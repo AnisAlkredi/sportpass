@@ -46,3 +46,6 @@ app.*.map.json
 
 # Local environment
 .env
+
+# Android generated build outputs
+/android/build/
