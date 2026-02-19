@@ -1,0 +1,10 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    { "source": "/assets/(.*)", "destination": "/landing/assets/$1" },
+    { "source": "/styles.css", "destination": "/landing/styles.css" },
+    { "source": "/main.js", "destination": "/landing/main.js" },
+    { "source": "/(.*)", "destination": "/landing/index.html" }
+  ]
+}

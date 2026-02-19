@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SportPass | بطاقات الرياضة الذكية</title>
+    <meta
+      name="description"
+      content="SportPass منصة دخول ذكية للأندية الرياضية عبر QR مع محفظة رقمية، خريطة مراكز، وسجل عمليات فوري."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="orb orb-a" aria-hidden="true"></div>
+    <div class="orb orb-b" aria-hidden="true"></div>
+    <div class="orb orb-c" aria-hidden="true"></div>
+
+    <header class="topbar container">
+      <a href="#top" class="brand" aria-label="SportPass">
+        <span class="brand-mark">SP</span>
+        <span class="brand-text">SportPass</span>
+      </a>
+      <nav class="topnav">
+        <a href="#features">المزايا</a>
+        <a href="#how">كيف يعمل</a>
+        <a href="#shots">الواجهات</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero container section">
+        <div class="hero-copy reveal">
+          <p class="eyebrow">منصة ذكية لسوق الأندية الرياضية</p>
+          <h1>ادخل النادي بثواني عبر QR وادفع من محفظتك مباشرة</h1>
+          <p class="lead">
+            SportPass يجمع اللاعب، النادي، والإدارة في نظام واحد واضح: شحن رصيد، اكتشاف مراكز،
+            وتسجيل دخول سريع بدون فوضى.
+          </p>
+          <div class="cta-row">
+            <a href="#cta" class="btn btn-primary">ابدأ الإطلاق</a>
+            <a href="#shots" class="btn btn-outline">شاهد الواجهات</a>
+          </div>
+          <ul class="badge-row">
+            <li>Check-in QR فوري</li>
+            <li>محفظة رقمية واضحة</li>
+            <li>إدارة صلاحيات للأدوار</li>
+          </ul>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="phone">
+            <img
+              id="heroShot"
+              src="/assets/screenshots/shot_current.png"
+              alt="واجهة SportPass الرئيسية"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+
+          <div class="switcher" role="tablist" aria-label="واجهة التطبيق">
+            <button class="is-active" data-shot="/assets/screenshots/shot_current.png">الرئيسية</button>
+            <button data-shot="/assets/screenshots/checkin.png">QR</button>
+            <button data-shot="/assets/screenshots/shot_wallet_try1.png">المحفظة</button>
+            <button data-shot="/assets/screenshots/shot_map_try1.png">الخريطة</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="container section stats" id="features">
+        <article class="stat reveal">
+          <span class="stat-title">تدفق دخول واضح</span>
+          <p>المستخدم يصل للمركز، يفتح الكاميرا، ويدخل فورًا عبر QR.</p>
+        </article>
+        <article class="stat reveal">
+          <span class="stat-title">محاسبة دقيقة</span>
+          <p>المحفظة وسجل العمليات يوضحان كل حركة رصيد بشكل مباشر.</p>
+        </article>
+        <article class="stat reveal">
+          <span class="stat-title">جاهز للتوسع</span>
+          <p>دعم أصحاب الأندية، موافقات الإدارة، وخريطة مراكز في تجربة موحدة.</p>
+        </article>
+      </section>
+
+      <section class="container section flow" id="how">
+        <div class="section-head reveal">
+          <p class="eyebrow">كيف يعمل</p>
+          <h2>3 خطوات وتكون العملية كاملة</h2>
+        </div>
+        <div class="flow-grid">
+          <article class="flow-card reveal">
+            <span class="flow-num">01</span>
+            <h3>سجل وأنشئ محفظتك</h3>
+            <p>إنشاء حساب بالبريد الإلكتروني ثم شحن الرصيد ليصبح الحساب جاهزًا للاستخدام.</p>
+          </article>
+          <article class="flow-card reveal">
+            <span class="flow-num">02</span>
+            <h3>اختر النادي الأقرب</h3>
+            <p>من الخريطة تشوف المراكز، السعر، والاتجاهات قبل الوصول إلى الموقع.</p>
+          </article>
+          <article class="flow-card reveal">
+            <span class="flow-num">03</span>
+            <h3>امسح QR وادخل</h3>
+            <p>التسجيل يتم فورًا مع خصم الرصيد وتوثيق العملية في السجل.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="container section gallery" id="shots">
+        <div class="section-head reveal">
+          <p class="eyebrow">واجهات حقيقية من التطبيق</p>
+          <h2>تصميم عربي واضح مع تجربة استخدام سريعة</h2>
+        </div>
+        <div class="gallery-grid">
+          <figure class="shot reveal">
+            <img src="/assets/screenshots/shot_current.png" alt="الواجهة الرئيسية" loading="lazy" decoding="async" />
+            <figcaption>الرئيسية: رصيد + إجراءات سريعة</figcaption>
+          </figure>
+          <figure class="shot reveal">
+            <img src="/assets/screenshots/checkin.png" alt="واجهة مسح الكود" loading="lazy" decoding="async" />
+            <figcaption>QR Scanner: دخول سريع أو إدخال يدوي</figcaption>
+          </figure>
+          <figure class="shot reveal">
+            <img src="/assets/screenshots/shot_wallet_try1.png" alt="المحفظة" loading="lazy" decoding="async" />
+            <figcaption>المحفظة: رصيد وسجل شحن واضح</figcaption>
+          </figure>
+          <figure class="shot reveal">
+            <img src="/assets/screenshots/shot_map_try1.png" alt="الخريطة والمراكز" loading="lazy" decoding="async" />
+            <figcaption>الخريطة: اكتشاف المراكز القريبة</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="container section audience">
+        <div class="section-head reveal">
+          <p class="eyebrow">لمن هذا النظام</p>
+          <h2>قيمة عملية لكل طرف في المنظومة</h2>
+        </div>
+        <div class="audience-grid">
+          <article class="audience-card reveal">
+            <h3>لللاعب</h3>
+            <p>وصول أسرع، شفافية في الرصيد، وتجربة دخول بدون انتظار.</p>
+          </article>
+          <article class="audience-card reveal">
+            <h3>لصاحب النادي</h3>
+            <p>تنظيم الحضور، إدارة أسهل للدخول، وسجل واضح للعمليات اليومية.</p>
+          </article>
+          <article class="audience-card reveal">
+            <h3>للإدارة</h3>
+            <p>صلاحيات مركزية، موافقات دقيقة، وتحكم كامل بدورة العمل.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="container section cta-block" id="cta">
+        <p class="eyebrow">جاهز للنشر</p>
+        <h2>مشروع SportPass جاهز للعرض والإطلاق على Vercel من GitHub</h2>
+        <p>صفحة هبوط تسويقية + واجهات حقيقية + بنية واضحة للعرض على المستثمر أو العميل مباشرة.</p>
+        <div class="cta-row center">
+          <a class="btn btn-primary" href="https://github.com/AnisAlkredi/sportpass" target="_blank" rel="noopener noreferrer">
+            افتح المشروع على GitHub
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer container">
+      <p>© <span id="year"></span> SportPass. Smart Sports Access.</p>
+    </footer>
+
+    <script src="/main.js" defer></script>
+  </body>
+</html>
