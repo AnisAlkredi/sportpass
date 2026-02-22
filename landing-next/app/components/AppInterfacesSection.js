@@ -1,88 +1,106 @@
-import Image from "next/image";
+"use client";
 
-const showcaseCards = [
-  {
-    id: "checkin",
-    title: "دخول سريع عبر QR",
-    caption: "واجهة المسح مع خيار الإدخال اليدوي للطوارئ",
-    src: "/screenshots/checkin.png",
-    className: "screen-card screen-feature",
-  },
+import Image from "next/image";
+import { useMemo, useState } from "react";
+
+const interfaces = [
   {
     id: "home",
-    title: "واجهة رئيسية واضحة",
-    caption: "رصيد سريع وإجراءات يومية في أول شاشة",
+    title: "الرئيسية السريعة",
+    subtitle: "رصيد + إجراءات مباشرة في أول شاشة",
     src: "/screenshots/shot_current.png",
-    className: "screen-card",
+    points: ["زر Check-in واضح", "وصول سريع للخريطة", "واجهة نظيفة للاستخدام اليومي"],
+  },
+  {
+    id: "qr",
+    title: "شاشة الدخول عبر QR",
+    subtitle: "مسح فوري مع خيار إدخال يدوي احتياطي",
+    src: "/screenshots/checkin.png",
+    points: ["توجيه مباشر للمستخدم", "واجهة تركيز بدون تشتيت", "جاهزة للتشغيل عند الباب"],
   },
   {
     id: "wallet",
-    title: "محفظة وسجل رصيد",
-    caption: "عرض الرصيد وحركات الشحن بدقة",
+    title: "المحفظة وسجل الرصيد",
+    subtitle: "شفافية كاملة لكل حركة مالية",
     src: "/screenshots/shot_wallet_try1.png",
-    className: "screen-card",
+    points: ["عرض الرصيد الحالي", "سجل الشحن والعمليات", "سهولة تتبع المستخدم للمدفوعات"],
   },
   {
-    id: "map",
-    title: "اكتشاف المراكز",
-    caption: "الخريطة لتوجيه المستخدم للنادي الأقرب",
-    src: "/screenshots/shot_map_try1.png",
-    className: "screen-card",
-  },
-  {
-    id: "history",
-    title: "سجل النشاط",
-    caption: "شفافية كاملة لكل العمليات",
-    src: "/screenshots/shot_history_try1.png",
-    className: "screen-card",
-  },
-  {
-    id: "home-alt",
-    title: "تفاصيل التشغيل اليومي",
-    caption: "كل ما يحتاجه اللاعب في دقائق",
-    src: "/screenshots/home.png",
-    className: "screen-card",
-  },
-  {
-    id: "wallet-alt",
-    title: "حالة المحفظة",
-    caption: "ملخص فوري لحركة الرصيد",
+    id: "scan",
+    title: "تجربة مسح احترافية",
+    subtitle: "تصميم بصري قوي متوافق مع هوية المنتج",
     src: "/screenshots/wallet.png",
-    className: "screen-card",
+    points: ["تركيز بصري على الإطار", "وضوح عالي داخل التطبيق", "ملائم للتجربة الليلية"],
   },
 ];
 
 export default function AppInterfacesSection() {
+  const [activeId, setActiveId] = useState(interfaces[0].id);
+
+  const activeInterface = useMemo(
+    () => interfaces.find((item) => item.id === activeId) || interfaces[0],
+    [activeId]
+  );
+
   return (
     <section className="container section" id="app-interfaces">
       <div className="section-head reveal">
         <p className="eyebrow">واجهات التطبيق</p>
-        <h2>تجربة بصرية غنية توضح مسار التشغيل كاملًا</h2>
+        <h2>عرض منسق وواضح لتجربة SportPass</h2>
       </div>
 
       <p className="interfaces-lead reveal">
-        من مسح QR إلى المحفظة والخريطة وسجل النشاط، كل شاشة مصممة لتقليل الاحتكاك وتسريع
-        الدخول، مع تجربة واضحة لصاحب النادي والمستخدم.
+        اختر الواجهة من القائمة لمعاينة التفاصيل. الهدف هنا إظهار تجربة متناسقة بصريًا من أول
+        شاشة حتى تنفيذ الدخول والمحفظة.
       </p>
 
-      <div className="screens-bento">
-        {showcaseCards.map((card) => (
-          <article className={`${card.className} reveal`} key={card.id}>
-            <div className="screen-frame">
-              <Image src={card.src} alt={card.title} width={1080} height={2400} />
-            </div>
-            <div className="screen-copy">
-              <h3>{card.title}</h3>
-              <p>{card.caption}</p>
-            </div>
-          </article>
-        ))}
+      <div className="interfaces-layout">
+        <article className="interface-stage reveal">
+          <div className="interface-phone">
+            <Image
+              src={activeInterface.src}
+              alt={activeInterface.title}
+              width={1080}
+              height={2400}
+              className="hero-shot"
+            />
+          </div>
+
+          <div className="interface-meta">
+            <h3>{activeInterface.title}</h3>
+            <p>{activeInterface.subtitle}</p>
+            <ul>
+              {activeInterface.points.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+          </div>
+        </article>
+
+        <aside className="interface-selector reveal">
+          {interfaces.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={`selector-item ${activeId === item.id ? "is-active" : ""}`}
+              onClick={() => setActiveId(item.id)}
+            >
+              <div className="selector-thumb">
+                <Image src={item.src} alt={item.title} width={1080} height={2400} />
+              </div>
+              <div className="selector-copy">
+                <strong>{item.title}</strong>
+                <span>{item.subtitle}</span>
+              </div>
+            </button>
+          ))}
+        </aside>
       </div>
 
-      <div className="screens-strip reveal" aria-label="معاينة سريعة للواجهات">
-        {showcaseCards.map((card) => (
-          <div className="strip-item" key={`strip-${card.id}`}>
-            <Image src={card.src} alt={card.title} width={1080} height={2400} />
+      <div className="screens-strip reveal" aria-label="معاينة إضافية للواجهات">
+        {interfaces.map((item) => (
+          <div className="strip-item" key={`strip-${item.id}`}>
+            <Image src={item.src} alt={item.title} width={1080} height={2400} />
           </div>
         ))}
       </div>

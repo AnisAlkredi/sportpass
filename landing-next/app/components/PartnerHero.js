@@ -35,8 +35,8 @@ export default function PartnerHero() {
       </div>
 
       <div className="hero-visual reveal">
-        <div className="phone-stack">
-          <div className="phone phone-main">
+        <div className="hero-showcase">
+          <div className="hero-preview hero-preview-main">
             <Image
               src="/screenshots/checkin.png"
               alt="نظام دخول QR"
@@ -45,15 +45,27 @@ export default function PartnerHero() {
               priority
               className="hero-shot"
             />
+            <span>دخول QR</span>
           </div>
-          <div className="phone phone-float">
+          <div className="hero-preview">
             <Image
-              src="/screenshots/shot_wallet_try1.png"
-              alt="تتبع الرصيد والأرباح"
+              src="/screenshots/shot_current.png"
+              alt="واجهة المستخدم الرئيسية"
               width={1080}
               height={2400}
               className="hero-shot"
             />
+            <span>الواجهة الرئيسية</span>
+          </div>
+          <div className="hero-preview">
+            <Image
+              src="/screenshots/shot_wallet_try1.png"
+              alt="المحفظة وسجل العمليات"
+              width={1080}
+              height={2400}
+              className="hero-shot"
+            />
+            <span>المحفظة</span>
           </div>
         </div>
 
