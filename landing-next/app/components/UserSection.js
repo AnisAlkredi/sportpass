@@ -20,9 +20,14 @@ export default function UserSection() {
           ))}
         </ul>
 
-        <a href="/apk/sportpass.apk" className="btn btn-outline" download>
-          تحميل التطبيق (APK)
-        </a>
+        <div className="cta-row">
+          <a href="/for-users" className="btn btn-outline">
+            صفحة المستخدم
+          </a>
+          <a href="/apk/sportpass.apk" className="btn btn-primary" download>
+            تحميل التطبيق (APK)
+          </a>
+        </div>
       </div>
     </section>
   );

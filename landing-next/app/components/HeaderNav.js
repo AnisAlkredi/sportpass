@@ -9,9 +9,11 @@ export default function HeaderNav() {
       <nav className="topnav">
         <a href="#partner-benefits">لماذا SportPass</a>
         <a href="#owner-flow">آلية العمل</a>
+        <a href="#owner-control">الإدارة المالية</a>
+        <a href="#club-brochure">بروشور النادي</a>
         <a href="#app-interfaces">الواجهات</a>
         <a href="#pilot-trust">المرحلة التجريبية</a>
-        <a href="#for-users">للمستخدم</a>
+        <a href="/for-users">للمستخدم</a>
       </nav>
     </header>
   );

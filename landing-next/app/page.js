@@ -1,6 +1,8 @@
 import AppInterfacesSection from "./components/AppInterfacesSection";
+import BrochureFlowSection from "./components/BrochureFlowSection";
 import FinalCtaSection from "./components/FinalCtaSection";
 import HeaderNav from "./components/HeaderNav";
+import OwnerControlSection from "./components/OwnerControlSection";
 import PageFooter from "./components/PageFooter";
 import PartnerBenefits from "./components/PartnerBenefits";
 import PartnerHero from "./components/PartnerHero";
@@ -21,6 +23,8 @@ export default function HomePage() {
         <PartnerHero />
         <PartnerBenefits />
         <PartnerHowItWorks />
+        <OwnerControlSection />
+        <BrochureFlowSection />
         <AppInterfacesSection />
         <PilotTrustSection />
         <UserSection />
