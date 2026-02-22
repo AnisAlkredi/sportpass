@@ -14,9 +14,9 @@ const tajawal = Tajawal({
 });
 
 export const metadata = {
-  title: "SportPass | بطاقات الرياضة الذكية",
+  title: "SportPass للشركاء | انضم كنادي رياضي",
   description:
-    "منصة SportPass لدخول الأندية الرياضية عبر QR مع محفظة رقمية واكتشاف المراكز على الخريطة.",
+    "صفحة شراكة SportPass للأندية الرياضية في سوريا: زبائن إضافيون بدون اشتراك شهري مع نظام QR وتقسيم 80% للنادي.",
 };
 
 export default function RootLayout({ children }) {
