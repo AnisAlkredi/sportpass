@@ -12,7 +12,7 @@ export default function HeaderNav() {
         <a href="#owner-control">الإدارة المالية</a>
         <a href="#club-brochure">بروشور النادي</a>
         <a href="#app-interfaces">الواجهات</a>
-        <a href="#pilot-trust">المرحلة التجريبية</a>
+        <a href="#pilot-trust">المرحلة الأولى</a>
         <a href="/for-users">للمستخدم</a>
       </nav>
     </header>
