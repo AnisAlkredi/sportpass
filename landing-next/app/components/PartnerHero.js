@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
 const ownerPoints = [
   "زبائن إضافيون بدون مخاطرة",
@@ -8,7 +11,52 @@ const ownerPoints = [
   "لوحة تحكم واضحة للإحصائيات",
 ];
 
+const heroScreens = [
+  {
+    id: "home",
+    label: "الرئيسية",
+    src: "/screenshots/shot_current.png",
+    alt: "واجهة المستخدم الرئيسية في تطبيق SportPass",
+    caption: "واجهة سريعة تضع الدفع وQR والخرائط أمام العميل مباشرة.",
+  },
+  {
+    id: "checkin",
+    label: "QR",
+    src: "/screenshots/checkin.png",
+    alt: "واجهة تسجيل دخول النادي عبر QR",
+    caption: "دخول فوري عبر المسح من دون تعقيد وبمتابعة لحظية.",
+  },
+  {
+    id: "wallet",
+    label: "المحفظة",
+    src: "/screenshots/shot_wallet_try1.png",
+    alt: "واجهة المحفظة وسجل الرصيد",
+    caption: "رصيد وسجل واضحان لرفع الثقة وتقليل مشاكل التحصيل.",
+  },
+  {
+    id: "map",
+    label: "الخريطة",
+    src: "/screenshots/shot_map_try1.png",
+    alt: "واجهة الخريطة لاكتشاف النوادي",
+    caption: "ظهور ناديك على الخريطة يجلب عملاء جدد قريبين من موقعك.",
+  },
+];
+
+const AUTO_ROTATE_MS = 4200;
+
 export default function PartnerHero() {
+  const [activeScreenIndex, setActiveScreenIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveScreenIndex((current) => (current + 1) % heroScreens.length);
+    }, AUTO_ROTATE_MS);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const activeScreen = heroScreens[activeScreenIndex];
+
   return (
     <section className="hero container section" id="top">
       <div className="hero-copy reveal">
@@ -35,38 +83,37 @@ export default function PartnerHero() {
       </div>
 
       <div className="hero-visual reveal">
-        <div className="hero-showcase">
-          <div className="hero-preview hero-preview-main">
+        <div className="hero-device">
+          <div className="hero-device-head">
+            <span className="hero-device-pill">واجهة تتبدّل تلقائياً</span>
+            <small>{activeScreen.label}</small>
+          </div>
+          <div className="hero-device-frame">
             <Image
-              src="/screenshots/checkin.png"
-              alt="نظام دخول QR"
+              src={activeScreen.src}
+              alt={activeScreen.alt}
               width={1080}
               height={2400}
-              priority
+              priority={activeScreenIndex === 0}
               className="hero-shot"
             />
-            <span>دخول QR</span>
           </div>
-          <div className="hero-preview">
-            <Image
-              src="/screenshots/shot_current.png"
-              alt="واجهة المستخدم الرئيسية"
-              width={1080}
-              height={2400}
-              className="hero-shot"
-            />
-            <span>الواجهة الرئيسية</span>
-          </div>
-          <div className="hero-preview">
-            <Image
-              src="/screenshots/shot_wallet_try1.png"
-              alt="المحفظة وسجل العمليات"
-              width={1080}
-              height={2400}
-              className="hero-shot"
-            />
-            <span>المحفظة</span>
-          </div>
+          <p className="hero-screen-note">{activeScreen.caption}</p>
+        </div>
+
+        <div className="hero-tabs" role="tablist" aria-label="تبديل واجهات التطبيق">
+          {heroScreens.map((screen, index) => (
+            <button
+              type="button"
+              key={screen.id}
+              role="tab"
+              aria-selected={activeScreenIndex === index}
+              className={`hero-tab${activeScreenIndex === index ? " is-active" : ""}`}
+              onClick={() => setActiveScreenIndex(index)}
+            >
+              {screen.label}
+            </button>
+          ))}
         </div>
 
         <div className="revenue-box">
