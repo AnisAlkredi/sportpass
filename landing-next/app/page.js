@@ -1,3 +1,4 @@
+import AppInterfacesSection from "./components/AppInterfacesSection";
 import FinalCtaSection from "./components/FinalCtaSection";
 import HeaderNav from "./components/HeaderNav";
 import PageFooter from "./components/PageFooter";
@@ -20,6 +21,7 @@ export default function HomePage() {
         <PartnerHero />
         <PartnerBenefits />
         <PartnerHowItWorks />
+        <AppInterfacesSection />
         <PilotTrustSection />
         <UserSection />
         <FinalCtaSection />
