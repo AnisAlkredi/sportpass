@@ -9,7 +9,7 @@ export default function UserSection() {
   return (
     <section className="container section user-section" id="for-users">
       <div className="section-head reveal">
-        <p className="eyebrow">للمستخدم (مختصر)</p>
+        <p className="eyebrow">للمستخدم</p>
         <h2>حرية التمرين بدون اشتراك</h2>
       </div>
 

@@ -11,7 +11,7 @@ const userSteps = [
 export const metadata = {
   title: "SportPass للمستخدم | تمرين بدون اشتراك شهري",
   description:
-    "صفحة مختصرة للمستخدم: ادفع فقط وقت التمرين، محفظة واضحة، ودخول سريع عبر QR.",
+    "صفحة للمستخدم: ادفع فقط وقت التمرين، محفظة واضحة، ودخول سريع عبر QR.",
 };
 
 export default function ForUsersPage() {

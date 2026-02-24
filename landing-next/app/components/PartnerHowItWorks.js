@@ -1,16 +1,21 @@
+import LineIcon from "./LineIcon";
+
 const steps = [
   {
     number: "01",
+    icon: "register",
     title: "سجّل ناديك وبياناتك",
     text: "ترسل بيانات النادي الأساسية، الفريق يراجع الطلب بسرعة ويبدأ تجهيز الحساب.",
   },
   {
     number: "02",
+    icon: "pricing",
     title: "أضف الفروع وحدد السعر الأساسي",
     text: "تحدد الفروع المتاحة وسعر الدخول لكل فرع ضمن لوحة إدارة واضحة وبسيطة.",
   },
   {
     number: "03",
+    icon: "scan",
     title: "استخرج QR واطبعه عند الباب",
     text: "كل زيارة عبر SportPass تُسجل تلقائيًا ويظهر نصيب النادي فورًا في لوحة الأرباح.",
   },
@@ -27,7 +32,12 @@ export default function PartnerHowItWorks() {
       <div className="flow-grid">
         {steps.map((step) => (
           <article className="flow-card reveal" key={step.number}>
-            <span className="flow-num">{step.number}</span>
+            <div className="flow-card-head">
+              <span className="icon-badge" aria-hidden="true">
+                <LineIcon name={step.icon} />
+              </span>
+              <span className="flow-num">{step.number}</span>
+            </div>
             <h3>{step.title}</h3>
             <p>{step.text}</p>
           </article>

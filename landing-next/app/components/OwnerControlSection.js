@@ -15,7 +15,7 @@ export default function OwnerControlSection() {
     <section className="container section" id="owner-control">
       <div className="section-head reveal">
         <p className="eyebrow">الإدارة المالية والتشغيل</p>
-        <h2>ارتاح من جمع المصاري يدويًا وخلي كل شيء موثق</h2>
+        <h2>ارتاح من جمع النقود يدويًا وخلي كل شيء موثق</h2>
       </div>
 
       <p className="interfaces-lead reveal">

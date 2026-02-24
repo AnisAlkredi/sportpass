@@ -84,10 +84,6 @@ export default function PartnerHero() {
 
       <div className="hero-visual reveal">
         <div className="hero-device">
-          <div className="hero-device-head">
-            <span className="hero-device-pill">واجهة تتبدّل تلقائياً</span>
-            <small>{activeScreen.label}</small>
-          </div>
           <div className="hero-device-frame">
             <Image
               src={activeScreen.src}
@@ -114,15 +110,6 @@ export default function PartnerHero() {
               {screen.label}
             </button>
           ))}
-        </div>
-
-        <div className="revenue-box">
-          <p>تقسيم الإيراد لكل زيارة</p>
-          <div className="revenue-split">
-            <span>80% للنادي</span>
-            <span>20% للمنصة</span>
-          </div>
-          <small>بدون رسوم ثابتة أو اشتراك شهري</small>
         </div>
       </div>
     </section>
