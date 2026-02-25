@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/utils.dart';
@@ -21,6 +22,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
   List<Map<String, dynamic>> _transactions = [];
   List<Map<String, dynamic>> _checkins = [];
   double _balance = 0;
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -78,24 +80,32 @@ class _UserDetailPageState extends State<UserDetailPage> {
 
   Future<void> _toggleSuspend() async {
     final newStatus = _user?['status'] == 'suspended' ? 'active' : 'suspended';
-    final label = newStatus == 'suspended' ? 'تعليق' : 'تفعيل';
+    final label = newStatus == 'suspended'
+        ? _tr('تعليق', 'Suspend')
+        : _tr('تفعيل', 'Activate');
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: C.surface,
-        title: Text('$label الحساب؟',
+        title: Text(_tr('$label الحساب؟', '$label account?'),
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.w700, color: C.textPrimary)),
         content: Text(
           newStatus == 'suspended'
-              ? 'سيتم تعليق هذا المستخدم ولن يتمكن من الدخول'
-              : 'سيتم تفعيل الحساب مرة أخرى',
+              ? _tr(
+                  'سيتم تعليق هذا المستخدم ولن يتمكن من الدخول',
+                  'This user will be suspended and will not be able to sign in',
+                )
+              : _tr(
+                  'سيتم تفعيل الحساب مرة أخرى',
+                  'The account will be activated again',
+                ),
           style: GoogleFonts.cairo(color: C.textSecondary),
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text('إلغاء', style: GoogleFonts.cairo())),
+              child: Text(_tr('إلغاء', 'Cancel'), style: GoogleFonts.cairo())),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
@@ -115,7 +125,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('تم $label الحساب', style: GoogleFonts.cairo()),
+              content: Text(_tr('تم $label الحساب', '$label account completed'),
+                  style: GoogleFonts.cairo()),
               backgroundColor: C.green),
         );
       }
@@ -123,7 +134,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('خطأ: $e', style: GoogleFonts.cairo()),
+              content:
+                  Text(_tr('خطأ: $e', 'Error: $e'), style: GoogleFonts.cairo()),
               backgroundColor: C.red),
         );
       }
@@ -142,7 +154,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
           backgroundColor: C.surface,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Text('تعديل الرصيد',
+          title: Text(_tr('تعديل الرصيد', 'Adjust balance'),
               style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700, color: C.textPrimary)),
           content: SingleChildScrollView(
@@ -153,7 +165,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                   children: [
                     Expanded(
                       child: ChoiceChip(
-                        label: Text('إضافة +',
+                        label: Text(_tr('إضافة +', 'Add +'),
                             style:
                                 GoogleFonts.cairo(fontWeight: FontWeight.w700)),
                         selected: isCredit,
@@ -164,7 +176,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: ChoiceChip(
-                        label: Text('خصم -',
+                        label: Text(_tr('خصم -', 'Deduct -'),
                             style:
                                 GoogleFonts.cairo(fontWeight: FontWeight.w700)),
                         selected: !isCredit,
@@ -180,8 +192,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
                   keyboardType: TextInputType.number,
                   style: GoogleFonts.cairo(color: C.textPrimary, fontSize: 18),
                   decoration: InputDecoration(
-                    labelText: 'المبلغ',
-                    suffixText: 'ل.س',
+                    labelText: _tr('المبلغ', 'Amount'),
+                    suffixText: currencyLabel(context),
                     prefixIcon: Icon(isCredit ? Icons.add : Icons.remove,
                         color: isCredit ? C.green : C.red),
                   ),
@@ -190,9 +202,9 @@ class _UserDetailPageState extends State<UserDetailPage> {
                 TextField(
                   controller: reasonCtrl,
                   style: GoogleFonts.cairo(color: C.textPrimary),
-                  decoration: const InputDecoration(
-                      labelText: 'السبب',
-                      prefixIcon: Icon(Icons.note, color: C.gold)),
+                  decoration: InputDecoration(
+                      labelText: _tr('السبب', 'Reason'),
+                      prefixIcon: const Icon(Icons.note, color: C.gold)),
                   maxLines: 2,
                 ),
               ],
@@ -201,7 +213,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: Text('إلغاء', style: GoogleFonts.cairo())),
+                child:
+                    Text(_tr('إلغاء', 'Cancel'), style: GoogleFonts.cairo())),
             ElevatedButton(
               onPressed: () {
                 final amount = double.tryParse(amountCtrl.text);
@@ -216,7 +229,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                 });
               },
               style: ElevatedButton.styleFrom(backgroundColor: C.cyan),
-              child: Text('تأكيد',
+              child: Text(_tr('تأكيد', 'Confirm'),
                   style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
             ),
           ],
@@ -237,8 +250,9 @@ class _UserDetailPageState extends State<UserDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text('تم تعديل الرصيد بنجاح', style: GoogleFonts.cairo()),
+              content: Text(
+                  _tr('تم تعديل الرصيد بنجاح', 'Balance adjusted successfully'),
+                  style: GoogleFonts.cairo()),
               backgroundColor: C.green),
         );
       }
@@ -246,7 +260,8 @@ class _UserDetailPageState extends State<UserDetailPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('خطأ: $e', style: GoogleFonts.cairo()),
+              content:
+                  Text(_tr('خطأ: $e', 'Error: $e'), style: GoogleFonts.cairo()),
               backgroundColor: C.red),
         );
       }
@@ -258,7 +273,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('تفاصيل المستخدم',
+        title: Text(_tr('تفاصيل المستخدم', 'User details'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
       ),
@@ -266,7 +281,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
           ? const Center(child: CircularProgressIndicator(color: C.cyan))
           : _user == null
               ? Center(
-                  child: Text('مستخدم غير موجود',
+                  child: Text(_tr('مستخدم غير موجود', 'User not found'),
                       style: GoogleFonts.cairo(color: C.textMuted)))
               : ListView(
                   padding: const EdgeInsets.all(20),
@@ -294,10 +309,10 @@ class _UserDetailPageState extends State<UserDetailPage> {
             ? C.gold
             : C.cyan;
     final roleLabel = role == 'admin'
-        ? 'مدير'
+        ? _tr('مدير', 'Admin')
         : role == 'gym_owner'
-            ? 'صاحب نادي'
-            : 'رياضي';
+            ? _tr('صاحب نادي', 'Gym owner')
+            : _tr('رياضي', 'Athlete');
 
     return GlassCard(
       borderColor: isSuspended
@@ -323,7 +338,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_user?['name'] ?? 'مستخدم',
+                    Text(_user?['name'] ?? _tr('مستخدم', 'User'),
                         style: GoogleFonts.cairo(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -356,7 +371,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
                       decoration: BoxDecoration(
                           color: C.red.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6)),
-                      child: Text('معلّق',
+                      child: Text(_tr('معلّق', 'Suspended'),
                           style: GoogleFonts.cairo(
                               color: C.red,
                               fontSize: 10,
@@ -371,9 +386,9 @@ class _UserDetailPageState extends State<UserDetailPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('الرصيد',
+              Text(_tr('الرصيد', 'Balance'),
                   style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12)),
-              Text(formatSYP(_balance),
+              Text(formatCurrency(context, _balance),
                   style: GoogleFonts.cairo(
                       color: C.cyan,
                       fontSize: 18,
@@ -393,7 +408,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
           child: ElevatedButton.icon(
             onPressed: _adjustBalance,
             icon: const Icon(Icons.edit, size: 18),
-            label: Text('تعديل الرصيد',
+            label: Text(_tr('تعديل الرصيد', 'Adjust balance'),
                 style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
             style: ElevatedButton.styleFrom(
                 backgroundColor: C.cyan,
@@ -406,7 +421,10 @@ class _UserDetailPageState extends State<UserDetailPage> {
             onPressed: _toggleSuspend,
             icon:
                 Icon(isSuspended ? Icons.check_circle : Icons.block, size: 18),
-            label: Text(isSuspended ? 'تفعيل' : 'تعليق',
+            label: Text(
+                isSuspended
+                    ? _tr('تفعيل', 'Activate')
+                    : _tr('تعليق', 'Suspend'),
                 style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
             style: OutlinedButton.styleFrom(
               foregroundColor: isSuspended ? C.green : C.red,
@@ -424,15 +442,18 @@ class _UserDetailPageState extends State<UserDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('تفاصيل المحفظة',
+          Text(_tr('تفاصيل المحفظة', 'Wallet details'),
               style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700,
                   color: C.textPrimary,
                   fontSize: 16)),
           const SizedBox(height: 12),
-          _infoRow('الرصيد الحالي', formatSYP(_balance), C.cyan),
-          _infoRow('عدد المعاملات', '${_transactions.length}', C.textSecondary),
-          _infoRow('عدد الزيارات', '${_checkins.length}', C.textSecondary),
+          _infoRow(_tr('الرصيد الحالي', 'Current balance'),
+              formatCurrency(context, _balance), C.cyan),
+          _infoRow(_tr('عدد المعاملات', 'Transactions count'),
+              '${_transactions.length}', C.textSecondary),
+          _infoRow(_tr('عدد الزيارات', 'Check-ins count'),
+              '${_checkins.length}', C.textSecondary),
         ],
       ),
     );
@@ -456,7 +477,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('آخر المعاملات',
+        Text(_tr('آخر المعاملات', 'Recent transactions'),
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.w700,
                 color: C.textPrimary,
@@ -464,7 +485,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
         const SizedBox(height: 12),
         if (_transactions.isEmpty)
           Center(
-              child: Text('لا توجد معاملات',
+              child: Text(_tr('لا توجد معاملات', 'No transactions'),
                   style: GoogleFonts.cairo(color: C.textMuted))),
         ..._transactions.take(10).map((tx) {
           final amount = (tx['amount'] as num?)?.toDouble() ?? 0;
@@ -490,13 +511,20 @@ class _UserDetailPageState extends State<UserDetailPage> {
                               color: C.textPrimary, fontSize: 12),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis),
-                      Text(DateFormat('MM/dd HH:mm').format(ts),
+                      Text(
+                          DateFormat(
+                            'MM/dd HH:mm',
+                            AppLocalizations.of(context).isEnglish
+                                ? 'en'
+                                : 'ar',
+                          ).format(ts),
                           style: GoogleFonts.cairo(
                               color: C.textMuted, fontSize: 10)),
                     ],
                   ),
                 ),
-                Text('${isPositive ? '+' : ''}${formatSYP(amount)}',
+                Text(
+                    '${isPositive ? '+' : ''}${formatCurrency(context, amount)}',
                     style: GoogleFonts.cairo(
                         color: isPositive ? C.green : C.red,
                         fontSize: 12,
@@ -513,7 +541,7 @@ class _UserDetailPageState extends State<UserDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('سجل الزيارات',
+        Text(_tr('سجل الزيارات', 'Check-in history'),
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.w700,
                 color: C.textPrimary,
@@ -521,10 +549,11 @@ class _UserDetailPageState extends State<UserDetailPage> {
         const SizedBox(height: 12),
         if (_checkins.isEmpty)
           Center(
-              child: Text('لا توجد زيارات',
+              child: Text(_tr('لا توجد زيارات', 'No visits'),
                   style: GoogleFonts.cairo(color: C.textMuted))),
         ..._checkins.take(10).map((c) {
-          final locName = (c['partner_locations'] as Map?)?['name'] ?? 'نادي';
+          final locName =
+              (c['partner_locations'] as Map?)?['name'] ?? _tr('نادي', 'Gym');
           final ts = DateTime.tryParse(c['created_at'] ?? '') ?? DateTime.now();
           final approved = c['status'] == 'approved';
           return Container(
@@ -544,13 +573,21 @@ class _UserDetailPageState extends State<UserDetailPage> {
                       Text(locName,
                           style: GoogleFonts.cairo(
                               color: C.textPrimary, fontSize: 12)),
-                      Text(DateFormat('MM/dd HH:mm').format(ts),
+                      Text(
+                          DateFormat(
+                            'MM/dd HH:mm',
+                            AppLocalizations.of(context).isEnglish
+                                ? 'en'
+                                : 'ar',
+                          ).format(ts),
                           style: GoogleFonts.cairo(
                               color: C.textMuted, fontSize: 10)),
                     ],
                   ),
                 ),
-                Text(formatSYP((c['final_price'] as num?)?.toDouble() ?? 0),
+                Text(
+                    formatCurrency(
+                        context, (c['final_price'] as num?)?.toDouble() ?? 0),
                     style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11)),
               ],
             ),

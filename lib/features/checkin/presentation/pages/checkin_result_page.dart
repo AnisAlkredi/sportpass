@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -15,12 +16,17 @@ class CheckinResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String tr(String ar, String en) => context.trd(ar, en);
     final success = result['success'] == true;
-    final message =
-        result['message']?.toString() ?? (success ? 'تم بنجاح' : 'فشل العملية');
+    final message = result['message']?.toString() ??
+        (success
+            ? tr('تم بنجاح', 'Success')
+            : tr('فشل العملية', 'Operation failed'));
 
-    final gymName = result['gym_name']?.toString() ?? 'غير متاح';
-    final locationName = result['location_name']?.toString() ?? 'غير متاح';
+    final gymName =
+        result['gym_name']?.toString() ?? tr('غير متاح', 'Unavailable');
+    final locationName =
+        result['location_name']?.toString() ?? tr('غير متاح', 'Unavailable');
 
     final pricePaid = (result['price_paid'] as num?)?.toDouble() ?? 0;
     final basePrice = (result['base_price'] as num?)?.toDouble();
@@ -30,7 +36,10 @@ class CheckinResultPage extends StatelessWidget {
     final createdAt = DateTime.tryParse(result['created_at']?.toString() ?? '');
     final createdAtText = createdAt == null
         ? null
-        : DateFormat('yyyy/MM/dd - HH:mm').format(createdAt.toLocal());
+        : DateFormat(
+            'yyyy/MM/dd - HH:mm',
+            AppLocalizations.of(context).isEnglish ? 'en' : 'ar',
+          ).format(createdAt.toLocal());
 
     return Scaffold(
       backgroundColor: C.bg,
@@ -43,7 +52,9 @@ class CheckinResultPage extends StatelessWidget {
                 .scale(begin: const Offset(0.7, 0.7), duration: 450.ms),
             const SizedBox(height: 20),
             Text(
-              success ? 'تم تسجيل الدخول' : 'فشل تسجيل الدخول',
+              success
+                  ? tr('تم تسجيل الدخول', 'Check-in successful')
+                  : tr('فشل تسجيل الدخول', 'Check-in failed'),
               textAlign: TextAlign.center,
               style: GoogleFonts.cairo(
                 color: success ? C.green : C.red,
@@ -68,12 +79,12 @@ class CheckinResultPage extends StatelessWidget {
                   : C.red.withValues(alpha: 0.35),
               child: Column(
                 children: [
-                  _line('النادي', gymName),
+                  _line(tr('النادي', 'Gym'), gymName),
                   const SizedBox(height: 10),
-                  _line('الفرع', locationName),
+                  _line(tr('الفرع', 'Branch'), locationName),
                   if (createdAtText != null) ...[
                     const SizedBox(height: 10),
-                    _line('الوقت', createdAtText),
+                    _line(tr('الوقت', 'Time'), createdAtText),
                   ],
                 ],
               ),
@@ -84,28 +95,33 @@ class CheckinResultPage extends StatelessWidget {
                 borderColor: C.cyan.withValues(alpha: 0.35),
                 child: Column(
                   children: [
-                    _valueLine(
-                        'سعر الدخول النهائي', formatSYP(pricePaid), C.gold),
+                    _valueLine(tr('سعر الدخول النهائي', 'Final entry price'),
+                        formatCurrency(context, pricePaid), C.gold),
                     const SizedBox(height: 8),
                     const Divider(color: C.border),
                     const SizedBox(height: 8),
                     _valueLine(
-                      'حصة النادي (base_price)',
-                      basePrice == null ? 'غير متاح' : formatSYP(basePrice),
+                      tr('حصة النادي', 'Gym share'),
+                      basePrice == null
+                          ? tr('غير متاح', 'Unavailable')
+                          : formatCurrency(context, basePrice),
                       C.cyan,
                     ),
                     const SizedBox(height: 8),
                     const Divider(color: C.border),
                     const SizedBox(height: 8),
                     _valueLine(
-                      'عمولة المنصة',
-                      platformFee == null ? 'غير متاح' : formatSYP(platformFee),
+                      tr('عمولة المنصة', 'Platform fee'),
+                      platformFee == null
+                          ? tr('غير متاح', 'Unavailable')
+                          : formatCurrency(context, platformFee),
                       C.textSecondary,
                     ),
                     const SizedBox(height: 8),
                     const Divider(color: C.border),
                     const SizedBox(height: 8),
-                    _valueLine('الرصيد الجديد', formatSYP(newBalance), C.green),
+                    _valueLine(tr('الرصيد الجديد', 'New balance'),
+                        formatCurrency(context, newBalance), C.green),
                   ],
                 ),
               ).animate().fadeIn(delay: 360.ms).slideY(begin: 0.06),
@@ -117,7 +133,7 @@ class CheckinResultPage extends StatelessWidget {
                 onPressed: () => context.go(AppRouter.home),
                 icon: const Icon(Icons.home_rounded),
                 label: Text(
-                  'العودة للرئيسية',
+                  tr('العودة للرئيسية', 'Back to home'),
                   style: GoogleFonts.cairo(
                     fontWeight: FontWeight.w700,
                     fontSize: 16,

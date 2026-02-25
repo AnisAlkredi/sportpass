@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/utils.dart';
@@ -19,6 +20,22 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage> {
+  String _txLabel(String type) {
+    return switch (type) {
+      'topup' => context.trd('شحن رصيد', 'Top up'),
+      'checkin_debit' => context.trd('دخول نادي', 'Gym entry'),
+      'checkin_credit_gym' => context.trd('عائد من زيارة', 'Visit revenue'),
+      'checkin_credit_platform' => context.trd('عمولة المنصة', 'Platform fee'),
+      'refund' => context.trd('استرداد', 'Refund'),
+      'refund_debit_gym' => context.trd('استرداد (خصم)', 'Refund (debit)'),
+      'refund_debit_platform' => context.trd('استرداد (خصم)', 'Refund (debit)'),
+      'adjustment' => context.trd('تعديل إداري', 'Admin adjustment'),
+      'settlement' => context.trd('تسوية مالية', 'Settlement'),
+      'bonus' => context.trd('مكافأة', 'Bonus'),
+      _ => type,
+    };
+  }
+
   @override
   void initState() {
     super.initState();
@@ -30,7 +47,7 @@ class _WalletPageState extends State<WalletPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('المحفظة',
+        title: Text(context.trd('المحفظة', 'Wallet'),
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.w700, color: C.textPrimary)),
         backgroundColor: C.bg,
@@ -62,7 +79,7 @@ class _WalletPageState extends State<WalletPage> {
                     _buildTopupButton().animate().fadeIn(delay: 100.ms),
                     const SizedBox(height: 32),
                   ],
-                  Text('سجل العمليات',
+                  Text(context.trd('سجل العمليات', 'Transactions'),
                       style: GoogleFonts.cairo(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -78,7 +95,9 @@ class _WalletPageState extends State<WalletPage> {
                                 size: 64,
                                 color: C.textMuted.withValues(alpha: 0.3)),
                             const SizedBox(height: 12),
-                            Text('لا توجد عمليات بعد',
+                            Text(
+                                context.trd('لا توجد عمليات بعد',
+                                    'No transactions yet'),
                                 style: GoogleFonts.cairo(color: C.textMuted)),
                           ],
                         ),
@@ -121,7 +140,7 @@ class _WalletPageState extends State<WalletPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('الرصيد الحالي',
+              Text(context.trd('الرصيد الحالي', 'Current balance'),
                   style:
                       GoogleFonts.cairo(color: Colors.white70, fontSize: 14)),
               const Icon(Icons.account_balance_wallet,
@@ -133,7 +152,7 @@ class _WalletPageState extends State<WalletPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                formatSYP(wallet.balance).replaceAll(' ل.س', ''),
+                formatCurrency(context, wallet.balance, includeCurrency: false),
                 style: GoogleFonts.cairo(
                     fontSize: 40,
                     fontWeight: FontWeight.w800,
@@ -143,7 +162,7 @@ class _WalletPageState extends State<WalletPage> {
               const SizedBox(width: 8),
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
-                child: Text('ل.س',
+                child: Text(currencyLabel(context),
                     style: GoogleFonts.cairo(
                         color: Colors.white70,
                         fontSize: 16,
@@ -164,7 +183,10 @@ class _WalletPageState extends State<WalletPage> {
                 const Icon(Icons.info_outline, color: Colors.white70, size: 16),
                 const SizedBox(width: 8),
                 Text(
-                  'يتم خصم الرصيد عند الدخول فقط',
+                  context.trd(
+                    'يتم خصم الرصيد عند الدخول فقط',
+                    'Balance is deducted only after successful check-in',
+                  ),
                   style: GoogleFonts.cairo(color: Colors.white70, fontSize: 12),
                 ),
               ],
@@ -192,7 +214,7 @@ class _WalletPageState extends State<WalletPage> {
         children: [
           const Icon(Icons.add_circle_outline),
           const SizedBox(width: 8),
-          Text('شحن رصيد',
+          Text(context.trd('شحن رصيد', 'Top up wallet'),
               style:
                   GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.w700)),
         ],
@@ -235,14 +257,17 @@ class _WalletPageState extends State<WalletPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tx.typeLabel,
+                Text(_txLabel(tx.type),
                     style: GoogleFonts.cairo(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
                         color: C.textPrimary)),
                 const SizedBox(height: 4),
                 Text(
-                  DateFormat('yyyy/MM/dd HH:mm', 'ar').format(tx.createdAt),
+                  DateFormat(
+                    'yyyy/MM/dd HH:mm',
+                    AppLocalizations.of(context).isEnglish ? 'en' : 'ar',
+                  ).format(tx.createdAt),
                   style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12),
                 ),
                 if (tx.description != null)
@@ -259,11 +284,11 @@ class _WalletPageState extends State<WalletPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${isCredit ? '+' : ''}${formatSYP(tx.amount.abs()).replaceAll(' ل.س', '')}',
+                '${isCredit ? '+' : ''}${formatCurrency(context, tx.amount.abs(), includeCurrency: false)}',
                 style: GoogleFonts.cairo(
                     fontWeight: FontWeight.w800, fontSize: 16, color: color),
               ),
-              Text('ل.س',
+              Text(currencyLabel(context),
                   style: GoogleFonts.cairo(color: C.textMuted, fontSize: 10)),
             ],
           ),

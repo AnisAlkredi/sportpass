@@ -8,6 +8,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/router/app_router.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../cubit/checkin_cubit.dart';
 
@@ -22,6 +23,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
   late final MobileScannerController _controller;
   bool _scanned = false;
   bool _torchOn = false;
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -58,7 +60,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
       builder: (ctx) => AlertDialog(
         backgroundColor: C.surface,
         title: Text(
-          'إدخال QR يدويًا',
+          _tr('إدخال QR يدويًا', 'Manual QR input'),
           style: GoogleFonts.cairo(
             color: C.textPrimary,
             fontWeight: FontWeight.w800,
@@ -71,7 +73,10 @@ class _QrScannerPageState extends State<QrScannerPage> {
               controller: tokenCtrl,
               style: GoogleFonts.cairo(color: C.textPrimary),
               decoration: InputDecoration(
-                hintText: 'ألصق التوكن هنا (مثال: SP-XXXXXXXXXXXX)',
+                hintText: _tr(
+                  'ألصق التوكن هنا (مثال: SP-XXXXXXXXXXXX)',
+                  'Paste token here (example: SP-XXXXXXXXXXXX)',
+                ),
                 hintStyle: GoogleFonts.cairo(color: C.textMuted, fontSize: 12),
                 prefixIcon: const Icon(Icons.qr_code_2_rounded, color: C.cyan),
               ),
@@ -92,7 +97,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                 },
                 icon: const Icon(Icons.content_paste_rounded, size: 18),
                 label: Text(
-                  'لصق من الحافظة',
+                  _tr('لصق من الحافظة', 'Paste from clipboard'),
                   style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
                 ),
               ),
@@ -102,7 +107,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('إلغاء', style: GoogleFonts.cairo()),
+            child: Text(_tr('إلغاء', 'Cancel'), style: GoogleFonts.cairo()),
           ),
           ElevatedButton(
             onPressed: () {
@@ -114,7 +119,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
             },
             style: ElevatedButton.styleFrom(backgroundColor: C.cyan),
             child: Text(
-              'تحقق الآن',
+              _tr('تحقق الآن', 'Validate now'),
               style: GoogleFonts.cairo(
                 fontWeight: FontWeight.w800,
                 color: Colors.white,
@@ -181,7 +186,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
-                      'سجّل دخول النادي',
+                      _tr('سجّل دخول النادي', 'Gym check-in'),
                       style: GoogleFonts.cairo(
                         color: C.textPrimary,
                         fontSize: 31,
@@ -192,7 +197,10 @@ class _QrScannerPageState extends State<QrScannerPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Text(
-                      'وجّه الكاميرا نحو رمز QR عند البوابة',
+                      _tr(
+                        'وجّه الكاميرا نحو رمز QR عند البوابة',
+                        'Point your camera to the QR code at the gate',
+                      ),
                       style: GoogleFonts.cairo(
                         color: C.textSecondary,
                         fontSize: 15,
@@ -235,7 +243,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                               const CircularProgressIndicator(color: C.cyan),
                               const SizedBox(height: 12),
                               Text(
-                                'جاري التحقق...',
+                                _tr('جاري التحقق...', 'Verifying...'),
                                 style: GoogleFonts.cairo(
                                   color: C.textPrimary,
                                   fontWeight: FontWeight.w700,
@@ -324,7 +332,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                         ),
                       ),
                       child: Text(
-                        'QR Scanner',
+                        _tr('QR Scanner', 'QR Scanner'),
                         style: GoogleFonts.cairo(
                           color: C.cyan,
                           fontSize: 11,
@@ -334,7 +342,9 @@ class _QrScannerPageState extends State<QrScannerPage> {
                     ),
                     const Spacer(),
                     Text(
-                      _scanned ? 'تمت القراءة...' : 'جاهز للمسح',
+                      _scanned
+                          ? _tr('تمت القراءة...', 'Scanned...')
+                          : _tr('جاهز للمسح', 'Ready to scan'),
                       style: GoogleFonts.cairo(
                         color: _scanned ? C.warning : C.green,
                         fontWeight: FontWeight.w700,
@@ -345,7 +355,10 @@ class _QrScannerPageState extends State<QrScannerPage> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'حافظ على ثبات الكاميرا داخل الإطار للحصول على نتيجة أدق.',
+                  _tr(
+                    'حافظ على ثبات الكاميرا داخل الإطار للحصول على نتيجة أدق.',
+                    'Keep the camera steady inside the frame for better accuracy.',
+                  ),
                   style: GoogleFonts.cairo(
                     color: C.textSecondary,
                     fontSize: 13,
@@ -359,7 +372,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
                     onPressed: _scanned ? null : _openManualTokenDialog,
                     icon: const Icon(Icons.keyboard_alt_rounded, size: 18),
                     label: Text(
-                      'إدخال التوكن يدويًا',
+                      _tr('إدخال التوكن يدويًا', 'Enter token manually'),
                       style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
                     ),
                   ),

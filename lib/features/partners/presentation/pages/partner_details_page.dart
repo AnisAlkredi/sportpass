@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/di/service_locator.dart';
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -21,6 +22,7 @@ class PartnerDetailsPage extends StatefulWidget {
 
 class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
   late Future<Partner?> _partnerFuture;
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -34,7 +36,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
       backgroundColor: C.bg,
       appBar: AppBar(
         title: Text(
-          'تفاصيل المركز',
+          _tr('تفاصيل المركز', 'Center details'),
           style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
         ),
         backgroundColor: Colors.transparent,
@@ -51,7 +53,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
           if (partner == null) {
             return Center(
               child: Text(
-                'تعذر تحميل بيانات المركز',
+                _tr('تعذر تحميل بيانات المركز', 'Failed to load center data'),
                 style: GoogleFonts.cairo(color: C.textSecondary),
               ),
             );
@@ -79,7 +81,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
               if (partner.locations.isEmpty)
                 GlassCard(
                   child: Text(
-                    'لا توجد فروع مضافة بعد',
+                    _tr('لا توجد فروع مضافة بعد', 'No branches added yet'),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.cairo(color: C.textSecondary),
                   ),
@@ -151,7 +153,9 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                   : C.red.withValues(alpha: 0.15),
             ),
             child: Text(
-              partner.isActive ? 'نشط' : 'متوقف',
+              partner.isActive
+                  ? _tr('نشط', 'Active')
+                  : _tr('متوقف', 'Inactive'),
               style: GoogleFonts.cairo(
                 color: partner.isActive ? C.green : C.red,
                 fontWeight: FontWeight.w700,
@@ -193,7 +197,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  formatSYP(location.userPrice),
+                  formatCurrency(context, location.userPrice),
                   style: GoogleFonts.cairo(
                     color: C.gold,
                     fontSize: 13,
@@ -217,12 +221,18 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
             children: [
               _pill(Icons.location_city_rounded, location.city),
               _pill(
-                  Icons.pin_drop_outlined, 'نطاق ${location.radiusM.toInt()}م'),
-              _pill(Icons.paid_outlined,
-                  'حصة النادي ${formatSYP(location.basePrice)}'),
+                Icons.pin_drop_outlined,
+                AppLocalizations.of(context).isEnglish
+                    ? 'Range ${location.radiusM.toInt()} m'
+                    : '${_tr('نطاق', 'Range')} ${location.radiusM.toInt()}${_tr('م', 'm')}',
+              ),
+              _pill(
+                Icons.paid_outlined,
+                '${_tr('حصة النادي', 'Gym share')} ${formatCurrency(context, location.basePrice)}',
+              ),
               _pill(
                 Icons.account_balance_wallet_outlined,
-                'عمولة المنصة ${formatSYP(location.platformFee)}',
+                '${_tr('عمولة المنصة', 'Platform fee')} ${formatCurrency(context, location.platformFee)}',
               ),
             ],
           ),
@@ -240,7 +250,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
               location.operatingHours!.isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(
-              'ساعات الدوام',
+              _tr('ساعات الدوام', 'Working hours'),
               style: GoogleFonts.cairo(
                 color: C.textPrimary,
                 fontSize: 13,
@@ -286,7 +296,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                   onPressed: () => _openDirections(location),
                   icon: const Icon(Icons.directions_rounded),
                   label: Text(
-                    'الاتجاهات',
+                    _tr('الاتجاهات', 'Directions'),
                     style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
                   ),
                 ),
@@ -297,7 +307,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                   onPressed: () => context.push(AppRouter.scanner),
                   icon: const Icon(Icons.qr_code_scanner_rounded),
                   label: Text(
-                    'شيك إن عند الوصول',
+                    _tr('شيك إن عند الوصول', 'Check-in on arrival'),
                     style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
                   ),
                 ),
@@ -312,13 +322,13 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
   List<Widget> _buildOperatingHours(Map<String, dynamic> hours) {
     final order = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
     final labels = {
-      'sat': 'السبت',
-      'sun': 'الأحد',
-      'mon': 'الاثنين',
-      'tue': 'الثلاثاء',
-      'wed': 'الأربعاء',
-      'thu': 'الخميس',
-      'fri': 'الجمعة',
+      'sat': _tr('السبت', 'Saturday'),
+      'sun': _tr('الأحد', 'Sunday'),
+      'mon': _tr('الاثنين', 'Monday'),
+      'tue': _tr('الثلاثاء', 'Tuesday'),
+      'wed': _tr('الأربعاء', 'Wednesday'),
+      'thu': _tr('الخميس', 'Thursday'),
+      'fri': _tr('الجمعة', 'Friday'),
     };
     final widgets = <Widget>[];
     for (final day in order) {
@@ -353,7 +363,10 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
     if (!launched && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('تعذر فتح تطبيق الخرائط', style: GoogleFonts.cairo()),
+          content: Text(
+            _tr('تعذر فتح تطبيق الخرائط', 'Unable to open maps application'),
+            style: GoogleFonts.cairo(),
+          ),
           backgroundColor: C.red,
         ),
       );
@@ -399,32 +412,32 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
   String _categoryLabel(String category) {
     switch (category) {
       case 'gym':
-        return 'نادي رياضي';
+        return _tr('نادي رياضي', 'Gym');
       case 'pool':
-        return 'مسبح';
+        return _tr('مسبح', 'Pool');
       case 'yoga':
-        return 'يوغا';
+        return _tr('يوغا', 'Yoga');
       case 'spa':
-        return 'سبا';
+        return _tr('سبا', 'Spa');
       case 'martial_arts':
-        return 'فنون قتالية';
+        return _tr('فنون قتالية', 'Martial arts');
       default:
-        return 'مركز رياضي';
+        return _tr('مركز رياضي', 'Fitness center');
     }
   }
 
   String _amenityLabel(String value) {
     switch (value) {
       case 'weights':
-        return 'أوزان';
+        return _tr('أوزان', 'Weights');
       case 'cardio':
-        return 'كارديو';
+        return _tr('كارديو', 'Cardio');
       case 'pool':
-        return 'مسبح';
+        return _tr('مسبح', 'Pool');
       case 'sauna':
-        return 'ساونا';
+        return _tr('ساونا', 'Sauna');
       case 'parking':
-        return 'موقف سيارات';
+        return _tr('موقف سيارات', 'Parking');
       default:
         return value;
     }

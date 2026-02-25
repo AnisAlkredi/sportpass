@@ -23,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic>? _profile;
   final _nameCtrl = TextEditingController();
   String? _role;
+  String? _email;
 
   @override
   void initState() {
@@ -49,6 +50,7 @@ class _ProfilePageState extends State<ProfilePage> {
         _profile = p;
         _nameCtrl.text = p?['name'] ?? '';
         _role = p?['role'] ?? 'athlete';
+        _email = sb.auth.currentUser?.email;
         _loading = false;
       });
     } catch (_) {
@@ -294,19 +296,19 @@ class _ProfilePageState extends State<ProfilePage> {
                 GlassCard(
                   child: Row(
                     children: [
-                      const Icon(Icons.phone, color: C.textMuted),
+                      const Icon(Icons.email_outlined, color: C.textMuted),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              context.trd('رقم الهاتف', 'Phone number'),
+                              context.trd('البريد الإلكتروني', 'Email'),
                               style: GoogleFonts.cairo(
                                   color: C.textMuted, fontSize: 12),
                             ),
                             Text(
-                              _profile?['phone'] ?? '-',
+                              _email ?? _profile?['phone'] ?? '-',
                               style: GoogleFonts.cairo(
                                 color: C.textPrimary,
                                 fontSize: 16,

@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -31,6 +32,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
   LatLng _pickedPoint = const LatLng(33.5138, 36.2765);
   TimeOfDay? _openTime;
   TimeOfDay? _closeTime;
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -67,7 +69,9 @@ class _AddLocationPageState extends State<AddLocationPage> {
       context: context,
       initialTime: initial,
       builder: (context, child) => Directionality(
-        textDirection: TextDirection.rtl,
+        textDirection: AppLocalizations.of(context).isEnglish
+            ? TextDirection.ltr
+            : TextDirection.rtl,
         child: child ?? const SizedBox.shrink(),
       ),
     );
@@ -120,7 +124,9 @@ class _AddLocationPageState extends State<AddLocationPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('يلزم السماح بالوصول للموقع',
+              content: Text(
+                  _tr('يلزم السماح بالوصول للموقع',
+                      'Location permission is required'),
                   style: GoogleFonts.cairo()),
               backgroundColor: C.red,
             ),
@@ -135,8 +141,10 @@ class _AddLocationPageState extends State<AddLocationPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('تعذر جلب الموقع الحالي: $e', style: GoogleFonts.cairo()),
+            content: Text(
+                _tr('تعذر جلب الموقع الحالي: $e',
+                    'Unable to fetch current location: $e'),
+                style: GoogleFonts.cairo()),
             backgroundColor: C.red,
           ),
         );
@@ -148,7 +156,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
     if (_nameCtrl.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('أدخل اسم الفرع', style: GoogleFonts.cairo()),
+            content: Text(_tr('أدخل اسم الفرع', 'Enter branch name'),
+                style: GoogleFonts.cairo()),
             backgroundColor: C.red),
       );
       return;
@@ -158,7 +167,9 @@ class _AddLocationPageState extends State<AddLocationPage> {
     if (lat == null || lng == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('حدد موقعًا صحيحًا على الخريطة',
+            content: Text(
+                _tr('حدد موقعًا صحيحًا على الخريطة',
+                    'Select a valid location on the map'),
                 style: GoogleFonts.cairo()),
             backgroundColor: C.red),
       );
@@ -193,7 +204,9 @@ class _AddLocationPageState extends State<AddLocationPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('تمت إضافة الفرع بنجاح! في انتظار موافقة المدير',
+              content: Text(
+                  _tr('تمت إضافة الفرع بنجاح! في انتظار موافقة المدير',
+                      'Branch added successfully! Waiting for admin approval'),
                   style: GoogleFonts.cairo()),
               backgroundColor: C.green),
         );
@@ -207,7 +220,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('خطأ: $e', style: GoogleFonts.cairo()),
+              content:
+                  Text(_tr('خطأ: $e', 'Error: $e'), style: GoogleFonts.cairo()),
               backgroundColor: C.red),
         );
       }
@@ -220,7 +234,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('إضافة فرع',
+        title: Text(_tr('إضافة فرع', 'Add branch'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
       ),
@@ -238,7 +252,10 @@ class _AddLocationPageState extends State<AddLocationPage> {
                   const SizedBox(width: 14),
                   Expanded(
                     child: Text(
-                      'سيقوم المدير بمراجعة الفرع وتحديد السعر قبل تفعيله',
+                      _tr(
+                        'سيقوم المدير بمراجعة الفرع وتحديد السعر قبل تفعيله',
+                        'The admin will review this branch and set the final price before activation',
+                      ),
                       style: GoogleFonts.cairo(
                           color: Colors.white, fontSize: 13, height: 1.5),
                     ),
@@ -250,28 +267,29 @@ class _AddLocationPageState extends State<AddLocationPage> {
             const SizedBox(height: 24),
 
             // Branch name
-            _label('اسم الفرع'),
+            _label(_tr('اسم الفرع', 'Branch name')),
             TextField(
               controller: _nameCtrl,
               style: GoogleFonts.cairo(color: C.textPrimary),
               decoration: InputDecoration(
-                  hintText: 'مثال: فرع المالكي',
+                  hintText:
+                      _tr('مثال: فرع المالكي', 'Example: Al-Malki branch'),
                   prefixIcon: const Icon(Icons.location_city, color: C.cyan)),
             ).animate().fadeIn(),
 
             const SizedBox(height: 20),
-            _label('العنوان'),
+            _label(_tr('العنوان', 'Address')),
             TextField(
               controller: _addressCtrl,
               style: GoogleFonts.cairo(color: C.textPrimary),
               decoration: InputDecoration(
-                  hintText: 'دمشق - المالكي',
+                  hintText: _tr('دمشق - المالكي', 'Damascus - Al-Malki'),
                   prefixIcon: const Icon(Icons.pin_drop, color: C.cyan)),
             ).animate().fadeIn(delay: 50.ms),
 
             const SizedBox(height: 20),
 
-            _label('حدد الموقع على الخريطة'),
+            _label(_tr('حدد الموقع على الخريطة', 'Pick location on map')),
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: SizedBox(
@@ -311,7 +329,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
                   child: OutlinedButton.icon(
                     onPressed: _useCurrentLocation,
                     icon: const Icon(Icons.my_location, size: 18),
-                    label: Text('موقعي الحالي',
+                    label: Text(_tr('موقعي الحالي', 'My current location'),
                         style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
                     style: OutlinedButton.styleFrom(foregroundColor: C.cyan),
                   ),
@@ -328,7 +346,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
                         decimal: true, signed: true),
                     style:
                         GoogleFonts.cairo(color: C.textPrimary, fontSize: 13),
-                    decoration: const InputDecoration(labelText: 'خط العرض'),
+                    decoration:
+                        InputDecoration(labelText: _tr('خط العرض', 'Latitude')),
                     onSubmitted: (_) {
                       final lat = double.tryParse(_latCtrl.text.trim());
                       final lng = double.tryParse(_lngCtrl.text.trim());
@@ -346,7 +365,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
                         decimal: true, signed: true),
                     style:
                         GoogleFonts.cairo(color: C.textPrimary, fontSize: 13),
-                    decoration: const InputDecoration(labelText: 'خط الطول'),
+                    decoration: InputDecoration(
+                        labelText: _tr('خط الطول', 'Longitude')),
                     onSubmitted: (_) {
                       final lat = double.tryParse(_latCtrl.text.trim());
                       final lng = double.tryParse(_lngCtrl.text.trim());
@@ -362,7 +382,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
             const SizedBox(height: 24),
 
             // Radius
-            _label('نطاق الجيوفنسينغ: ${_radius.toInt()} متر'),
+            _label(_tr('نطاق الجيوفنسينغ: ${_radius.toInt()} متر',
+                'Geofencing range: ${_radius.toInt()} m')),
             Slider(
               value: _radius,
               min: 50,
@@ -375,7 +396,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
 
             const SizedBox(height: 20),
 
-            _label('ساعات الدوام (اختياري)'),
+            _label(_tr('ساعات الدوام (اختياري)', 'Working hours (optional)')),
             Row(
               children: [
                 Expanded(
@@ -384,8 +405,9 @@ class _AddLocationPageState extends State<AddLocationPage> {
                     icon: const Icon(Icons.schedule_rounded),
                     label: Text(
                       _openTime == null
-                          ? 'وقت الفتح'
-                          : 'فتح ${_formatTime(_openTime!)}',
+                          ? _tr('وقت الفتح', 'Opening time')
+                          : _tr('فتح ${_formatTime(_openTime!)}',
+                              'Open ${_formatTime(_openTime!)}'),
                       style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -397,8 +419,9 @@ class _AddLocationPageState extends State<AddLocationPage> {
                     icon: const Icon(Icons.schedule_send_rounded),
                     label: Text(
                       _closeTime == null
-                          ? 'وقت الإغلاق'
-                          : 'إغلاق ${_formatTime(_closeTime!)}',
+                          ? _tr('وقت الإغلاق', 'Closing time')
+                          : _tr('إغلاق ${_formatTime(_closeTime!)}',
+                              'Close ${_formatTime(_closeTime!)}'),
                       style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
                     ),
                   ),
@@ -407,13 +430,15 @@ class _AddLocationPageState extends State<AddLocationPage> {
             ).animate().fadeIn(delay: 170.ms),
 
             const SizedBox(height: 20),
-            _label('صور الفرع (روابط - اختياري)'),
+            _label(_tr('صور الفرع (روابط - اختياري)',
+                'Branch photos (URLs - optional)')),
             TextField(
               controller: _photosCtrl,
               maxLines: 3,
               style: GoogleFonts.cairo(color: C.textPrimary),
               decoration: InputDecoration(
-                hintText: 'ضع روابط الصور مفصولة بفاصلة أو سطر جديد',
+                hintText: _tr('ضع روابط الصور مفصولة بفاصلة أو سطر جديد',
+                    'Add image links separated by commas or new lines'),
                 hintStyle: GoogleFonts.cairo(color: C.textMuted, fontSize: 12),
                 prefixIcon: const Padding(
                   padding: EdgeInsets.only(bottom: 42),
@@ -437,7 +462,10 @@ class _AddLocationPageState extends State<AddLocationPage> {
                         child: CircularProgressIndicator(
                             strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.check_circle),
-                label: Text(_loading ? 'جاري الحفظ...' : 'إرسال للمراجعة',
+                label: Text(
+                    _loading
+                        ? _tr('جاري الحفظ...', 'Saving...')
+                        : _tr('إرسال للمراجعة', 'Submit for review'),
                     style: GoogleFonts.cairo(
                         fontWeight: FontWeight.w700, fontSize: 16)),
                 style: ElevatedButton.styleFrom(backgroundColor: C.green),

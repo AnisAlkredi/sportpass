@@ -8,6 +8,7 @@ import 'package:printing/printing.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 
 class QrGeneratorPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
   bool _isAdmin = false;
   String? _resolvedPartnerId;
   String? _busyLocationId;
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -152,7 +154,9 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('تم إنشاء رمز QR جديد بموافقة المدير',
+              content: Text(
+                  _tr('تم إنشاء رمز QR جديد بموافقة المدير',
+                      'New QR token generated with admin approval'),
                   style: GoogleFonts.cairo()),
               backgroundColor: C.green),
         );
@@ -161,7 +165,8 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('خطأ: $e', style: GoogleFonts.cairo()),
+              content:
+                  Text(_tr('خطأ: $e', 'Error: $e'), style: GoogleFonts.cairo()),
               backgroundColor: C.red),
         );
       }
@@ -179,8 +184,9 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
       final message = res is Map && res['message'] != null
           ? res['message'].toString()
           : success
-              ? 'تم إرسال طلب التجديد إلى المدير'
-              : 'تعذر إرسال الطلب';
+              ? _tr('تم إرسال طلب التجديد إلى المدير',
+                  'Regeneration request sent to admin')
+              : _tr('تعذر إرسال الطلب', 'Unable to send request');
 
       if (success) {
         setState(() {
@@ -201,8 +207,10 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text('تعذر إرسال طلب التجديد: $e', style: GoogleFonts.cairo()),
+            content: Text(
+                _tr('تعذر إرسال طلب التجديد: $e',
+                    'Unable to send regeneration request: $e'),
+                style: GoogleFonts.cairo()),
             backgroundColor: C.red,
           ),
         );
@@ -219,11 +227,21 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
     required bool hasToken,
   }) async {
     final title = isAdmin
-        ? (hasToken ? 'تأكيد إعادة إنشاء QR' : 'تأكيد إنشاء QR')
-        : (hasToken ? 'تأكيد طلب تجديد QR' : 'تأكيد طلب إنشاء QR');
+        ? (hasToken
+            ? _tr('تأكيد إعادة إنشاء QR', 'Confirm QR regeneration')
+            : _tr('تأكيد إنشاء QR', 'Confirm QR generation'))
+        : (hasToken
+            ? _tr('تأكيد طلب تجديد QR', 'Confirm QR regeneration request')
+            : _tr('تأكيد طلب إنشاء QR', 'Confirm QR generation request'));
     final body = isAdmin
-        ? 'سيتم تعطيل الرمز الحالي وإنشاء رمز فعال جديد لهذا الفرع.'
-        : 'سيتم إرسال الطلب إلى مدير النظام للمراجعة قبل إصدار الرمز الجديد.';
+        ? _tr(
+            'سيتم تعطيل الرمز الحالي وإنشاء رمز فعال جديد لهذا الفرع.',
+            'The current token will be deactivated and a new active token will be generated for this branch.',
+          )
+        : _tr(
+            'سيتم إرسال الطلب إلى مدير النظام للمراجعة قبل إصدار الرمز الجديد.',
+            'The request will be sent to system admin for review before issuing the new token.',
+          );
 
     final result = await showDialog<bool>(
       context: context,
@@ -243,12 +261,12 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('إلغاء', style: GoogleFonts.cairo()),
+            child: Text(_tr('إلغاء', 'Cancel'), style: GoogleFonts.cairo()),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(backgroundColor: C.cyan),
-            child: Text('تأكيد',
+            child: Text(_tr('تأكيد', 'Confirm'),
                 style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
           ),
         ],
@@ -276,7 +294,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                     pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
               ),
               pw.SizedBox(height: 10),
-              pw.Text('Location: $locationName'),
+              pw.Text('${_tr('الفرع', 'Location')}: $locationName'),
               pw.SizedBox(height: 24),
               pw.BarcodeWidget(
                 barcode: pw.Barcode.qrCode(),
@@ -287,7 +305,8 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
               pw.SizedBox(height: 16),
               pw.Text(token, style: const pw.TextStyle(fontSize: 16)),
               pw.SizedBox(height: 24),
-              pw.Text('Print and place this code at gym entrance.'),
+              pw.Text(_tr('اطبع هذا الرمز وضعه عند مدخل النادي.',
+                  'Print and place this code at gym entrance.')),
             ],
           ),
         ),
@@ -310,7 +329,8 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('تعذر الطباعة: $e', style: GoogleFonts.cairo()),
+            content: Text(_tr('تعذر الطباعة: $e', 'Unable to print: $e'),
+                style: GoogleFonts.cairo()),
             backgroundColor: C.red,
           ),
         );
@@ -337,7 +357,8 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('تعذر التصدير: $e', style: GoogleFonts.cairo()),
+            content: Text(_tr('تعذر التصدير: $e', 'Unable to export: $e'),
+                style: GoogleFonts.cairo()),
             backgroundColor: C.red,
           ),
         );
@@ -356,7 +377,8 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
     }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('تم نسخ التوكن', style: GoogleFonts.cairo()),
+        content: Text(_tr('تم نسخ التوكن', 'Token copied'),
+            style: GoogleFonts.cairo()),
         backgroundColor: C.green,
       ),
     );
@@ -367,7 +389,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('رموز QR',
+        title: Text(_tr('رموز QR', 'QR tokens'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
       ),
@@ -375,7 +397,9 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
           ? const Center(child: CircularProgressIndicator(color: C.cyan))
           : _locations.isEmpty
               ? Center(
-                  child: Text('لا توجد فروع مرتبطة بهذا النادي',
+                  child: Text(
+                      _tr('لا توجد فروع مرتبطة بهذا النادي',
+                          'No branches linked to this gym'),
                       style: GoogleFonts.cairo(color: C.textMuted)))
               : ListView.builder(
                   padding: const EdgeInsets.all(20),
@@ -446,7 +470,9 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    isActive ? 'نشط' : 'قيد المراجعة',
+                    isActive
+                        ? _tr('نشط', 'Active')
+                        : _tr('قيد المراجعة', 'Under review'),
                     style: GoogleFonts.cairo(
                       color: Colors.white,
                       fontSize: 10,
@@ -510,7 +536,9 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text('اطبع هذا الرمز وضعه عند مدخل النادي',
+                      Text(
+                          _tr('اطبع هذا الرمز وضعه عند مدخل النادي',
+                              'Print this code and place it at gym entrance'),
                           style: GoogleFonts.cairo(
                               color: C.textMuted, fontSize: 12)),
                       if (!_isAdmin && hasReview) ...[
@@ -525,7 +553,8 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                       if (!_isAdmin && hasPendingRequest) ...[
                         const SizedBox(height: 8),
                         Text(
-                          'طلب التجديد قيد مراجعة مدير النظام',
+                          _tr('طلب التجديد قيد مراجعة مدير النظام',
+                              'Regeneration request is under admin review'),
                           style: GoogleFonts.cairo(
                             color: C.gold,
                             fontSize: 12,
@@ -539,7 +568,9 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                         children: [
                           Expanded(
                             child: Tooltip(
-                              message: _isAdmin ? 'إعادة إنشاء' : 'طلب تجديد',
+                              message: _isAdmin
+                                  ? _tr('إعادة إنشاء', 'Regenerate')
+                                  : _tr('طلب تجديد', 'Request regeneration'),
                               child: OutlinedButton(
                                 onPressed: isBusy ||
                                         (!_isAdmin && hasPendingRequest)
@@ -578,14 +609,14 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Tooltip(
-                              message: 'طباعة',
+                              message: _tr('طباعة', 'Print'),
                               child: OutlinedButton(
                                 onPressed: isBusy
                                     ? null
                                     : () => _printQr(
                                           locationId: loc['id'],
-                                          locationName:
-                                              loc['name'] ?? 'Location',
+                                          locationName: loc['name'] ??
+                                              _tr('فرع', 'Branch'),
                                           token: token,
                                         ),
                                 style: OutlinedButton.styleFrom(
@@ -600,14 +631,14 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                           const SizedBox(width: 8),
                           Expanded(
                             child: Tooltip(
-                              message: 'تصدير',
+                              message: _tr('تصدير', 'Export'),
                               child: OutlinedButton(
                                 onPressed: isBusy
                                     ? null
                                     : () => _exportQrPdf(
                                           locationId: loc['id'],
-                                          locationName:
-                                              loc['name'] ?? 'Location',
+                                          locationName: loc['name'] ??
+                                              _tr('فرع', 'Branch'),
                                           token: token,
                                         ),
                                 style: OutlinedButton.styleFrom(
@@ -638,15 +669,18 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                       const SizedBox(height: 12),
                       Text(
                           _isAdmin
-                              ? 'لم يُنشأ رمز QR بعد'
-                              : 'لا يوجد QR فعال بعد',
+                              ? _tr(
+                                  'لم يُنشأ رمز QR بعد', 'No QR generated yet')
+                              : _tr('لا يوجد QR فعال بعد', 'No active QR yet'),
                           style: GoogleFonts.cairo(color: C.textMuted)),
                       if (!_isAdmin) ...[
                         const SizedBox(height: 8),
                         Text(
                           hasPendingRequest
-                              ? 'تم إرسال طلب الإنشاء وبانتظار الموافقة'
-                              : 'إنشاء/تجديد QR يتطلب موافقة مدير النظام',
+                              ? _tr('تم إرسال طلب الإنشاء وبانتظار الموافقة',
+                                  'Creation request sent and waiting approval')
+                              : _tr('إنشاء/تجديد QR يتطلب موافقة مدير النظام',
+                                  'QR creation/regeneration requires admin approval'),
                           textAlign: TextAlign.center,
                           style: GoogleFonts.cairo(
                               color: hasPendingRequest ? C.gold : C.textMuted,
@@ -687,10 +721,12 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                               : Icons.mark_email_read_rounded),
                           label: Text(
                             _isAdmin
-                                ? 'إنشاء رمز QR'
+                                ? _tr('إنشاء رمز QR', 'Generate QR token')
                                 : (hasPendingRequest
-                                    ? 'طلب قيد المراجعة'
-                                    : 'طلب إنشاء QR'),
+                                    ? _tr(
+                                        'طلب قيد المراجعة', 'Request in review')
+                                    : _tr(
+                                        'طلب إنشاء QR', 'Request QR creation')),
                             style: GoogleFonts.cairo(
                               fontWeight: FontWeight.w700,
                             ),
@@ -714,7 +750,9 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
   }) {
     final approved = status == 'approved';
     final color = approved ? C.green : C.red;
-    final title = approved ? 'تمت الموافقة على طلب QR' : 'تم رفض طلب تجديد QR';
+    final title = approved
+        ? _tr('تمت الموافقة على طلب QR', 'QR request approved')
+        : _tr('تم رفض طلب تجديد QR', 'QR regeneration request rejected');
 
     return Container(
       width: double.infinity,
@@ -750,7 +788,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
           if (notes != null && notes.isNotEmpty) ...[
             const SizedBox(height: 6),
             Text(
-              'ملاحظة الإدارة: $notes',
+              '${_tr('ملاحظة الإدارة', 'Admin note')}: $notes',
               style: GoogleFonts.cairo(
                 color: C.textSecondary,
                 fontSize: 12,

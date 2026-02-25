@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       title: BlocBuilder<AuthCubit, AuthState>(
         builder: (ctx, state) {
-          String greeting = 'مرحباً';
+          String greeting = context.trd('مرحباً', 'Hello');
           if (state is AuthAuthenticated) {
             final name = state.user.name ?? context.trd('رياضي', 'Athlete');
             greeting = context.trd('أهلاً $name', 'Hi $name');
@@ -260,6 +260,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 16),
               AnimatedBalance(
                   balance: balance,
+                  includeCurrency: false,
                   style: GoogleFonts.cairo(
                     fontSize: 36,
                     fontWeight: FontWeight.w800,
@@ -340,7 +341,10 @@ class _HomePageState extends State<HomePage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'طلب صاحب النادي قيد المراجعة',
+                    context.trd(
+                      'طلب صاحب النادي قيد المراجعة',
+                      'Gym owner request is under review',
+                    ),
                     style: GoogleFonts.cairo(
                       color: C.textPrimary,
                       fontSize: 14,
@@ -348,7 +352,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   Text(
-                    'سيتم تفعيل صلاحيات الإدارة بعد موافقة مدير النظام.',
+                    context.trd(
+                      'سيتم تفعيل صلاحيات الإدارة بعد موافقة مدير النظام.',
+                      'Owner permissions will be activated after admin approval.',
+                    ),
                     style: GoogleFonts.cairo(
                       color: C.textSecondary,
                       fontSize: 12,

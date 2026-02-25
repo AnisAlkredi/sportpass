@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/router/app_router.dart';
 
@@ -29,7 +30,7 @@ class _PartnersListPageState extends State<PartnersListPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('المراكز الرياضية',
+        title: Text(context.trd('المراكز الرياضية', 'Fitness centers'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
       ),
@@ -42,7 +43,9 @@ class _PartnersListPageState extends State<PartnersListPage> {
           if (state is PartnersLoaded) {
             if (state.partners.isEmpty) {
               return Center(
-                  child: Text('لا توجد مراكز متاحة حالياً',
+                  child: Text(
+                      context.trd('لا توجد مراكز متاحة حالياً',
+                          'No centers available right now'),
                       style: GoogleFonts.cairo(color: C.textMuted)));
             }
             return ListView.builder(
@@ -109,7 +112,7 @@ class _PartnersListPageState extends State<PartnersListPage> {
                                 size: 12, color: Colors.white),
                             const SizedBox(width: 4),
                             Text(
-                              'نشط',
+                              context.trd('نشط', 'Active'),
                               style: GoogleFonts.cairo(
                                   color: Colors.white,
                                   fontSize: 11,
@@ -144,11 +147,17 @@ class _PartnersListPageState extends State<PartnersListPage> {
                   Row(
                     children: [
                       if (loc != null) ...[
-                        _tag(Icons.location_on, loc.addressText ?? 'دمشق',
-                            C.textMuted),
+                        _tag(
+                          Icons.location_on,
+                          loc.addressText ?? context.trd('دمشق', 'Damascus'),
+                          C.textMuted,
+                        ),
                         const Spacer(),
-                        _tag(Icons.monetization_on, formatSYP(loc.userPrice),
-                            C.gold),
+                        _tag(
+                          Icons.monetization_on,
+                          formatCurrency(context, loc.userPrice),
+                          C.gold,
+                        ),
                       ],
                     ],
                   ),
@@ -164,7 +173,7 @@ class _PartnersListPageState extends State<PartnersListPage> {
                           icon:
                               const Icon(Icons.info_outline_rounded, size: 18),
                           label: Text(
-                            'التفاصيل',
+                            context.trd('التفاصيل', 'Details'),
                             style: GoogleFonts.cairo(
                               fontWeight: FontWeight.w700,
                             ),
@@ -178,7 +187,7 @@ class _PartnersListPageState extends State<PartnersListPage> {
                           icon: const Icon(Icons.qr_code_scanner_rounded,
                               size: 18),
                           label: Text(
-                            'شيك إن',
+                            context.trd('شيك إن', 'Check-in'),
                             style: GoogleFonts.cairo(
                               fontWeight: FontWeight.w700,
                             ),

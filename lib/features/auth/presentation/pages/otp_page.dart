@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -18,6 +19,7 @@ class OtpPage extends StatefulWidget {
 
 class _OtpPageState extends State<OtpPage> {
   final _otpCtrl = TextEditingController();
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +52,7 @@ class _OtpPageState extends State<OtpPage> {
                     .fadeIn()
                     .scale(begin: const Offset(0.5, 0.5)),
                 const SizedBox(height: 24),
-                Text('رمز التحقق',
+                Text(_tr('رمز التحقق', 'Verification code'),
                         style: GoogleFonts.cairo(
                             fontSize: 28,
                             fontWeight: FontWeight.w800,
@@ -59,7 +61,10 @@ class _OtpPageState extends State<OtpPage> {
                     .fadeIn(delay: 200.ms),
                 const SizedBox(height: 8),
                 Text(
-                  'تم إرسال رمز التحقق إلى ${widget.phoneNumber}',
+                  _tr(
+                    'تم إرسال رمز التحقق إلى ${widget.phoneNumber}',
+                    'A verification code has been sent to ${widget.phoneNumber}',
+                  ),
                   style:
                       GoogleFonts.cairo(fontSize: 14, color: C.textSecondary),
                   textAlign: TextAlign.center,
@@ -109,7 +114,7 @@ class _OtpPageState extends State<OtpPage> {
                                       height: 24,
                                       child: CircularProgressIndicator(
                                           strokeWidth: 2))
-                                  : Text('تحقق',
+                                  : Text(_tr('تحقق', 'Verify'),
                                       style: GoogleFonts.cairo(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700)),

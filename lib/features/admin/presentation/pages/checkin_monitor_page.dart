@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -20,6 +21,7 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
   bool _loading = true;
   List<Map<String, dynamic>> _checkins = [];
   String _filter = 'all'; // all, approved, rejected
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -82,9 +84,9 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: C.textPrimary),
           onPressed: _exitPage,
-          tooltip: 'رجوع',
+          tooltip: _tr('رجوع', 'Back'),
         ),
-        title: Text('مراقبة تسجيلات الدخول',
+        title: Text(_tr('مراقبة تسجيلات الدخول', 'Check-in monitor'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
         actions: [
@@ -100,13 +102,17 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
             child: Row(
               children: [
-                _miniStat('اليوم', '${todayCheckins.length}', C.cyan),
+                _miniStat(
+                    _tr('اليوم', 'Today'), '${todayCheckins.length}', C.cyan),
                 const SizedBox(width: 8),
-                _miniStat('إجمالي', '${_checkins.length}', C.green),
+                _miniStat(
+                    _tr('إجمالي', 'Total'), '${_checkins.length}', C.green),
                 const SizedBox(width: 8),
-                _miniStat('الإيرادات', formatSYP(totalRevenue), C.gold),
+                _miniStat(_tr('الإيرادات', 'Revenue'),
+                    formatCurrency(context, totalRevenue), C.gold),
                 const SizedBox(width: 8),
-                _miniStat('العمولة', formatSYP(totalCommission), C.purple),
+                _miniStat(_tr('العمولة', 'Commission'),
+                    formatCurrency(context, totalCommission), C.purple),
               ],
             ),
           ).animate().fadeIn(),
@@ -116,11 +122,11 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                _filterChip('الكل', 'all'),
+                _filterChip(_tr('الكل', 'All'), 'all'),
                 const SizedBox(width: 8),
-                _filterChip('معتمد', 'approved'),
+                _filterChip(_tr('معتمد', 'Approved'), 'approved'),
                 const SizedBox(width: 8),
-                _filterChip('مرفوض', 'rejected'),
+                _filterChip(_tr('مرفوض', 'Rejected'), 'rejected'),
               ],
             ),
           ),
@@ -137,7 +143,8 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
                           const Icon(Icons.sensors_off,
                               size: 64, color: C.textMuted),
                           const SizedBox(height: 12),
-                          Text('لا توجد تسجيلات دخول',
+                          Text(
+                              _tr('لا توجد تسجيلات دخول', 'No check-ins found'),
                               style: GoogleFonts.cairo(color: C.textMuted)),
                         ],
                       ))
@@ -208,7 +215,7 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
     final approved = c['status'] == 'approved';
     final locName = (c['partner_locations'] as Map?)?['name'] ?? '-';
     final profile = c['profiles'] as Map?;
-    final userName = profile?['name'] ?? 'مستخدم';
+    final userName = profile?['name'] ?? _tr('مستخدم', 'User');
     final userPhone = profile?['phone'] ?? '';
     final ts = DateTime.tryParse(c['created_at'] ?? '') ?? DateTime.now();
     final amount = (c['final_price'] as num?)?.toDouble() ?? 0;
@@ -268,15 +275,25 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   if (approved)
-                    Text(formatSYP(amount),
+                    Text(formatCurrency(context, amount),
                         style: GoogleFonts.cairo(
                             color: C.green,
                             fontSize: 12,
                             fontWeight: FontWeight.w700)),
                   Text(
                     isToday
-                        ? DateFormat('HH:mm').format(ts)
-                        : DateFormat('MM/dd HH:mm').format(ts),
+                        ? DateFormat(
+                            'HH:mm',
+                            AppLocalizations.of(context).isEnglish
+                                ? 'en'
+                                : 'ar',
+                          ).format(ts)
+                        : DateFormat(
+                            'MM/dd HH:mm',
+                            AppLocalizations.of(context).isEnglish
+                                ? 'en'
+                                : 'ar',
+                          ).format(ts),
                     style: GoogleFonts.cairo(color: C.textMuted, fontSize: 10),
                   ),
                 ],
@@ -299,7 +316,8 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
                   decoration: BoxDecoration(
                       color: C.purple.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6)),
-                  child: Text('عمولة: ${formatSYP(commission)}',
+                  child: Text(
+                      '${_tr('عمولة', 'Commission')}: ${formatCurrency(context, commission)}',
                       style: GoogleFonts.cairo(
                           color: C.purple,
                           fontSize: 9,
@@ -333,7 +351,7 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
                     children: [
                       const Icon(Icons.fiber_new, size: 10, color: C.cyan),
                       const SizedBox(width: 2),
-                      Text('جديد',
+                      Text(_tr('جديد', 'New'),
                           style: GoogleFonts.cairo(
                               color: C.cyan,
                               fontSize: 9,

@@ -1,14 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../l10n/app_localizations.dart';
 import '../theme/colors.dart';
 
 /// Formats Syrian Pounds with proper formatting
-String formatSYP(num amount) {
-  final formatted = amount.toStringAsFixed(0).replaceAllMapped(
+String formatAmount(num amount) {
+  return amount.toStringAsFixed(0).replaceAllMapped(
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
         (m) => '${m[1]},',
       );
-  return '$formatted ل.س';
+}
+
+String formatSYP(num amount) {
+  return '${formatAmount(amount)} ل.س';
+}
+
+String currencyLabel(BuildContext context) {
+  return AppLocalizations.of(context).isEnglish ? 'SYP' : 'ل.س';
+}
+
+String formatCurrency(
+  BuildContext context,
+  num amount, {
+  bool includeCurrency = true,
+}) {
+  final value = formatAmount(amount);
+  if (!includeCurrency) {
+    return value;
+  }
+  return '$value ${currencyLabel(context)}';
 }
 
 /// Shimmer loading placeholder
@@ -67,12 +87,14 @@ class AnimatedBalance extends StatelessWidget {
   final double balance;
   final TextStyle? style;
   final Duration duration;
+  final bool includeCurrency;
 
   const AnimatedBalance({
     super.key,
     required this.balance,
     this.style,
     this.duration = const Duration(milliseconds: 1200),
+    this.includeCurrency = true,
   });
 
   @override
@@ -82,8 +104,11 @@ class AnimatedBalance extends StatelessWidget {
       duration: duration,
       curve: Curves.easeOutCubic,
       builder: (context, value, child) {
+        final formatted = includeCurrency
+            ? formatCurrency(context, value)
+            : formatCurrency(context, value, includeCurrency: false);
         return Text(
-          formatSYP(value),
+          formatted,
           style: style ??
               GoogleFonts.cairo(
                 fontSize: 36,

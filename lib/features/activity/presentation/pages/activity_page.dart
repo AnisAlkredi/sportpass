@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/utils.dart';
 import '../cubit/activity_cubit.dart';
@@ -26,7 +27,7 @@ class _ActivityPageState extends State<ActivityPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('سجل النشاط',
+        title: Text(context.trd('سجل النشاط', 'Activity'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
       ),
@@ -45,7 +46,7 @@ class _ActivityPageState extends State<ActivityPage> {
                     Icon(Icons.history,
                         size: 64, color: C.textMuted.withValues(alpha: 0.3)),
                     const SizedBox(height: 12),
-                    Text('لا توجد سجلات بعد',
+                    Text(context.trd('لا توجد سجلات بعد', 'No activity yet'),
                         style: GoogleFonts.cairo(color: C.textMuted)),
                   ],
                 ),
@@ -67,7 +68,8 @@ class _ActivityPageState extends State<ActivityPage> {
 
   Widget _buildItem(Map<String, dynamic> c) {
     final approved = c['status'] == 'approved';
-    final locationName = (c['partner_locations'] as Map?)?['name'] ?? 'نادي';
+    final locationName =
+        (c['partner_locations'] as Map?)?['name'] ?? context.trd('نادي', 'Gym');
     final ts = DateTime.tryParse(c['created_at'] ?? '') ?? DateTime.now();
     final amountCharged = (c['final_price'] as num?)?.toDouble() ?? 0;
 
@@ -100,13 +102,17 @@ class _ActivityPageState extends State<ActivityPage> {
                         fontWeight: FontWeight.w600,
                         color: C.textPrimary,
                         fontSize: 14)),
-                Text(DateFormat('yyyy/MM/dd - HH:mm').format(ts),
+                Text(
+                    DateFormat(
+                      'yyyy/MM/dd - HH:mm',
+                      AppLocalizations.of(context).isEnglish ? 'en' : 'ar',
+                    ).format(ts),
                     style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11)),
               ],
             ),
           ),
           if (approved && amountCharged > 0)
-            Text('-${formatSYP(amountCharged)}',
+            Text('-${formatCurrency(context, amountCharged)}',
                 style: GoogleFonts.cairo(
                     color: C.red, fontSize: 12, fontWeight: FontWeight.w700)),
         ],

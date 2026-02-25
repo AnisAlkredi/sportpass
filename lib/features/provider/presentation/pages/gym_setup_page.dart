@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -27,12 +28,22 @@ class _GymSetupPageState extends State<GymSetupPage> {
     'spa': {'icon': '💆', 'label': 'سبا'},
     'martial_arts': {'icon': '🥋', 'label': 'فنون قتالية'},
   };
+  String _tr(String ar, String en) => context.trd(ar, en);
+  String _categoryEn(String key) => switch (key) {
+        'gym' => 'Gym',
+        'yoga' => 'Yoga',
+        'pool' => 'Pool',
+        'spa' => 'Spa',
+        'martial_arts' => 'Martial arts',
+        _ => key,
+      };
 
   Future<void> _submit() async {
     if (_nameCtrl.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('أدخل اسم النادي', style: GoogleFonts.cairo()),
+            content: Text(_tr('أدخل اسم النادي', 'Enter gym name'),
+                style: GoogleFonts.cairo()),
             backgroundColor: C.red),
       );
       return;
@@ -42,7 +53,7 @@ class _GymSetupPageState extends State<GymSetupPage> {
       final sb = Supabase.instance.client;
       final uid = sb.auth.currentUser?.id;
       if (uid == null) {
-        throw Exception('يجب تسجيل الدخول أولاً');
+        throw Exception(_tr('يجب تسجيل الدخول أولاً', 'You must login first'));
       }
       final profile = await sb
           .from('profiles')
@@ -53,7 +64,10 @@ class _GymSetupPageState extends State<GymSetupPage> {
       final isAdmin = role == 'admin';
       final canCreate = isAdmin || role == 'gym_owner';
       if (!canCreate) {
-        throw Exception('يجب موافقة الإدارة على طلب صاحب النادي أولاً');
+        throw Exception(_tr(
+          'يجب موافقة الإدارة على طلب صاحب النادي أولاً',
+          'Admin approval is required for gym owner request first',
+        ));
       }
       final res = await Supabase.instance.client
           .from('partners')
@@ -73,8 +87,14 @@ class _GymSetupPageState extends State<GymSetupPage> {
           SnackBar(
               content: Text(
                 isAdmin
-                    ? 'تم إنشاء "${_nameCtrl.text}" بنجاح!'
-                    : 'تم إرسال "${_nameCtrl.text}" للمراجعة الإدارية',
+                    ? _tr(
+                        'تم إنشاء "${_nameCtrl.text}" بنجاح!',
+                        '"${_nameCtrl.text}" created successfully!',
+                      )
+                    : _tr(
+                        'تم إرسال "${_nameCtrl.text}" للمراجعة الإدارية',
+                        '"${_nameCtrl.text}" was sent for admin review',
+                      ),
                 style: GoogleFonts.cairo(),
               ),
               backgroundColor: C.green),
@@ -85,7 +105,8 @@ class _GymSetupPageState extends State<GymSetupPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('خطأ: $e', style: GoogleFonts.cairo()),
+              content:
+                  Text(_tr('خطأ: $e', 'Error: $e'), style: GoogleFonts.cairo()),
               backgroundColor: C.red),
         );
       }
@@ -98,7 +119,7 @@ class _GymSetupPageState extends State<GymSetupPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('إنشاء ملف النادي',
+        title: Text(_tr('إنشاء ملف النادي', 'Create gym profile'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
       ),
@@ -118,12 +139,14 @@ class _GymSetupPageState extends State<GymSetupPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('أنشئ ملف ناديك',
+                        Text(_tr('أنشئ ملف ناديك', 'Create your gym profile'),
                             style: GoogleFonts.cairo(
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700)),
-                        Text('أضف معلومات النادي والبدء باستقبال الرياضيين',
+                        Text(
+                            _tr('أضف معلومات النادي والبدء باستقبال الرياضيين',
+                                'Add gym information and start accepting athletes'),
                             style: GoogleFonts.cairo(
                                 color: Colors.white70, fontSize: 12)),
                       ],
@@ -136,7 +159,7 @@ class _GymSetupPageState extends State<GymSetupPage> {
             const SizedBox(height: 28),
 
             // Name
-            Text('اسم النادي',
+            Text(_tr('اسم النادي', 'Gym name'),
                 style: GoogleFonts.cairo(
                     fontWeight: FontWeight.w600,
                     color: C.textPrimary,
@@ -146,7 +169,8 @@ class _GymSetupPageState extends State<GymSetupPage> {
               controller: _nameCtrl,
               style: GoogleFonts.cairo(color: C.textPrimary),
               decoration: InputDecoration(
-                hintText: 'مثال: Olympia Health Club',
+                hintText: _tr('مثال: Olympia Health Club',
+                    'Example: Olympia Health Club'),
                 prefixIcon: const Icon(Icons.fitness_center, color: C.cyan),
               ),
             ).animate().fadeIn(delay: 100.ms),
@@ -154,7 +178,7 @@ class _GymSetupPageState extends State<GymSetupPage> {
             const SizedBox(height: 24),
 
             // Category
-            Text('تصنيف النادي',
+            Text(_tr('تصنيف النادي', 'Gym category'),
                 style: GoogleFonts.cairo(
                     fontWeight: FontWeight.w600,
                     color: C.textPrimary,
@@ -183,7 +207,7 @@ class _GymSetupPageState extends State<GymSetupPage> {
                         Text(e.value['icon']!,
                             style: const TextStyle(fontSize: 18)),
                         const SizedBox(width: 6),
-                        Text(e.value['label']!,
+                        Text(_tr(e.value['label']!, _categoryEn(e.key)),
                             style: GoogleFonts.cairo(
                               color: selected ? Colors.white : C.textSecondary,
                               fontWeight:
@@ -200,7 +224,7 @@ class _GymSetupPageState extends State<GymSetupPage> {
             const SizedBox(height: 24),
 
             // Description
-            Text('وصف النادي (اختياري)',
+            Text(_tr('وصف النادي (اختياري)', 'Gym description (optional)'),
                 style: GoogleFonts.cairo(
                     fontWeight: FontWeight.w600,
                     color: C.textPrimary,
@@ -211,7 +235,8 @@ class _GymSetupPageState extends State<GymSetupPage> {
               style: GoogleFonts.cairo(color: C.textPrimary),
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'اكتب وصفاً مختصراً يجذب الرياضيين...',
+                hintText: _tr('اكتب وصفاً مختصراً يجذب الرياضيين...',
+                    'Write a short description that attracts athletes...'),
                 prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 48),
                     child: Icon(Icons.description, color: C.cyan)),
@@ -234,7 +259,9 @@ class _GymSetupPageState extends State<GymSetupPage> {
                             strokeWidth: 2, color: Colors.white))
                     : const Icon(Icons.arrow_forward),
                 label: Text(
-                  _loading ? 'جاري الإنشاء...' : 'متابعة — إضافة الموقع',
+                  _loading
+                      ? _tr('جاري الإنشاء...', 'Creating...')
+                      : _tr('متابعة — إضافة الموقع', 'Continue — add location'),
                   style: GoogleFonts.cairo(
                       fontWeight: FontWeight.w700, fontSize: 16),
                 ),
@@ -253,7 +280,10 @@ class _GymSetupPageState extends State<GymSetupPage> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'عمولة المنصة 20% تُخصم تلقائياً من كل زيارة. أنت تحدد السعر الذي يدفعه الرياضي.',
+                      _tr(
+                        'عمولة المنصة 20% تُخصم تلقائياً من كل زيارة. أنت تحدد السعر الذي يدفعه الرياضي.',
+                        'Platform fee is 20%, deducted automatically per visit. You set the price paid by the athlete.',
+                      ),
                       style: GoogleFonts.cairo(
                           color: C.textMuted, fontSize: 11, height: 1.5),
                     ),

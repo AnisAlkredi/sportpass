@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -21,6 +22,7 @@ class _MyGymPageState extends State<MyGymPage> {
   String _role = 'athlete';
   Map<String, dynamic>? _partner;
   List<Map<String, dynamic>> _locations = [];
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -61,7 +63,7 @@ class _MyGymPageState extends State<MyGymPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('ناديي',
+        title: Text(_tr('ناديي', 'My gym'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
         actions: [
@@ -69,14 +71,14 @@ class _MyGymPageState extends State<MyGymPage> {
             IconButton(
               icon: const Icon(Icons.storefront, color: C.gold),
               onPressed: () => context.push(AppRouter.gymSetup),
-              tooltip: 'إنشاء نادي',
+              tooltip: _tr('إنشاء نادي', 'Create gym'),
             ),
           if (_partner != null)
             IconButton(
                 icon: const Icon(Icons.add_location_alt, color: C.cyan),
                 onPressed: () =>
                     context.push(AppRouter.addLocation, extra: _partner!['id']),
-                tooltip: 'إضافة فرع'),
+                tooltip: _tr('إضافة فرع', 'Add branch')),
         ],
       ),
       floatingActionButton: _partner != null
@@ -85,7 +87,7 @@ class _MyGymPageState extends State<MyGymPage> {
                   context.push(AppRouter.addLocation, extra: _partner!['id']),
               backgroundColor: C.cyan,
               icon: const Icon(Icons.add_location_alt, color: Colors.white),
-              label: Text('إضافة فرع',
+              label: Text(_tr('إضافة فرع', 'Add branch'),
                   style: GoogleFonts.cairo(
                       fontWeight: FontWeight.w700, color: Colors.white)),
             )
@@ -97,16 +99,27 @@ class _MyGymPageState extends State<MyGymPage> {
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                   const Icon(Icons.store, size: 64, color: C.textMuted),
                   const SizedBox(height: 12),
-                  Text('لم تُنشئ نادياً بعد',
+                  Text(
+                      _tr('لم تُنشئ نادياً بعد',
+                          'You have not created a gym yet'),
                       style:
                           GoogleFonts.cairo(color: C.textMuted, fontSize: 16)),
                   const SizedBox(height: 6),
                   Text(
                     _role == 'gym_owner_pending'
-                        ? 'طلبك قيد مراجعة الإدارة، بعد الموافقة يمكنك إنشاء النادي.'
+                        ? _tr(
+                            'طلبك قيد مراجعة الإدارة، بعد الموافقة يمكنك إنشاء النادي.',
+                            'Your request is under admin review. After approval, you can create your gym.',
+                          )
                         : _canCreateGym
-                            ? 'أنشئ ناديك الآن ثم أضف الفروع ليتم اعتمادها من الإدارة.'
-                            : 'النادي يُربط من قبل الإدارة بعد الموافقة.',
+                            ? _tr(
+                                'أنشئ ناديك الآن ثم أضف الفروع ليتم اعتمادها من الإدارة.',
+                                'Create your gym now, then add branches for admin approval.',
+                              )
+                            : _tr(
+                                'النادي يُربط من قبل الإدارة بعد الموافقة.',
+                                'Gym linking is done by admin after approval.',
+                              ),
                     style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12),
                     textAlign: TextAlign.center,
                   ),
@@ -116,7 +129,7 @@ class _MyGymPageState extends State<MyGymPage> {
                       onPressed: () => context.push(AppRouter.gymSetup),
                       icon: const Icon(Icons.storefront),
                       label: Text(
-                        'إنشاء نادي',
+                        _tr('إنشاء نادي', 'Create gym'),
                         style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
                       ),
                     ),
@@ -125,7 +138,7 @@ class _MyGymPageState extends State<MyGymPage> {
                   OutlinedButton.icon(
                     onPressed: _load,
                     icon: const Icon(Icons.refresh),
-                    label: Text('تحديث',
+                    label: Text(_tr('تحديث', 'Refresh'),
                         style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
                   ),
                 ]))
@@ -194,7 +207,9 @@ class _MyGymPageState extends State<MyGymPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('الفروع ومواقع التدريب',
+                          Text(
+                              _tr('الفروع ومواقع التدريب',
+                                  'Branches & locations'),
                               style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.w700,
                                   color: C.textPrimary,
@@ -221,7 +236,9 @@ class _MyGymPageState extends State<MyGymPage> {
                         Container(
                           padding: const EdgeInsets.all(32),
                           alignment: Alignment.center,
-                          child: Text('لا توجد فروع مضافة بعد',
+                          child: Text(
+                              _tr('لا توجد فروع مضافة بعد',
+                                  'No branches added yet'),
                               style: GoogleFonts.cairo(color: C.textMuted)),
                         ),
 
@@ -262,7 +279,8 @@ class _MyGymPageState extends State<MyGymPage> {
                                     decoration: BoxDecoration(
                                         gradient: C.goldGradient,
                                         borderRadius: BorderRadius.circular(8)),
-                                    child: Text('سعر الدخول',
+                                    child: Text(
+                                        _tr('سعر الدخول', 'Entry price'),
                                         style: GoogleFonts.cairo(
                                             color: Colors.white,
                                             fontSize: 10,
@@ -270,9 +288,11 @@ class _MyGymPageState extends State<MyGymPage> {
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
-                                      formatSYP((l['base_price'] as num?)
-                                              ?.toDouble() ??
-                                          0),
+                                      formatCurrency(
+                                        context,
+                                        (l['base_price'] as num?)?.toDouble() ??
+                                            0,
+                                      ),
                                       style: GoogleFonts.cairo(
                                           color: C.gold,
                                           fontSize: 13,
@@ -304,7 +324,7 @@ class _MyGymPageState extends State<MyGymPage> {
                                         const SizedBox(width: 4),
                                         Expanded(
                                           child: Text(
-                                            'الدوام: $hoursSummary',
+                                            '${_tr('الدوام', 'Hours')}: $hoursSummary',
                                             style: GoogleFonts.cairo(
                                                 color: C.textMuted,
                                                 fontSize: 12),
@@ -322,7 +342,7 @@ class _MyGymPageState extends State<MyGymPage> {
                                             size: 14, color: C.textMuted),
                                         const SizedBox(width: 4),
                                         Text(
-                                          'صور مرفوعة: $photosCount',
+                                          '${_tr('صور مرفوعة', 'Uploaded photos')}: $photosCount',
                                           style: GoogleFonts.cairo(
                                               color: C.textMuted, fontSize: 12),
                                         ),
@@ -336,7 +356,10 @@ class _MyGymPageState extends State<MyGymPage> {
                                       const Icon(Icons.radar,
                                           size: 14, color: C.cyan),
                                       const SizedBox(width: 4),
-                                      Text('نطاق ${l['radius_m'] ?? 150}م',
+                                      Text(
+                                          AppLocalizations.of(context).isEnglish
+                                              ? 'Range ${l['radius_m'] ?? 150} m'
+                                              : '${_tr('نطاق', 'Range')} ${l['radius_m'] ?? 150}${_tr('م', 'm')}',
                                           style: GoogleFonts.cairo(
                                               color: C.cyan, fontSize: 11)),
                                       const Spacer(),
@@ -353,8 +376,9 @@ class _MyGymPageState extends State<MyGymPage> {
                                       const SizedBox(width: 4),
                                       Text(
                                         (l['is_active'] as bool? ?? false)
-                                            ? 'نشط'
-                                            : 'قيد المراجعة',
+                                            ? _tr('نشط', 'Active')
+                                            : _tr(
+                                                'قيد المراجعة', 'Under review'),
                                         style: GoogleFonts.cairo(
                                           color:
                                               (l['is_active'] as bool? ?? false)

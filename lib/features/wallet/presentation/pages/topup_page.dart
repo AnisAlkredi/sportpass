@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/utils.dart';
@@ -28,6 +29,7 @@ class _TopupPageState extends State<TopupPage> {
   bool _uploading = false;
 
   final _presets = [50000, 100000, 200000, 500000];
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   InputDecoration _fieldDecoration({
     String? hintText,
@@ -76,7 +78,7 @@ class _TopupPageState extends State<TopupPage> {
       builder: (ctx) => Padding(
         padding: const EdgeInsets.all(24),
         child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text('اختر مصدر الصورة',
+          Text(_tr('اختر مصدر الصورة', 'Choose image source'),
               style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700,
                   color: C.textPrimary,
@@ -84,14 +86,14 @@ class _TopupPageState extends State<TopupPage> {
           const SizedBox(height: 16),
           ListTile(
             leading: const Icon(Icons.camera_alt, color: C.cyan),
-            title: Text('الكاميرا',
+            title: Text(_tr('الكاميرا', 'Camera'),
                 style: GoogleFonts.cairo(color: C.textPrimary)),
             onTap: () => Navigator.pop(ctx, ImageSource.camera),
           ),
           ListTile(
             leading: const Icon(Icons.photo_library, color: C.gold),
-            title:
-                Text('المعرض', style: GoogleFonts.cairo(color: C.textPrimary)),
+            title: Text(_tr('المعرض', 'Gallery'),
+                style: GoogleFonts.cairo(color: C.textPrimary)),
             onTap: () => Navigator.pop(ctx, ImageSource.gallery),
           ),
         ]),
@@ -133,7 +135,7 @@ class _TopupPageState extends State<TopupPage> {
       return Scaffold(
         backgroundColor: C.bg,
         appBar: AppBar(
-          title: Text('شحن المحفظة',
+          title: Text(_tr('شحن المحفظة', 'Top up wallet'),
               style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
           backgroundColor: C.bg,
         ),
@@ -141,7 +143,8 @@ class _TopupPageState extends State<TopupPage> {
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Text(
-              'ميزة شحن الرصيد متاحة لحساب الرياضي فقط.',
+              _tr('ميزة شحن الرصيد متاحة لحساب الرياضي فقط.',
+                  'Top-up is available for athlete accounts only.'),
               textAlign: TextAlign.center,
               style: GoogleFonts.cairo(color: C.textMuted, fontSize: 15),
             ),
@@ -156,7 +159,9 @@ class _TopupPageState extends State<TopupPage> {
           if (state.success) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text('تم إرسال طلب الشحن بنجاح! سيتم مراجعته قريباً',
+                  content: Text(
+                      _tr('تم إرسال طلب الشحن بنجاح! سيتم مراجعته قريباً',
+                          'Top-up request submitted successfully. It will be reviewed soon.'),
                       style: GoogleFonts.cairo()),
                   backgroundColor: C.green),
             );
@@ -164,7 +169,9 @@ class _TopupPageState extends State<TopupPage> {
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text('فشل إرسال الطلب', style: GoogleFonts.cairo()),
+                  content: Text(
+                      _tr('فشل إرسال الطلب', 'Failed to submit request'),
+                      style: GoogleFonts.cairo()),
                   backgroundColor: C.red),
             );
           }
@@ -173,7 +180,7 @@ class _TopupPageState extends State<TopupPage> {
       child: Scaffold(
         backgroundColor: C.bg,
         appBar: AppBar(
-          title: Text('شحن المحفظة',
+          title: Text(_tr('شحن المحفظة', 'Top up wallet'),
               style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
           backgroundColor: C.bg,
         ),
@@ -195,11 +202,12 @@ class _TopupPageState extends State<TopupPage> {
                           Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('رصيدك الحالي',
+                                Text(
+                                    _tr('رصيدك الحالي', 'Your current balance'),
                                     style: GoogleFonts.cairo(
                                         color: Colors.white70, fontSize: 13)),
                                 const SizedBox(height: 6),
-                                Text(formatSYP(balance),
+                                Text(formatCurrency(context, balance),
                                     style: GoogleFonts.cairo(
                                         color: Colors.white,
                                         fontSize: 28,
@@ -216,7 +224,7 @@ class _TopupPageState extends State<TopupPage> {
 
               // Presets
               if (widget.amount == null) ...[
-                Text('اختر مبلغ الشحن',
+                Text(_tr('اختر مبلغ الشحن', 'Choose top-up amount'),
                     style: GoogleFonts.cairo(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -246,7 +254,9 @@ class _TopupPageState extends State<TopupPage> {
                                 Border.all(color: selected ? C.cyan : C.border),
                           ),
                           child: Center(
-                              child: Text(formatSYP(v),
+                              child: Text(
+                                  formatCurrency(context, v,
+                                      includeCurrency: false),
                                   style: GoogleFonts.cairo(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
@@ -259,7 +269,7 @@ class _TopupPageState extends State<TopupPage> {
                   }).toList(),
                 ).animate().fadeIn(delay: 100.ms),
                 const SizedBox(height: 20),
-                Text('أو أدخل مبلغ مخصص',
+                Text(_tr('أو أدخل مبلغ مخصص', 'Or enter a custom amount'),
                     style: GoogleFonts.cairo(
                         color: C.textSecondary, fontSize: 14)),
                 const SizedBox(height: 8),
@@ -273,8 +283,8 @@ class _TopupPageState extends State<TopupPage> {
                 cursorColor: C.cyan,
                 style: GoogleFonts.cairo(color: C.textPrimary, fontSize: 20),
                 decoration: _fieldDecoration(
-                  hintText: 'مثال: 50000',
-                  suffixText: 'ل.س',
+                  hintText: _tr('مثال: 50000', 'Example: 50000'),
+                  suffixText: currencyLabel(context),
                   suffixStyle: GoogleFonts.cairo(color: C.textMuted),
                   prefixIcon: const Icon(Icons.attach_money, color: C.cyan),
                 ),
@@ -284,11 +294,13 @@ class _TopupPageState extends State<TopupPage> {
               const SizedBox(height: 20),
 
               // TX ID
-              Text('رقم معاملة شام كاش',
+              Text(_tr('رقم معاملة شام كاش', 'ShamCash transaction ID'),
                   style:
                       GoogleFonts.cairo(color: C.textSecondary, fontSize: 14)),
               const SizedBox(height: 4),
-              Text('أدخل رقم العملية كما يظهر في إيصال شام كاش',
+              Text(
+                  _tr('أدخل رقم العملية كما يظهر في إيصال شام كاش',
+                      'Enter the transaction number exactly as shown on the ShamCash receipt'),
                   style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11)),
               const SizedBox(height: 8),
               TextField(
@@ -296,7 +308,7 @@ class _TopupPageState extends State<TopupPage> {
                 cursorColor: C.cyan,
                 style: GoogleFonts.cairo(color: C.textPrimary),
                 decoration: _fieldDecoration(
-                  hintText: 'مثال: SC-12345678',
+                  hintText: _tr('مثال: SC-12345678', 'Example: SC-12345678'),
                   prefixIcon: const Icon(Icons.receipt, color: C.cyan),
                 ),
               ).animate().fadeIn(delay: 300.ms),
@@ -304,7 +316,7 @@ class _TopupPageState extends State<TopupPage> {
               const SizedBox(height: 24),
 
               // Receipt upload
-              Text('صورة الإيصال (اختياري)',
+              Text(_tr('صورة الإيصال (اختياري)', 'Receipt image (optional)'),
                   style:
                       GoogleFonts.cairo(color: C.textSecondary, fontSize: 14)),
               const SizedBox(height: 8),
@@ -334,7 +346,9 @@ class _TopupPageState extends State<TopupPage> {
                               const Icon(Icons.add_a_photo,
                                   color: C.textMuted, size: 32),
                               const SizedBox(height: 8),
-                              Text('التقط صورة الإيصال أو اختر من المعرض',
+                              Text(
+                                  _tr('التقط صورة الإيصال أو اختر من المعرض',
+                                      'Take a receipt photo or choose one from gallery'),
                                   style: GoogleFonts.cairo(
                                       color: C.textMuted, fontSize: 12)),
                             ])
@@ -368,14 +382,18 @@ class _TopupPageState extends State<TopupPage> {
                           final txId = _txIdCtrl.text.trim();
                           if (amount == null || amount <= 0) {
                             messenger.showSnackBar(SnackBar(
-                                content: Text('أدخل مبلغ صحيح',
+                                content: Text(
+                                    _tr('أدخل مبلغ صحيح',
+                                        'Enter a valid amount'),
                                     style: GoogleFonts.cairo()),
                                 backgroundColor: C.red));
                             return;
                           }
                           if (txId.isEmpty) {
                             messenger.showSnackBar(SnackBar(
-                                content: Text('أدخل رقم المعاملة',
+                                content: Text(
+                                    _tr('أدخل رقم المعاملة',
+                                        'Enter transaction ID'),
                                     style: GoogleFonts.cairo()),
                                 backgroundColor: C.red));
                             return;
@@ -400,7 +418,7 @@ class _TopupPageState extends State<TopupPage> {
                           height: 24,
                           child: CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 2))
-                      : Text('إرسال طلب الشحن',
+                      : Text(_tr('إرسال طلب الشحن', 'Submit top-up request'),
                           style: GoogleFonts.cairo(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
@@ -420,7 +438,10 @@ class _TopupPageState extends State<TopupPage> {
                       const SizedBox(width: 10),
                       Expanded(
                           child: Text(
-                              'سيتم مراجعة طلبك وشحن رصيدك خلال دقائق. عمولة التطبيق 20% يتم خصمها عند كل تسجيل دخول لنادي.',
+                              _tr(
+                                'سيتم مراجعة طلبك وشحن رصيدك خلال دقائق. عمولة التطبيق 20% يتم خصمها عند كل تسجيل دخول لنادي.',
+                                'Your request will be reviewed and your balance charged within minutes. Platform fee is 20% and is deducted on each gym check-in.',
+                              ),
                               style: GoogleFonts.cairo(
                                   color: C.textMuted,
                                   fontSize: 12,

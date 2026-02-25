@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/utils.dart';
@@ -18,6 +19,7 @@ class _ProviderAnalyticsPageState extends State<ProviderAnalyticsPage> {
   bool _loading = true;
   List<Map<String, dynamic>> _checkins = [];
   double _gross = 0, _commission = 0, _net = 0;
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -67,7 +69,7 @@ class _ProviderAnalyticsPageState extends State<ProviderAnalyticsPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-          title: Text('التحليلات والتسوية',
+          title: Text(_tr('التحليلات والتسوية', 'Analytics & settlement'),
               style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
           backgroundColor: C.bg),
       body: _loading
@@ -80,21 +82,23 @@ class _ProviderAnalyticsPageState extends State<ProviderAnalyticsPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('تقرير التسوية',
+                        Text(_tr('تقرير التسوية', 'Settlement report'),
                             style: GoogleFonts.cairo(
                                 color: Colors.white,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w700)),
                         const SizedBox(height: 16),
-                        _row('إجمالي المدفوعات', formatSYP(_gross),
-                            Colors.white),
+                        _row(_tr('إجمالي المدفوعات', 'Total payments'),
+                            formatCurrency(context, _gross), Colors.white),
                         const Divider(color: Colors.white30),
-                        _row('عمولة المنصة (20%)',
-                            '- ${formatSYP(_commission)}', C.red),
+                        _row(_tr('عمولة المنصة (20%)', 'Platform fee (20%)'),
+                            '- ${formatCurrency(context, _commission)}', C.red),
                         const Divider(color: Colors.white30),
-                        _row('صافي أرباحك', formatSYP(_net), C.green),
+                        _row(_tr('صافي أرباحك', 'Your net earnings'),
+                            formatCurrency(context, _net), C.green),
                         const SizedBox(height: 8),
-                        _row('عدد الزيارات', '${_checkins.length}', C.cyan),
+                        _row(_tr('عدد الزيارات', 'Visit count'),
+                            '${_checkins.length}', C.cyan),
                       ],
                     )).animate().fadeIn(),
                 const SizedBox(height: 20),
@@ -102,7 +106,7 @@ class _ProviderAnalyticsPageState extends State<ProviderAnalyticsPage> {
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('ساعات الذروة',
+                    Text(_tr('ساعات الذروة', 'Peak hours'),
                         style: GoogleFonts.cairo(
                             fontWeight: FontWeight.w700,
                             color: C.textPrimary,

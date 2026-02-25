@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/utils.dart';
@@ -31,12 +32,29 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
   bool _mapLoadFailed = false;
 
   String _search = '';
-  String _city = 'الكل';
+  String _city = _allCitiesToken;
   final Set<String> _categories = {};
   final Set<String> _amenities = {};
   RangeValues _priceRange = const RangeValues(0, 60000);
   double _distanceKm = 25;
   bool _useDistanceFilter = false;
+
+  static const String _allCitiesToken = 'all';
+
+  String _tr(String ar, String en) => context.trd(ar, en);
+
+  String _cityLabel(String value) =>
+      value == _allCitiesToken ? _tr('الكل', 'All') : value;
+
+  String _distanceText(double meters) {
+    if (meters < 1000) {
+      return AppLocalizations.of(context).isEnglish
+          ? '${meters.toInt()} m'
+          : '${meters.toInt()}م';
+    }
+    final km = (meters / 1000).toStringAsFixed(1);
+    return AppLocalizations.of(context).isEnglish ? '$km km' : '$km كم';
+  }
 
   @override
   void initState() {
@@ -79,7 +97,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'اكتشف المراكز',
+          _tr('اكتشف المراكز', 'Discover gyms'),
           style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -87,7 +105,9 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
           IconButton(
             icon: Icon(_listView ? Icons.map_rounded : Icons.list_rounded,
                 color: C.cyan),
-            tooltip: _listView ? 'عرض الخريطة' : 'عرض القائمة',
+            tooltip: _listView
+                ? _tr('عرض الخريطة', 'Map view')
+                : _tr('عرض القائمة', 'List view'),
             onPressed: () => setState(() => _listView = !_listView),
           ),
         ],
@@ -137,7 +157,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
       final partner = point.partner;
       final location = point.location;
 
-      if (_city != 'الكل' && location.city != _city) {
+      if (_city != _allCitiesToken && location.city != _city) {
         return false;
       }
 
@@ -303,7 +323,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
               foregroundColor: Colors.white,
               icon: const Icon(Icons.qr_code_scanner_rounded),
               label: Text(
-                'شيك إن',
+                _tr('شيك إن', 'Check-in'),
                 style: GoogleFonts.cairo(fontWeight: FontWeight.w800),
               ),
             ),
@@ -326,7 +346,10 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'تم رفض إذن الموقع. يمكنك المتابعة عبر البحث أو الفلاتر.',
+                      _tr(
+                        'تم رفض إذن الموقع. يمكنك المتابعة عبر البحث أو الفلاتر.',
+                        'Location permission denied. You can continue with search and filters.',
+                      ),
                       style: GoogleFonts.cairo(
                         color: C.textPrimary,
                         fontSize: 12,
@@ -356,7 +379,10 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'تعذر تحميل بلاطات الخريطة. تحقق من الإنترنت ثم أعد المحاولة.',
+                      _tr(
+                        'تعذر تحميل بلاطات الخريطة. تحقق من الإنترنت ثم أعد المحاولة.',
+                        'Failed to load map tiles. Check your internet and retry.',
+                      ),
                       style: GoogleFonts.cairo(
                         color: C.textPrimary,
                         fontSize: 12,
@@ -366,8 +392,8 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                   ),
                   TextButton(
                     onPressed: () => setState(() => _mapLoadFailed = false),
-                    child:
-                        Text('إخفاء', style: GoogleFonts.cairo(color: C.red)),
+                    child: Text(_tr('إخفاء', 'Hide'),
+                        style: GoogleFonts.cairo(color: C.red)),
                   ),
                 ],
               ),
@@ -396,7 +422,10 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
           child: points.isEmpty
               ? Center(
                   child: Text(
-                    'لا توجد نتائج مطابقة للفلاتر',
+                    _tr(
+                      'لا توجد نتائج مطابقة للفلاتر',
+                      'No results match the selected filters',
+                    ),
                     style: GoogleFonts.cairo(color: C.textSecondary),
                   ),
                 )
@@ -466,9 +495,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                                       ),
                                       if (distance != null)
                                         Text(
-                                          distance < 1000
-                                              ? '${distance.toInt()}م'
-                                              : '${(distance / 1000).toStringAsFixed(1)}كم',
+                                          _distanceText(distance),
                                           style: GoogleFonts.cairo(
                                             color: C.textMuted,
                                             fontSize: 11,
@@ -478,7 +505,8 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                                   ),
                                 ),
                                 Text(
-                                  formatSYP(point.location.userPrice),
+                                  formatCurrency(
+                                      context, point.location.userPrice),
                                   style: GoogleFonts.cairo(
                                     color: C.gold,
                                     fontWeight: FontWeight.w800,
@@ -496,7 +524,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                                     icon: const Icon(Icons.directions_rounded,
                                         size: 18),
                                     label: Text(
-                                      'الاتجاهات',
+                                      _tr('الاتجاهات', 'Directions'),
                                       style: GoogleFonts.cairo(
                                           fontWeight: FontWeight.w700),
                                     ),
@@ -511,7 +539,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                                         Icons.qr_code_scanner_rounded,
                                         size: 18),
                                     label: Text(
-                                      'شيك إن',
+                                      _tr('شيك إن', 'Check-in'),
                                       style: GoogleFonts.cairo(
                                           fontWeight: FontWeight.w700),
                                     ),
@@ -547,7 +575,10 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
               style: GoogleFonts.cairo(color: C.textPrimary, fontSize: 14),
               decoration: InputDecoration(
                 isDense: true,
-                hintText: 'ابحث باسم النادي أو الفرع',
+                hintText: _tr(
+                  'ابحث باسم النادي أو الفرع',
+                  'Search by gym or branch name',
+                ),
                 hintStyle: GoogleFonts.cairo(color: C.textMuted),
                 filled: true,
                 fillColor: C.bg.withValues(alpha: 0.45),
@@ -570,7 +601,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
             ),
             icon: const Icon(Icons.tune_rounded, size: 18),
             label: Text(
-              'فلترة',
+              _tr('فلترة', 'Filter'),
               style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
             ),
           ),
@@ -598,7 +629,10 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
   }
 
   Future<void> _openFilters(List<_PartnerPoint> allPoints) async {
-    final cities = {'الكل', ...allPoints.map((e) => e.location.city)}.toList();
+    final cities = {
+      _allCitiesToken,
+      ...allPoints.map((e) => e.location.city),
+    }.toList();
     final categories =
         allPoints.map((e) => e.partner.category).toSet().toList();
     final amenities =
@@ -644,7 +678,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     ),
                     const SizedBox(height: 14),
                     Text(
-                      'فلاتر الخريطة',
+                      _tr('فلاتر الخريطة', 'Map filters'),
                       style: GoogleFonts.cairo(
                         color: C.textPrimary,
                         fontWeight: FontWeight.w800,
@@ -652,7 +686,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                       ),
                     ),
                     const SizedBox(height: 14),
-                    Text('المدينة',
+                    Text(_tr('المدينة', 'City'),
                         style: GoogleFonts.cairo(
                             color: C.textSecondary,
                             fontWeight: FontWeight.w700)),
@@ -663,7 +697,8 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                       children: cities.map((city) {
                         final selected = selectedCity == city;
                         return ChoiceChip(
-                          label: Text(city, style: GoogleFonts.cairo()),
+                          label: Text(_cityLabel(city),
+                              style: GoogleFonts.cairo()),
                           selected: selected,
                           onSelected: (_) {
                             setModalState(() => selectedCity = city);
@@ -677,7 +712,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                       }).toList(),
                     ),
                     const SizedBox(height: 14),
-                    Text('الفئة',
+                    Text(_tr('الفئة', 'Category'),
                         style: GoogleFonts.cairo(
                             color: C.textSecondary,
                             fontWeight: FontWeight.w700)),
@@ -709,7 +744,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                       }).toList(),
                     ),
                     const SizedBox(height: 14),
-                    Text('المرافق',
+                    Text(_tr('المرافق', 'Amenities'),
                         style: GoogleFonts.cairo(
                             color: C.textSecondary,
                             fontWeight: FontWeight.w700)),
@@ -742,7 +777,10 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     ),
                     const SizedBox(height: 14),
                     Text(
-                      'نطاق السعر (${priceRange.start.toInt()} - ${priceRange.end.toInt()} ل.س)',
+                      _tr(
+                        'نطاق السعر (${priceRange.start.toInt()} - ${priceRange.end.toInt()} ${currencyLabel(context)})',
+                        'Price range (${priceRange.start.toInt()} - ${priceRange.end.toInt()} ${currencyLabel(context)})',
+                      ),
                       style: GoogleFonts.cairo(
                         color: C.textSecondary,
                         fontWeight: FontWeight.w700,
@@ -771,7 +809,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                           : (value) =>
                               setModalState(() => useDistanceFilter = value),
                       title: Text(
-                        'تفعيل فلتر المسافة',
+                        _tr('تفعيل فلتر المسافة', 'Enable distance filter'),
                         style: GoogleFonts.cairo(
                           color: C.textSecondary,
                           fontWeight: FontWeight.w700,
@@ -779,8 +817,14 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                       ),
                       subtitle: Text(
                         _userPos == null
-                            ? 'فعّل الموقع أولاً لاستخدام المسافة'
-                            : 'إخفاء النوادي الأبعد من المسافة المحددة',
+                            ? _tr(
+                                'فعّل الموقع أولاً لاستخدام المسافة',
+                                'Enable location first to use distance filter',
+                              )
+                            : _tr(
+                                'إخفاء النوادي الأبعد من المسافة المحددة',
+                                'Hide gyms farther than selected distance',
+                              ),
                         style: GoogleFonts.cairo(
                           color: C.textMuted,
                           fontSize: 12,
@@ -788,7 +832,10 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                       ),
                     ),
                     Text(
-                      'المسافة من موقعك (${distanceKm.toStringAsFixed(0)} كم)',
+                      _tr(
+                        'المسافة من موقعك (${distanceKm.toStringAsFixed(0)} كم)',
+                        'Distance from your location (${distanceKm.toStringAsFixed(0)} km)',
+                      ),
                       style: GoogleFonts.cairo(
                         color:
                             useDistanceFilter ? C.textSecondary : C.textMuted,
@@ -801,7 +848,9 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                       max: 50,
                       divisions: 49,
                       activeColor: C.cyan,
-                      label: '${distanceKm.toStringAsFixed(0)} كم',
+                      label: AppLocalizations.of(context).isEnglish
+                          ? '${distanceKm.toStringAsFixed(0)} km'
+                          : '${distanceKm.toStringAsFixed(0)} كم',
                       onChanged: useDistanceFilter
                           ? (value) => setModalState(() => distanceKm = value)
                           : null,
@@ -813,7 +862,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                           child: OutlinedButton(
                             onPressed: () {
                               setState(() {
-                                _city = 'الكل';
+                                _city = _allCitiesToken;
                                 _categories.clear();
                                 _amenities.clear();
                                 _priceRange = const RangeValues(0, 60000);
@@ -823,7 +872,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                               Navigator.pop(context);
                             },
                             child: Text(
-                              'إعادة تعيين',
+                              _tr('إعادة تعيين', 'Reset'),
                               style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.w700),
                             ),
@@ -849,7 +898,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                               Navigator.pop(context);
                             },
                             child: Text(
-                              'تطبيق الفلاتر',
+                              _tr('تطبيق الفلاتر', 'Apply filters'),
                               style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.w700),
                             ),
@@ -930,9 +979,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     ),
                     if (distance != null)
                       Text(
-                        distance < 1000
-                            ? '${distance.toInt()}م'
-                            : '${(distance / 1000).toStringAsFixed(1)}كم',
+                        _distanceText(distance),
                         style:
                             GoogleFonts.cairo(color: C.textMuted, fontSize: 11),
                       ),
@@ -943,14 +990,14 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    formatSYP(location.userPrice),
+                    formatCurrency(context, location.userPrice),
                     style: GoogleFonts.cairo(
                       color: C.gold,
                       fontWeight: FontWeight.w800,
                       fontSize: 15,
                     ),
                   ),
-                  Text('لكل زيارة',
+                  Text(_tr('لكل زيارة', 'Per visit'),
                       style:
                           GoogleFonts.cairo(color: C.textMuted, fontSize: 10)),
                 ],
@@ -1012,7 +1059,10 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
     if (!launched && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('تعذر فتح تطبيق الخرائط', style: GoogleFonts.cairo()),
+          content: Text(
+            _tr('تعذر فتح تطبيق الخرائط', 'Unable to open maps application'),
+            style: GoogleFonts.cairo(),
+          ),
           backgroundColor: C.red,
         ),
       );
@@ -1034,15 +1084,15 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
   String _categoryLabel(String category) {
     switch (category) {
       case 'gym':
-        return 'نادي';
+        return _tr('نادي', 'Gym');
       case 'pool':
-        return 'مسبح';
+        return _tr('مسبح', 'Pool');
       case 'yoga':
-        return 'يوغا';
+        return _tr('يوغا', 'Yoga');
       case 'spa':
-        return 'سبا';
+        return _tr('سبا', 'Spa');
       case 'martial_arts':
-        return 'فنون قتالية';
+        return _tr('فنون قتالية', 'Martial arts');
       default:
         return category;
     }
@@ -1051,15 +1101,15 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
   String _amenityLabel(String value) {
     switch (value) {
       case 'weights':
-        return 'أوزان';
+        return _tr('أوزان', 'Weights');
       case 'cardio':
-        return 'كارديو';
+        return _tr('كارديو', 'Cardio');
       case 'pool':
-        return 'مسبح';
+        return _tr('مسبح', 'Pool');
       case 'sauna':
-        return 'ساونا';
+        return _tr('ساونا', 'Sauna');
       case 'parking':
-        return 'موقف';
+        return _tr('موقف', 'Parking');
       default:
         return value;
     }

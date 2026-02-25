@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/utils.dart';
@@ -21,6 +22,7 @@ class _SettlementPageState extends State<SettlementPage> {
   int _checkinCount = 0;
   List<Map<String, dynamic>> _weeklyBreakdown = [];
   DateTimeRange? _dateRange;
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -142,22 +144,24 @@ class _SettlementPageState extends State<SettlementPage> {
       builder: (ctx) => AlertDialog(
         backgroundColor: C.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('طلب تسوية',
+        title: Text(_tr('طلب تسوية', 'Request settlement'),
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.w700, color: C.textPrimary)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('هل أنت متأكد من طلب تسوية المبلغ التالي؟',
+            Text(
+                _tr('هل أنت متأكد من طلب تسوية المبلغ التالي؟',
+                    'Are you sure you want to request settlement for this amount?'),
                 style: GoogleFonts.cairo(color: C.textSecondary)),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('المبلغ الصافي:',
+                Text(_tr('المبلغ الصافي:', 'Net amount:'),
                     style: GoogleFonts.cairo(color: C.textMuted)),
-                Text(formatSYP(_net),
+                Text(formatCurrency(context, _net),
                     style: GoogleFonts.cairo(
                         color: C.green,
                         fontWeight: FontWeight.w800,
@@ -168,7 +172,7 @@ class _SettlementPageState extends State<SettlementPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('عدد الزيارات:',
+                Text(_tr('عدد الزيارات:', 'Visit count:'),
                     style: GoogleFonts.cairo(color: C.textMuted)),
                 Text('$_checkinCount',
                     style: GoogleFonts.cairo(
@@ -180,11 +184,11 @@ class _SettlementPageState extends State<SettlementPage> {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text('إلغاء', style: GoogleFonts.cairo())),
+              child: Text(_tr('إلغاء', 'Cancel'), style: GoogleFonts.cairo())),
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(backgroundColor: C.green),
-            child: Text('طلب التسوية',
+            child: Text(_tr('طلب التسوية', 'Request settlement'),
                 style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
           ),
         ],
@@ -205,7 +209,9 @@ class _SettlementPageState extends State<SettlementPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('تم إرسال طلب التسوية بنجاح',
+              content: Text(
+                  _tr('تم إرسال طلب التسوية بنجاح',
+                      'Settlement request submitted successfully'),
                   style: GoogleFonts.cairo()),
               backgroundColor: C.green),
         );
@@ -214,7 +220,8 @@ class _SettlementPageState extends State<SettlementPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('خطأ: $e', style: GoogleFonts.cairo()),
+              content:
+                  Text(_tr('خطأ: $e', 'Error: $e'), style: GoogleFonts.cairo()),
               backgroundColor: C.red),
         );
       }
@@ -226,14 +233,14 @@ class _SettlementPageState extends State<SettlementPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('التسوية المالية',
+        title: Text(_tr('التسوية المالية', 'Settlement'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_month, color: C.cyan),
             onPressed: _pickDateRange,
-            tooltip: 'تحديد الفترة',
+            tooltip: _tr('تحديد الفترة', 'Select period'),
           ),
         ],
       ),
@@ -255,7 +262,7 @@ class _SettlementPageState extends State<SettlementPage> {
                       const Icon(Icons.date_range, size: 16, color: C.cyan),
                       const SizedBox(width: 8),
                       Text(
-                        '${DateFormat('yyyy/MM/dd').format(_dateRange!.start)} → ${DateFormat('yyyy/MM/dd').format(_dateRange!.end)}',
+                        '${DateFormat('yyyy/MM/dd', AppLocalizations.of(context).isEnglish ? 'en' : 'ar').format(_dateRange!.start)} → ${DateFormat('yyyy/MM/dd', AppLocalizations.of(context).isEnglish ? 'en' : 'ar').format(_dateRange!.end)}',
                         style: GoogleFonts.cairo(
                             color: C.textSecondary, fontSize: 13),
                       ),
@@ -271,21 +278,25 @@ class _SettlementPageState extends State<SettlementPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('ملخص التسوية',
+                      Text(_tr('ملخص التسوية', 'Settlement summary'),
                           style: GoogleFonts.cairo(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.w700)),
                       const SizedBox(height: 16),
+                      _summaryRow(_tr('إجمالي المدخول', 'Total revenue'),
+                          formatCurrency(context, _gross), Colors.white),
+                      const Divider(color: Colors.white24, height: 20),
                       _summaryRow(
-                          'إجمالي المدخول', formatSYP(_gross), Colors.white),
+                          _tr('عمولة المنصة (20%)', 'Platform fee (20%)'),
+                          '- ${formatCurrency(context, _commission)}',
+                          C.red),
                       const Divider(color: Colors.white24, height: 20),
-                      _summaryRow('عمولة المنصة (20%)',
-                          '- ${formatSYP(_commission)}', C.red),
+                      _summaryRow(_tr('صافي المستحقات', 'Net payable'),
+                          formatCurrency(context, _net), C.green),
                       const Divider(color: Colors.white24, height: 20),
-                      _summaryRow('صافي المستحقات', formatSYP(_net), C.green),
-                      const Divider(color: Colors.white24, height: 20),
-                      _summaryRow('عدد الزيارات', '$_checkinCount', C.cyan),
+                      _summaryRow(_tr('عدد الزيارات', 'Visit count'),
+                          '$_checkinCount', C.cyan),
                     ],
                   ),
                 ).animate().fadeIn(delay: 100.ms),
@@ -299,7 +310,7 @@ class _SettlementPageState extends State<SettlementPage> {
                   child: ElevatedButton.icon(
                     onPressed: _net > 0 ? _requestSettlement : null,
                     icon: const Icon(Icons.send),
-                    label: Text('طلب تسوية',
+                    label: Text(_tr('طلب تسوية', 'Request settlement'),
                         style: GoogleFonts.cairo(
                             fontSize: 16, fontWeight: FontWeight.w700)),
                     style: ElevatedButton.styleFrom(
@@ -314,7 +325,7 @@ class _SettlementPageState extends State<SettlementPage> {
                 const SizedBox(height: 24),
 
                 // Weekly breakdown
-                Text('تفصيل أسبوعي',
+                Text(_tr('تفصيل أسبوعي', 'Weekly breakdown'),
                     style: GoogleFonts.cairo(
                         fontWeight: FontWeight.w700,
                         color: C.textPrimary,
@@ -325,7 +336,9 @@ class _SettlementPageState extends State<SettlementPage> {
                   Center(
                       child: Padding(
                     padding: const EdgeInsets.all(24),
-                    child: Text('لا توجد بيانات في هذه الفترة',
+                    child: Text(
+                        _tr('لا توجد بيانات في هذه الفترة',
+                            'No data in this period'),
                         style: GoogleFonts.cairo(color: C.textMuted)),
                   )),
 
@@ -347,7 +360,7 @@ class _SettlementPageState extends State<SettlementPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('أسبوع ${w['week']}',
+                            Text('${_tr('أسبوع', 'Week')} ${w['week']}',
                                 style: GoogleFonts.cairo(
                                     fontWeight: FontWeight.w700,
                                     color: C.textPrimary)),
@@ -358,7 +371,7 @@ class _SettlementPageState extends State<SettlementPage> {
                                   color: C.cyan.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8)),
                               child: Text(
-                                  '${(w['count'] as double).toInt()} زيارة',
+                                  '${(w['count'] as double).toInt()} ${_tr('زيارة', 'visits')}',
                                   style: GoogleFonts.cairo(
                                       color: C.cyan,
                                       fontSize: 11,
@@ -371,17 +384,21 @@ class _SettlementPageState extends State<SettlementPage> {
                           children: [
                             Expanded(
                                 child: _miniInfo(
-                                    'إجمالي',
-                                    formatSYP(w['gross'] as double),
+                                    _tr('إجمالي', 'Total'),
+                                    formatCurrency(
+                                        context, w['gross'] as double),
                                     C.textSecondary)),
                             Expanded(
                                 child: _miniInfo(
-                                    'عمولة',
-                                    formatSYP(w['commission'] as double),
+                                    _tr('عمولة', 'Fee'),
+                                    formatCurrency(
+                                        context, w['commission'] as double),
                                     C.red)),
                             Expanded(
-                                child: _miniInfo('صافي',
-                                    formatSYP(w['net'] as double), C.green)),
+                                child: _miniInfo(
+                                    _tr('صافي', 'Net'),
+                                    formatCurrency(context, w['net'] as double),
+                                    C.green)),
                           ],
                         ),
                       ],

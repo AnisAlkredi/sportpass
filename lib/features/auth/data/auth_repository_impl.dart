@@ -150,7 +150,7 @@ class AuthRepositoryImpl implements AuthRepository {
     // Fallback: profile trigger should normally create this row.
     await _sb.from('profiles').insert({
       'user_id': u.id,
-      'phone': u.phone ?? u.email,
+      'phone': u.phone,
       'name': u.userMetadata?['name'] ?? 'مستخدم جديد',
       'status': 'active',
       'role': 'athlete',

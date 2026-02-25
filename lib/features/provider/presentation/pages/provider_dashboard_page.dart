@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fl_chart/fl_chart.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -24,6 +25,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
   double _totalEarned = 0;
   double _todayEarned = 0;
   int _todayCount = 0;
+  String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
   void initState() {
@@ -91,7 +93,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
     return Scaffold(
       backgroundColor: C.bg,
       appBar: AppBar(
-        title: Text('لوحة تحكم النادي',
+        title: Text(_tr('لوحة تحكم النادي', 'Gym dashboard'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
         backgroundColor: C.bg,
         actions: [
@@ -101,7 +103,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
               await Supabase.instance.client.auth.signOut();
               if (context.mounted) context.go(AppRouter.login);
             },
-            tooltip: 'تسجيل الخروج',
+            tooltip: _tr('تسجيل الخروج', 'Logout'),
           ),
         ],
       ),
@@ -137,14 +139,17 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
           children: [
             const Icon(Icons.store_mall_directory, size: 80, color: C.gold),
             const SizedBox(height: 20),
-            Text('لم تُنشئ ملف نادي بعد',
+            Text(_tr('لم تُنشئ ملف نادي بعد', 'No gym profile created yet'),
                 style: GoogleFonts.cairo(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: C.textPrimary)),
             const SizedBox(height: 8),
             Text(
-              'أنشئ ملف النادي ثم أضف الفروع ليتم اعتمادها من الإدارة.',
+              _tr(
+                'أنشئ ملف النادي ثم أضف الفروع ليتم اعتمادها من الإدارة.',
+                'Create your gym profile, then add branches for admin approval.',
+              ),
               textAlign: TextAlign.center,
               style: GoogleFonts.cairo(color: C.textMuted),
             ),
@@ -153,7 +158,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
               onPressed: () => context.push(AppRouter.gymSetup),
               icon: const Icon(Icons.storefront),
               label: Text(
-                'إنشاء نادي',
+                _tr('إنشاء نادي', 'Create gym'),
                 style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
               ),
             ),
@@ -161,7 +166,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
             OutlinedButton.icon(
               onPressed: _loadData,
               icon: const Icon(Icons.refresh),
-              label: Text('تحديث',
+              label: Text(_tr('تحديث', 'Refresh'),
                   style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
             ),
           ],
@@ -192,11 +197,13 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                         fontWeight: FontWeight.w800,
                         color: Colors.white)),
                 const SizedBox(height: 4),
-                Text('عمولة المنصة: 80/20 (ثابتة)',
+                Text(
+                    _tr('عمولة المنصة: 80/20 (ثابتة)',
+                        'Platform split: 80/20 (fixed)'),
                     style:
                         GoogleFonts.cairo(color: Colors.white70, fontSize: 12)),
                 Text(
-                    '${(_partner?['partner_locations'] as List?)?.length ?? 0} فروع',
+                    '${(_partner?['partner_locations'] as List?)?.length ?? 0} ${_tr('فروع', 'branches')}',
                     style:
                         GoogleFonts.cairo(color: Colors.white70, fontSize: 12)),
               ],
@@ -217,11 +224,14 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
   Widget _buildStatsRow() {
     return Row(
       children: [
-        _statCard('اليوم', '$_todayCount', 'زيارة', C.cyan),
+        _statCard(_tr('اليوم', 'Today'), '$_todayCount', _tr('زيارة', 'visits'),
+            C.cyan),
         const SizedBox(width: 12),
-        _statCard('أرباح اليوم', formatSYP(_todayEarned), '', C.green),
+        _statCard(_tr('أرباح اليوم', 'Today earnings'),
+            formatCurrency(context, _todayEarned), '', C.green),
         const SizedBox(width: 12),
-        _statCard('الإجمالي', formatSYP(_totalEarned), '', C.gold),
+        _statCard(_tr('الإجمالي', 'Total'),
+            formatCurrency(context, _totalEarned), '', C.gold),
       ],
     );
   }
@@ -273,7 +283,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('أرباح آخر 7 أيام',
+          Text(_tr('أرباح آخر 7 أيام', 'Earnings in last 7 days'),
               style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700,
                   color: C.textPrimary,
@@ -301,7 +311,12 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                           return const SizedBox.shrink();
                         }
                         return Text(
-                          DateFormat('E', 'ar').format(days[idx]),
+                          DateFormat(
+                            'E',
+                            AppLocalizations.of(context).isEnglish
+                                ? 'en'
+                                : 'ar',
+                          ).format(days[idx]),
                           style: GoogleFonts.cairo(
                               color: C.textMuted, fontSize: 9),
                         );
@@ -334,7 +349,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('آخر الزيارات',
+        Text(_tr('آخر الزيارات', 'Recent check-ins'),
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.w700,
                 color: C.textPrimary,
@@ -344,7 +359,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
           Center(
               child: Padding(
             padding: const EdgeInsets.all(32),
-            child: Text('لا توجد زيارات بعد',
+            child: Text(_tr('لا توجد زيارات بعد', 'No visits yet'),
                 style: GoogleFonts.cairo(color: C.textMuted)),
           )),
         ..._checkins.take(10).map((c) {
@@ -379,13 +394,19 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                               fontWeight: FontWeight.w600,
                               color: C.textPrimary,
                               fontSize: 13)),
-                      Text(DateFormat('yyyy/MM/dd HH:mm').format(ts),
+                      Text(
+                          DateFormat(
+                            'yyyy/MM/dd HH:mm',
+                            AppLocalizations.of(context).isEnglish
+                                ? 'en'
+                                : 'ar',
+                          ).format(ts),
                           style: GoogleFonts.cairo(
                               color: C.textMuted, fontSize: 11)),
                     ],
                   ),
                 ),
-                Text('+${formatSYP(earned)}',
+                Text('+${formatCurrency(context, earned)}',
                     style: GoogleFonts.cairo(
                         color: C.green,
                         fontWeight: FontWeight.w700,

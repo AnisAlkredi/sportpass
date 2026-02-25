@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/router/app_router.dart';
 import '../cubit/auth_cubit.dart';
@@ -19,18 +20,28 @@ class _OnboardingPageState extends State<OnboardingPage> {
   String? _selectedRole;
   final _nameCtrl = TextEditingController();
   final _gymNameCtrl = TextEditingController();
-  final _gymCityCtrl = TextEditingController(text: 'دمشق');
+  final _gymCityCtrl = TextEditingController();
   final _gymAddressCtrl = TextEditingController();
   final _branchesCtrl = TextEditingController(text: '1');
-  String _gymCategory = 'gym';
+  final Set<String> _selectedGymCategories = {'gym'};
+  String _tr(String ar, String en) => context.trd(ar, en);
 
-  static const Map<String, String> _gymCategories = {
-    'gym': 'نادي رياضي',
-    'women_only': 'نادي نسائي',
-    'pool': 'مسبح',
-    'martial_arts': 'فنون قتالية',
-    'studio': 'استوديو لياقة',
-  };
+  static const List<String> _gymCategories = [
+    'gym',
+    'women_only',
+    'pool',
+    'martial_arts',
+    'studio',
+  ];
+
+  String _gymCategoryLabel(String key) => switch (key) {
+        'gym' => _tr('نادي رياضي', 'Gym'),
+        'women_only' => _tr('نادي نسائي', 'Women only gym'),
+        'pool' => _tr('مسبح', 'Pool'),
+        'martial_arts' => _tr('فنون قتالية', 'Martial arts'),
+        'studio' => _tr('استوديو لياقة', 'Fitness studio'),
+        _ => key,
+      };
 
   Future<void> _complete() async {
     if (_nameCtrl.text.trim().length < 2 || _selectedRole == null) return;
@@ -42,7 +53,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         'gym_city': _gymCityCtrl.text.trim(),
         'gym_address': _gymAddressCtrl.text.trim(),
         'branches_count': branches < 1 ? 1 : branches,
-        'gym_category': _gymCategory,
+        'gym_category': _selectedGymCategories.join(','),
       };
     }
     context.read<AuthCubit>().submitRoleSelection(
@@ -134,10 +145,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             )
                           : Text(
                               _step < 2
-                                  ? 'متابعة'
+                                  ? _tr('متابعة', 'Continue')
                                   : _selectedRole == 'gym_owner'
-                                      ? 'إرسال طلب المراجعة'
-                                      : 'حفظ الدور',
+                                      ? _tr('إرسال طلب المراجعة',
+                                          'Submit for review')
+                                      : _tr('حفظ الدور', 'Save role'),
                               style: GoogleFonts.cairo(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
@@ -168,7 +180,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
       return _gymNameCtrl.text.trim().length >= 2 &&
           _gymCityCtrl.text.trim().length >= 2 &&
           _gymAddressCtrl.text.trim().length >= 5 &&
-          branchCount >= 1;
+          branchCount >= 1 &&
+          _selectedGymCategories.isNotEmpty;
     }
     return false;
   }
@@ -199,7 +212,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               size: 64, color: Colors.white),
         ).animate().scale(duration: 600.ms, curve: Curves.elasticOut),
         const SizedBox(height: 32),
-        Text('مرحباً بك في SportPass',
+        Text(_tr('مرحباً بك في SportPass', 'Welcome to SportPass'),
                 style: GoogleFonts.cairo(
                     fontSize: 28,
                     fontWeight: FontWeight.w800,
@@ -208,7 +221,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
             .fadeIn(delay: 200.ms),
         const SizedBox(height: 12),
         Text(
-          'شبكة الأندية الرياضية الأولى في سوريا\nادخل أي نادي — امسح QR — تمرّن',
+          _tr(
+            'شبكة الأندية الرياضية الأولى في سوريا\nادخل أي نادي — امسح QR — تمرّن',
+            'The first smart fitness network in Syria\nEnter any gym — scan QR — train',
+          ),
           textAlign: TextAlign.center,
           style: GoogleFonts.cairo(
             color: _secondaryColor(context),
@@ -220,11 +236,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _featurePill(Icons.qr_code_scanner, 'امسح QR'),
+            _featurePill(Icons.qr_code_scanner, _tr('امسح QR', 'Scan QR')),
             const SizedBox(width: 12),
-            _featurePill(Icons.account_balance_wallet, 'محفظة رقمية'),
+            _featurePill(Icons.account_balance_wallet,
+                _tr('محفظة رقمية', 'Digital wallet')),
             const SizedBox(width: 12),
-            _featurePill(Icons.fitness_center, 'أندية متعددة'),
+            _featurePill(
+                Icons.fitness_center, _tr('أندية متعددة', 'Multiple gyms')),
           ],
         ).animate().fadeIn(delay: 600.ms),
       ],
@@ -263,7 +281,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             .animate()
             .scale(duration: 400.ms, curve: Curves.elasticOut),
         const SizedBox(height: 24),
-        Text('ما اسمك؟',
+        Text(_tr('ما اسمك؟', 'What is your name?'),
                 style: GoogleFonts.cairo(
                     fontSize: 26,
                     fontWeight: FontWeight.w800,
@@ -271,7 +289,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
             .animate()
             .fadeIn(delay: 100.ms),
         const SizedBox(height: 8),
-        Text('سيظهر اسمك للمراكز الرياضية عند تسجيل الدخول',
+        Text(
+                _tr('سيظهر اسمك للمراكز الرياضية عند تسجيل الدخول',
+                    'Your name will appear to gyms during check-in'),
                 style: GoogleFonts.cairo(
                     color: _secondaryColor(context), fontSize: 14))
             .animate()
@@ -287,7 +307,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             fontWeight: FontWeight.w700,
           ),
           decoration: InputDecoration(
-            hintText: 'اكتب اسمك هنا',
+            hintText: _tr('اكتب اسمك هنا', 'Write your name here'),
             hintStyle:
                 GoogleFonts.cairo(color: _mutedColor(context), fontSize: 18),
             filled: true,
@@ -311,7 +331,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       key: const ValueKey('role'),
       child: Column(
         children: [
-          Text('ما هو دورك؟',
+          Text(_tr('ما هو دورك؟', 'What is your role?'),
                   style: GoogleFonts.cairo(
                       fontSize: 26,
                       fontWeight: FontWeight.w800,
@@ -321,8 +341,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
           const SizedBox(height: 8),
           Text(
             _selectedRole == 'gym_owner'
-                ? 'أدخل بيانات ناديك لتصل إلى الإدارة للمراجعة'
-                : 'يمكنك تغيير هذا لاحقاً',
+                ? _tr(
+                    'أدخل بيانات ناديك لتصل إلى الإدارة للمراجعة',
+                    'Enter your gym details to send them for admin review',
+                  )
+                : _tr('يمكنك تغيير هذا لاحقاً', 'You can change this later'),
             style: GoogleFonts.cairo(
                 color: _secondaryColor(context), fontSize: 14),
           ).animate().fadeIn(delay: 100.ms),
@@ -330,16 +353,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
           _roleCard(
             'athlete',
             Icons.sports_gymnastics,
-            'رياضي',
-            'أريد التمرن في مراكز رياضية متعددة',
+            _tr('رياضي', 'Athlete'),
+            _tr('أريد التمرن في مراكز رياضية متعددة',
+                'I want to train in multiple gyms'),
             C.cyan,
           ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.1),
           const SizedBox(height: 14),
           _roleCard(
             'gym_owner',
             Icons.store,
-            'صاحب نادي',
-            'أمتلك ناديًا وسأنتظر موافقة الإدارة قبل التفعيل',
+            _tr('صاحب نادي', 'Gym owner'),
+            _tr('أمتلك ناديًا وسأنتظر موافقة الإدارة قبل التفعيل',
+                'I own a gym and will wait for admin approval before activation'),
             C.gold,
           ).animate().fadeIn(delay: 320.ms).slideX(begin: 0.1),
           if (_selectedRole == 'gym_owner') ...[
@@ -366,7 +391,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'بيانات النادي للموافقة',
+            _tr('بيانات النادي للموافقة', 'Gym details for approval'),
             style: GoogleFonts.cairo(
               color: _onSurfaceColor(context),
               fontWeight: FontWeight.w700,
@@ -378,9 +403,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
             controller: _gymNameCtrl,
             onChanged: (_) => setState(() {}),
             style: GoogleFonts.cairo(color: _onSurfaceColor(context)),
-            decoration: const InputDecoration(
-              labelText: 'اسم النادي',
-              hintText: 'مثال: نادي المالكي الرياضي',
+            decoration: InputDecoration(
+              labelText: _tr('اسم النادي', 'Gym name'),
+              hintText: _tr('مثال: نادي المالكي الرياضي',
+                  'Example: Al-Malki Sports Club'),
             ),
           ),
           const SizedBox(height: 10),
@@ -391,9 +417,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   controller: _gymCityCtrl,
                   onChanged: (_) => setState(() {}),
                   style: GoogleFonts.cairo(color: _onSurfaceColor(context)),
-                  decoration: const InputDecoration(
-                    labelText: 'المدينة',
-                    hintText: 'دمشق',
+                  decoration: InputDecoration(
+                    labelText: _tr('المدينة', 'City'),
+                    hintText: _tr('دمشق', 'Damascus'),
                   ),
                 ),
               ),
@@ -404,8 +430,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   keyboardType: TextInputType.number,
                   onChanged: (_) => setState(() {}),
                   style: GoogleFonts.cairo(color: _onSurfaceColor(context)),
-                  decoration: const InputDecoration(
-                    labelText: 'عدد الفروع المبدئي',
+                  decoration: InputDecoration(
+                    labelText:
+                        _tr('عدد الفروع المبدئي', 'Initial branches count'),
                     hintText: '1',
                   ),
                 ),
@@ -417,14 +444,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
             controller: _gymAddressCtrl,
             onChanged: (_) => setState(() {}),
             style: GoogleFonts.cairo(color: _onSurfaceColor(context)),
-            decoration: const InputDecoration(
-              labelText: 'العنوان',
-              hintText: 'المنطقة - الشارع',
+            decoration: InputDecoration(
+              labelText: _tr('العنوان', 'Address'),
+              hintText: _tr('المنطقة - الشارع', 'Area - Street'),
             ),
           ),
           const SizedBox(height: 12),
           Text(
-            'نوع النشاط',
+            _tr('نوع النشاط (يمكن اختيار أكثر من نوع)',
+                'Activity type (you can select more than one)'),
             style: GoogleFonts.cairo(
               color: _secondaryColor(context),
               fontWeight: FontWeight.w700,
@@ -435,18 +463,28 @@ class _OnboardingPageState extends State<OnboardingPage> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: _gymCategories.entries.map((entry) {
-              final selected = _gymCategory == entry.key;
-              return ChoiceChip(
+            children: _gymCategories.map((categoryKey) {
+              final selected = _selectedGymCategories.contains(categoryKey);
+              return FilterChip(
                 label: Text(
-                  entry.value,
+                  _gymCategoryLabel(categoryKey),
                   style: GoogleFonts.cairo(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 selected: selected,
-                onSelected: (_) => setState(() => _gymCategory = entry.key),
+                onSelected: (isSelected) {
+                  setState(() {
+                    if (isSelected) {
+                      _selectedGymCategories.add(categoryKey);
+                      return;
+                    }
+                    if (_selectedGymCategories.length > 1) {
+                      _selectedGymCategories.remove(categoryKey);
+                    }
+                  });
+                },
                 selectedColor: C.gold.withValues(alpha: 0.24),
                 backgroundColor: Theme.of(context)
                     .colorScheme
@@ -456,7 +494,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   color: selected ? C.gold : _secondaryColor(context),
                 ),
               );
-            }).toList(),
+            }).toList(growable: false),
           ),
         ],
       ),
