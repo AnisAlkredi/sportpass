@@ -30,7 +30,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
       Theme.of(context).colorScheme.onSurface;
   Color _muted(BuildContext context) {
     if (Theme.of(context).brightness == Brightness.dark) {
-      return _muted(context);
+      return C.textMuted;
     }
     return const Color(0xFF6D8199);
   }
