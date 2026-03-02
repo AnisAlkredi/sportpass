@@ -20,15 +20,19 @@ class AppTheme {
   static ThemeData _themeFromBase(ThemeData base, Brightness brightness) {
     final isDark = brightness == Brightness.dark;
 
-    final surface = isDark ? C.surface : const Color(0xFFF4F8FC);
-    final surfaceAlt = isDark ? C.surfaceAlt : Colors.white;
-    final onSurface = isDark ? C.textPrimary : const Color(0xFF13233A);
-    final muted = isDark ? C.textMuted : const Color(0xFF5C7390);
+    final surface = isDark ? C.surface : const Color(0xFFFFFFFF);
+    final surfaceAlt = isDark ? C.surfaceAlt : const Color(0xFFF3F6FA);
+    final onSurface = isDark ? C.textPrimary : const Color(0xFF10233D);
+    final muted = isDark ? C.textMuted : const Color(0xFF60748D);
+    final textTheme = GoogleFonts.cairoTextTheme(base.textTheme).apply(
+      bodyColor: onSurface,
+      displayColor: onSurface,
+    );
 
     return base.copyWith(
       brightness: brightness,
       primaryColor: C.cyan,
-      scaffoldBackgroundColor: isDark ? C.bg : const Color(0xFFEFF5FB),
+      scaffoldBackgroundColor: isDark ? C.bg : const Color(0xFFF5F7FA),
       colorScheme: ColorScheme(
         brightness: brightness,
         primary: C.cyan,
@@ -40,9 +44,13 @@ class AppTheme {
         surface: surface,
         onSurface: onSurface,
       ),
-      textTheme: GoogleFonts.cairoTextTheme(base.textTheme).apply(
-        bodyColor: onSurface,
-        displayColor: onSurface,
+      textTheme: textTheme.copyWith(
+        bodyLarge: textTheme.bodyLarge?.copyWith(height: 1.4),
+        bodyMedium: textTheme.bodyMedium?.copyWith(height: 1.4),
+        bodySmall: textTheme.bodySmall?.copyWith(height: 1.4),
+        labelLarge: textTheme.labelLarge?.copyWith(height: 1.35),
+        labelMedium: textTheme.labelMedium?.copyWith(height: 1.35),
+        titleMedium: textTheme.titleMedium?.copyWith(height: 1.35),
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -73,26 +81,46 @@ class AppTheme {
           backgroundColor: C.cyan,
           foregroundColor: C.navy,
           elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+          minimumSize: const Size(0, 52),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          textStyle:
-              GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.w700),
+          textStyle: GoogleFonts.cairo(
+            fontSize: 16,
+            height: 1.35,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: C.cyan,
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+          minimumSize: const Size(0, 52),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           side: BorderSide(color: C.cyan.withValues(alpha: 0.45), width: 1.5),
+          textStyle: GoogleFonts.cairo(
+            fontSize: 15,
+            height: 1.35,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          textStyle: GoogleFonts.cairo(
+            fontSize: 14,
+            height: 1.35,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surfaceAlt,
-        contentPadding: const EdgeInsets.all(18),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         hintStyle: GoogleFonts.cairo(color: muted, fontSize: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -118,11 +146,12 @@ class AppTheme {
           if (states.contains(WidgetState.selected)) {
             return GoogleFonts.cairo(
               color: C.cyan,
-              fontSize: 12,
+              fontSize: 11.5,
+              height: 1.35,
               fontWeight: FontWeight.w600,
             );
           }
-          return GoogleFonts.cairo(color: muted, fontSize: 12);
+          return GoogleFonts.cairo(color: muted, fontSize: 11.5, height: 1.35);
         }),
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {

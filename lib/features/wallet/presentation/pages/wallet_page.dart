@@ -20,6 +20,23 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage> {
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+
+  Color _secondaryText(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textSecondary;
+    }
+    return const Color(0xFF4E6580);
+  }
+
+  Color _mutedText(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textMuted;
+    }
+    return const Color(0xFF6D8199);
+  }
+
   String _txLabel(String type) {
     return switch (type) {
       'topup' => context.trd('شحن رصيد', 'Top up'),
@@ -44,13 +61,17 @@ class _WalletPageState extends State<WalletPage> {
 
   @override
   Widget build(BuildContext context) {
+    final pageBg = Theme.of(context).scaffoldBackgroundColor;
+
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: pageBg,
       appBar: AppBar(
         title: Text(context.trd('المحفظة', 'Wallet'),
             style: GoogleFonts.cairo(
-                fontWeight: FontWeight.w700, color: C.textPrimary)),
-        backgroundColor: C.bg,
+              fontWeight: FontWeight.w700,
+              color: _onSurface(context),
+            )),
+        backgroundColor: pageBg,
         centerTitle: true,
         elevation: 0,
       ),
@@ -83,7 +104,7 @@ class _WalletPageState extends State<WalletPage> {
                       style: GoogleFonts.cairo(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: C.textPrimary)),
+                          color: _onSurface(context))),
                   const SizedBox(height: 16),
                   if (state.transactions.isEmpty)
                     Center(
@@ -93,12 +114,14 @@ class _WalletPageState extends State<WalletPage> {
                           children: [
                             Icon(Icons.receipt_long,
                                 size: 64,
-                                color: C.textMuted.withValues(alpha: 0.3)),
+                                color:
+                                    _mutedText(context).withValues(alpha: 0.3)),
                             const SizedBox(height: 12),
                             Text(
                                 context.trd('لا توجد عمليات بعد',
                                     'No transactions yet'),
-                                style: GoogleFonts.cairo(color: C.textMuted)),
+                                style: GoogleFonts.cairo(
+                                    color: _mutedText(context))),
                           ],
                         ),
                       ),
@@ -122,10 +145,29 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   Widget _buildMainWalletCard(Wallet wallet) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cardGradient = isDark
+        ? C.walletGradient
+        : const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color(0xFFE8F2FF),
+              Color(0xFFDDF8F2),
+              Color(0xFFC8F5E5),
+            ],
+          );
+    final amountColor = isDark ? Colors.white : const Color(0xFF0F2B49);
+    final subtitleColor = isDark ? Colors.white70 : const Color(0xFF48637D);
+    final iconColor = isDark ? Colors.white : const Color(0xFF184A65);
+    final noteBg = isDark
+        ? Colors.black.withValues(alpha: 0.2)
+        : Colors.white.withValues(alpha: 0.72);
+
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        gradient: C.walletGradient,
+        gradient: cardGradient,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -141,10 +183,8 @@ class _WalletPageState extends State<WalletPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(context.trd('الرصيد الحالي', 'Current balance'),
-                  style:
-                      GoogleFonts.cairo(color: Colors.white70, fontSize: 14)),
-              const Icon(Icons.account_balance_wallet,
-                  color: Colors.white, size: 22),
+                  style: GoogleFonts.cairo(color: subtitleColor, fontSize: 14)),
+              Icon(Icons.account_balance_wallet, color: iconColor, size: 22),
             ],
           ),
           const SizedBox(height: 16),
@@ -156,7 +196,7 @@ class _WalletPageState extends State<WalletPage> {
                 style: GoogleFonts.cairo(
                     fontSize: 40,
                     fontWeight: FontWeight.w800,
-                    color: Colors.white,
+                    color: amountColor,
                     height: 1.0),
               ),
               const SizedBox(width: 8),
@@ -164,7 +204,7 @@ class _WalletPageState extends State<WalletPage> {
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Text(currencyLabel(context),
                     style: GoogleFonts.cairo(
-                        color: Colors.white70,
+                        color: subtitleColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w700)),
               ),
@@ -174,20 +214,20 @@ class _WalletPageState extends State<WalletPage> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.2),
+              color: noteBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.info_outline, color: Colors.white70, size: 16),
+                Icon(Icons.info_outline, color: subtitleColor, size: 16),
                 const SizedBox(width: 8),
                 Text(
                   context.trd(
                     'يتم خصم الرصيد عند الدخول فقط',
                     'Balance is deducted only after successful check-in',
                   ),
-                  style: GoogleFonts.cairo(color: Colors.white70, fontSize: 12),
+                  style: GoogleFonts.cairo(color: subtitleColor, fontSize: 12),
                 ),
               ],
             ),
@@ -198,15 +238,17 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   Widget _buildTopupButton() {
+    final surface = Theme.of(context).colorScheme.surface;
+    final divider = Theme.of(context).dividerColor;
     return ElevatedButton(
       onPressed: () => context.push(AppRouter.topup),
       style: ElevatedButton.styleFrom(
-        backgroundColor: C.surface,
+        backgroundColor: surface,
         foregroundColor: C.cyan,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: C.cyan.withValues(alpha: 0.3))),
+            side: BorderSide(color: divider.withValues(alpha: 0.4))),
         elevation: 0,
       ),
       child: Row(
@@ -223,6 +265,8 @@ class _WalletPageState extends State<WalletPage> {
   }
 
   Widget _buildTransactionTile(WalletTransaction tx) {
+    final surface = Theme.of(context).colorScheme.surface;
+    final divider = Theme.of(context).dividerColor;
     final isCredit = tx.isCredit; // > 0
     // If topup -> Green (+), Checkin -> Red (-)
     final color = isCredit ? C.green : C.red;
@@ -238,9 +282,9 @@ class _WalletPageState extends State<WalletPage> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: C.surface,
+        color: surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: C.border.withValues(alpha: 0.3)),
+        border: Border.all(color: divider.withValues(alpha: 0.35)),
       ),
       child: Row(
         children: [
@@ -261,21 +305,22 @@ class _WalletPageState extends State<WalletPage> {
                     style: GoogleFonts.cairo(
                         fontWeight: FontWeight.w700,
                         fontSize: 15,
-                        color: C.textPrimary)),
+                        color: _onSurface(context))),
                 const SizedBox(height: 4),
                 Text(
                   DateFormat(
                     'yyyy/MM/dd HH:mm',
                     AppLocalizations.of(context).isEnglish ? 'en' : 'ar',
                   ).format(tx.createdAt),
-                  style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12),
+                  style: GoogleFonts.cairo(
+                      color: _mutedText(context), fontSize: 12),
                 ),
                 if (tx.description != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(tx.description!,
                         style: GoogleFonts.cairo(
-                            color: C.textSecondary, fontSize: 11)),
+                            color: _secondaryText(context), fontSize: 11)),
                   ),
               ],
             ),
@@ -289,7 +334,8 @@ class _WalletPageState extends State<WalletPage> {
                     fontWeight: FontWeight.w800, fontSize: 16, color: color),
               ),
               Text(currencyLabel(context),
-                  style: GoogleFonts.cairo(color: C.textMuted, fontSize: 10)),
+                  style: GoogleFonts.cairo(
+                      color: _mutedText(context), fontSize: 10)),
             ],
           ),
         ],

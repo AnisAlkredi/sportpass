@@ -49,13 +49,13 @@ class _SportPassAppState extends State<SportPassApp>
   Future<void> _loadPreferences() async {
     final prefs = await SharedPreferences.getInstance();
     final code = prefs.getString(_localePrefKey);
-    final theme = prefs.getString(_themePrefKey);
+    final themeCode = prefs.getString(_themePrefKey);
     if (!mounted) {
       return;
     }
     setState(() {
       _locale = (code == null || code == 'system') ? null : Locale(code);
-      _themeMode = switch (theme) {
+      _themeMode = switch (themeCode) {
         'light' => ThemeMode.light,
         'dark' => ThemeMode.dark,
         _ => ThemeMode.system,

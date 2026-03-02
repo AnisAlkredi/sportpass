@@ -19,6 +19,17 @@ class PartnersListPage extends StatefulWidget {
 }
 
 class _PartnersListPageState extends State<PartnersListPage> {
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+  Color _surface(BuildContext context) => Theme.of(context).colorScheme.surface;
+  Color _divider(BuildContext context) => Theme.of(context).dividerColor;
+  Color _muted(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textMuted;
+    }
+    return const Color(0xFF6D8199);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -28,11 +39,14 @@ class _PartnersListPageState extends State<PartnersListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(context.trd('المراكز الرياضية', 'Fitness centers'),
-            style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-        backgroundColor: C.bg,
+            style: GoogleFonts.cairo(
+              fontWeight: FontWeight.w700,
+              color: _onSurface(context),
+            )),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: BlocBuilder<PartnersCubit, PartnersState>(
         builder: (ctx, state) {
@@ -46,7 +60,7 @@ class _PartnersListPageState extends State<PartnersListPage> {
                   child: Text(
                       context.trd('لا توجد مراكز متاحة حالياً',
                           'No centers available right now'),
-                      style: GoogleFonts.cairo(color: C.textMuted)));
+                      style: GoogleFonts.cairo(color: _muted(context))));
             }
             return ListView.builder(
               padding: const EdgeInsets.all(20),
@@ -71,9 +85,9 @@ class _PartnersListPageState extends State<PartnersListPage> {
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
-          color: C.surface,
+          color: _surface(context),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: C.border.withValues(alpha: 0.5)),
+          border: Border.all(color: _divider(context).withValues(alpha: 0.5)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,13 +148,13 @@ class _PartnersListPageState extends State<PartnersListPage> {
                       style: GoogleFonts.cairo(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
-                          color: C.textPrimary)),
+                          color: _onSurface(context))),
                   if (partner.description != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
                       child: Text(partner.description!,
                           style: GoogleFonts.cairo(
-                              color: C.textMuted, fontSize: 12),
+                              color: _muted(context), fontSize: 12),
                           maxLines: 2),
                     ),
                   const SizedBox(height: 12),
@@ -150,7 +164,7 @@ class _PartnersListPageState extends State<PartnersListPage> {
                         _tag(
                           Icons.location_on,
                           loc.addressText ?? context.trd('دمشق', 'Damascus'),
-                          C.textMuted,
+                          _muted(context),
                         ),
                         const Spacer(),
                         _tag(

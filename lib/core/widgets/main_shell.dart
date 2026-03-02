@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 
 import '../l10n/app_localizations.dart';
 import '../router/app_router.dart';
-import '../theme/colors.dart';
 import '../../features/auth/presentation/cubit/auth_cubit.dart';
 
 /// Role-aware navigation shell — different tabs for athlete, gym_owner, admin
@@ -19,14 +18,17 @@ class MainShell extends StatelessWidget {
         final role = state is AuthAuthenticated ? state.user.role : 'athlete';
         final destinations = _buildDestinations(context, role);
         final routes = _buildRoutes(role);
+        final theme = Theme.of(context);
+        final navSurface = theme.colorScheme.surface;
+        final navBorder = theme.dividerColor.withValues(alpha: 0.45);
+        final navIndicator = theme.colorScheme.primary.withValues(alpha: 0.15);
 
         return Scaffold(
           body: child,
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
-              color: C.surface,
-              border: Border(
-                  top: BorderSide(color: C.border.withValues(alpha: 0.5))),
+              color: navSurface,
+              border: Border(top: BorderSide(color: navBorder)),
             ),
             child: NavigationBar(
               selectedIndex: _index(context, routes),
@@ -40,8 +42,8 @@ class MainShell extends StatelessWidget {
               },
               backgroundColor: Colors.transparent,
               elevation: 0,
-              height: 72,
-              indicatorColor: C.cyan.withValues(alpha: 0.15),
+              height: 76,
+              indicatorColor: navIndicator,
               destinations: destinations,
             ),
           ),

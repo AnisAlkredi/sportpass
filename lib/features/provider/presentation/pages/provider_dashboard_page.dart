@@ -26,6 +26,14 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
   double _todayEarned = 0;
   int _todayCount = 0;
   String _tr(String ar, String en) => context.trd(ar, en);
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+  Color _muted(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return _muted(context);
+    }
+    return const Color(0xFF6D8199);
+  }
 
   @override
   void initState() {
@@ -91,11 +99,11 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(_tr('لوحة تحكم النادي', 'Gym dashboard'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-        backgroundColor: C.bg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: C.red),
@@ -143,7 +151,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                 style: GoogleFonts.cairo(
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: C.textPrimary)),
+                    color: _onSurface(context))),
             const SizedBox(height: 8),
             Text(
               _tr(
@@ -151,7 +159,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                 'Create your gym profile, then add branches for admin approval.',
               ),
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(color: C.textMuted),
+              style: GoogleFonts.cairo(color: _muted(context)),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
@@ -253,7 +261,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                   style: GoogleFonts.cairo(
                       color: color.withValues(alpha: 0.7), fontSize: 11)),
             Text(label,
-                style: GoogleFonts.cairo(color: C.textMuted, fontSize: 10)),
+                style: GoogleFonts.cairo(color: _muted(context), fontSize: 10)),
           ],
         ),
       ),
@@ -286,7 +294,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
           Text(_tr('أرباح آخر 7 أيام', 'Earnings in last 7 days'),
               style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700,
-                  color: C.textPrimary,
+                  color: _onSurface(context),
                   fontSize: 16)),
           const SizedBox(height: 20),
           SizedBox(
@@ -318,7 +326,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                                 : 'ar',
                           ).format(days[idx]),
                           style: GoogleFonts.cairo(
-                              color: C.textMuted, fontSize: 9),
+                              color: _muted(context), fontSize: 9),
                         );
                       },
                     ),
@@ -352,7 +360,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
         Text(_tr('آخر الزيارات', 'Recent check-ins'),
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.w700,
-                color: C.textPrimary,
+                color: _onSurface(context),
                 fontSize: 16)),
         const SizedBox(height: 12),
         if (_checkins.isEmpty)
@@ -360,7 +368,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
               child: Padding(
             padding: const EdgeInsets.all(32),
             child: Text(_tr('لا توجد زيارات بعد', 'No visits yet'),
-                style: GoogleFonts.cairo(color: C.textMuted)),
+                style: GoogleFonts.cairo(color: _muted(context))),
           )),
         ..._checkins.take(10).map((c) {
           final locName = (c['partner_locations'] as Map?)?['name'] ?? '';
@@ -392,7 +400,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                       Text(locName,
                           style: GoogleFonts.cairo(
                               fontWeight: FontWeight.w600,
-                              color: C.textPrimary,
+                              color: _onSurface(context),
                               fontSize: 13)),
                       Text(
                           DateFormat(
@@ -402,7 +410,7 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                                 : 'ar',
                           ).format(ts),
                           style: GoogleFonts.cairo(
-                              color: C.textMuted, fontSize: 11)),
+                              color: _muted(context), fontSize: 11)),
                     ],
                   ),
                 ),

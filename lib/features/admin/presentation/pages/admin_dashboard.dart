@@ -22,6 +22,25 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabCtrl;
   String _tr(String ar, String en) => context.trd(ar, en);
+  Color _pageBg(BuildContext context) =>
+      Theme.of(context).scaffoldBackgroundColor;
+  Color _surface(BuildContext context) => Theme.of(context).colorScheme.surface;
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+  Color _divider(BuildContext context) => Theme.of(context).dividerColor;
+  Color _secondary(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textSecondary;
+    }
+    return const Color(0xFF4E6580);
+  }
+
+  Color _muted(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textMuted;
+    }
+    return const Color(0xFF6D8199);
+  }
 
   @override
   void initState() {
@@ -33,11 +52,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: _pageBg(context),
       appBar: AppBar(
         title: Text(_tr('لوحة التحكم', 'Admin dashboard'),
-            style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-        backgroundColor: C.bg,
+            style: GoogleFonts.cairo(
+                fontWeight: FontWeight.w700, color: _onSurface(context))),
+        backgroundColor: _pageBg(context),
         actions: [
           IconButton(
             icon: const Icon(Icons.monitor_heart, color: C.cyan),
@@ -57,7 +77,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           controller: _tabCtrl,
           indicatorColor: C.cyan,
           labelColor: C.cyan,
-          unselectedLabelColor: C.textMuted,
+          unselectedLabelColor: _muted(context),
           labelStyle: GoogleFonts.cairo(fontWeight: FontWeight.w700),
           tabs: [
             Tab(
@@ -140,7 +160,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 style: GoogleFonts.cairo(
                     fontSize: 22, fontWeight: FontWeight.w800, color: color)),
             Text(label,
-                style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11)),
+                style: GoogleFonts.cairo(color: _muted(context), fontSize: 11)),
           ],
         ),
       ),
@@ -157,18 +177,18 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
         gymOwnerRequests.isEmpty) {
       return Center(
           child: Text(_tr('لا توجد مدفوعات', 'No payments found'),
-              style: GoogleFonts.cairo(color: C.textMuted)));
+              style: GoogleFonts.cairo(color: _muted(context))));
     }
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
         Text(_tr('طلبات الشحن', 'Top-up requests'),
             style: GoogleFonts.cairo(
-                color: C.textPrimary, fontWeight: FontWeight.w700)),
+                color: _onSurface(context), fontWeight: FontWeight.w700)),
         const SizedBox(height: 10),
         if (topupRequests.isEmpty)
           Text(_tr('لا توجد طلبات شحن', 'No top-up requests'),
-              style: GoogleFonts.cairo(color: C.textMuted))
+              style: GoogleFonts.cairo(color: _muted(context)))
         else
           ...topupRequests.asMap().entries.map(
                 (entry) => _buildTopupCard(entry.value)
@@ -178,11 +198,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
         const SizedBox(height: 18),
         Text(_tr('طلبات تجديد QR', 'QR regeneration requests'),
             style: GoogleFonts.cairo(
-                color: C.textPrimary, fontWeight: FontWeight.w700)),
+                color: _onSurface(context), fontWeight: FontWeight.w700)),
         const SizedBox(height: 10),
         if (qrRegenRequests.isEmpty)
           Text(_tr('لا توجد طلبات QR', 'No QR requests'),
-              style: GoogleFonts.cairo(color: C.textMuted))
+              style: GoogleFonts.cairo(color: _muted(context)))
         else
           ...qrRegenRequests.asMap().entries.map(
                 (entry) => _buildQrRegenCard(entry.value).animate().fadeIn(
@@ -191,11 +211,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
         const SizedBox(height: 18),
         Text(_tr('طلبات ترقية صاحب نادي', 'Gym owner upgrade requests'),
             style: GoogleFonts.cairo(
-                color: C.textPrimary, fontWeight: FontWeight.w700)),
+                color: _onSurface(context), fontWeight: FontWeight.w700)),
         const SizedBox(height: 10),
         if (gymOwnerRequests.isEmpty)
           Text(_tr('لا توجد طلبات ترقية', 'No upgrade requests'),
-              style: GoogleFonts.cairo(color: C.textMuted))
+              style: GoogleFonts.cairo(color: _muted(context)))
         else
           ...gymOwnerRequests.asMap().entries.map(
                 (entry) => _buildOwnerRequestCard(entry.value).animate().fadeIn(
@@ -218,12 +238,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: C.surface,
+        color: _surface(context),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isPending
               ? C.gold.withValues(alpha: 0.3)
-              : C.border.withValues(alpha: 0.5),
+              : _divider(context).withValues(alpha: 0.5),
         ),
       ),
       child: Column(
@@ -234,7 +254,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             children: [
               Text(name,
                   style: GoogleFonts.cairo(
-                      fontWeight: FontWeight.w600, color: C.textPrimary)),
+                      fontWeight: FontWeight.w600, color: _onSurface(context))),
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -254,12 +274,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           ),
           const SizedBox(height: 4),
           Text(phone,
-              style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12)),
+              style: GoogleFonts.cairo(color: _muted(context), fontSize: 12)),
           Text('${_tr('المبلغ', 'Amount')}: ${formatCurrency(context, amount)}',
               style: GoogleFonts.cairo(
                   color: C.cyan, fontSize: 14, fontWeight: FontWeight.w600)),
           Text('${_tr('رقم المعاملة', 'Transaction ID')}: ${p['tx_id'] ?? '-'}',
-              style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11)),
+              style: GoogleFonts.cairo(color: _muted(context), fontSize: 11)),
           if (proofUrl != null && proofUrl.isNotEmpty) ...[
             const SizedBox(height: 10),
             GestureDetector(
@@ -269,7 +289,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: C.border),
+                  border: Border.all(color: _divider(context)),
                   image: DecorationImage(
                     image: NetworkImage(proofUrl),
                     fit: BoxFit.cover,
@@ -348,12 +368,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: C.surface,
+        color: _surface(context),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isPending
               ? C.cyan.withValues(alpha: 0.4)
-              : C.border.withValues(alpha: 0.5),
+              : _divider(context).withValues(alpha: 0.5),
         ),
       ),
       child: Column(
@@ -366,7 +386,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 child: Text(
                   '${_tr('طلب QR', 'QR request')}: $locationName',
                   style: GoogleFonts.cairo(
-                    color: C.textPrimary,
+                    color: _onSurface(context),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -391,12 +411,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           ),
           const SizedBox(height: 6),
           Text('$requesterName • $requesterPhone',
-              style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12)),
+              style: GoogleFonts.cairo(color: _muted(context), fontSize: 12)),
           if (!isPending && adminNotes != null && adminNotes.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
               '${_tr('ملاحظة الإدارة', 'Admin note')}: $adminNotes',
-              style: GoogleFonts.cairo(color: C.textSecondary, fontSize: 12),
+              style:
+                  GoogleFonts.cairo(color: _secondary(context), fontSize: 12),
             ),
           ],
           if (isPending) ...[
@@ -470,12 +491,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: C.surface,
+        color: _surface(context),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isPending
               ? C.gold.withValues(alpha: 0.45)
-              : C.border.withValues(alpha: 0.5),
+              : _divider(context).withValues(alpha: 0.5),
         ),
       ),
       child: Column(
@@ -487,7 +508,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
               Text(
                 _tr('طلب دور صاحب نادي', 'Gym owner role request'),
                 style: GoogleFonts.cairo(
-                  color: C.textPrimary,
+                  color: _onSurface(context),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -511,13 +532,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           ),
           const SizedBox(height: 6),
           Text('$requesterName • $requesterPhone',
-              style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12)),
+              style: GoogleFonts.cairo(color: _muted(context), fontSize: 12)),
           if (gymName != null && gymName.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
               '${_tr('اسم النادي', 'Gym name')}: $gymName',
               style: GoogleFonts.cairo(
-                color: C.textSecondary,
+                color: _secondary(context),
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
               ),
@@ -530,17 +551,17 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             Text(
               '${_tr('المدينة', 'City')}: ${gymCity?.isNotEmpty == true ? gymCity : '-'}'
               ' • ${_tr('الفروع', 'Branches')}: ${branchesCount ?? 1}',
-              style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11),
+              style: GoogleFonts.cairo(color: _muted(context), fontSize: 11),
             ),
             if (gymAddress != null && gymAddress.isNotEmpty)
               Text(
                 '${_tr('العنوان', 'Address')}: $gymAddress',
-                style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11),
+                style: GoogleFonts.cairo(color: _muted(context), fontSize: 11),
               ),
             if (gymCategoryDisplay != null && gymCategoryDisplay.isNotEmpty)
               Text(
                 '${_tr('النشاط', 'Activity')}: $gymCategoryDisplay',
-                style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11),
+                style: GoogleFonts.cairo(color: _muted(context), fontSize: 11),
               ),
           ],
           if (businessDescription != null &&
@@ -548,7 +569,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             const SizedBox(height: 6),
             Text(
               businessDescription,
-              style: GoogleFonts.cairo(color: C.textSecondary, fontSize: 12),
+              style:
+                  GoogleFonts.cairo(color: _secondary(context), fontSize: 12),
             ),
           ],
           if ((gymName == null || gymName.isEmpty) &&
@@ -557,14 +579,16 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
             const SizedBox(height: 6),
             Text(
               '${_tr('تفاصيل الطلب', 'Request details')}: $requestNotes',
-              style: GoogleFonts.cairo(color: C.textSecondary, fontSize: 12),
+              style:
+                  GoogleFonts.cairo(color: _secondary(context), fontSize: 12),
             ),
           ],
           if (!isPending && adminNotes != null && adminNotes.isNotEmpty) ...[
             const SizedBox(height: 8),
             Text(
               '${_tr('ملاحظة الإدارة', 'Admin note')}: $adminNotes',
-              style: GoogleFonts.cairo(color: C.textSecondary, fontSize: 12),
+              style:
+                  GoogleFonts.cairo(color: _secondary(context), fontSize: 12),
             ),
           ],
           if (isPending) ...[
@@ -850,9 +874,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: C.surface,
+                  color: _surface(context),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: C.border.withValues(alpha: 0.5)),
+                  border: Border.all(
+                      color: _divider(context).withValues(alpha: 0.5)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -863,7 +888,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                             child: Text(p['name'] ?? '',
                                 style: GoogleFonts.cairo(
                                     fontWeight: FontWeight.w700,
-                                    color: C.textPrimary))),
+                                    color: _onSurface(context)))),
                         Switch(
                           value: p['is_active'] ?? false,
                           activeThumbColor: C.green,
@@ -894,7 +919,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                   : _tr('لا يوجد مالك مرتبط',
                                       'No owner assigned'),
                               style: GoogleFonts.cairo(
-                                  color: C.textSecondary, fontSize: 11),
+                                  color: _secondary(context), fontSize: 11),
                             ),
                           ),
                           TextButton(
@@ -928,7 +953,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                           children: [
                             Text('${locs.length} ${_tr('فرع', 'branches')}',
                                 style: GoogleFonts.cairo(
-                                    color: C.textMuted, fontSize: 12)),
+                                    color: _muted(context), fontSize: 12)),
                             const SizedBox(width: 8),
                             // Check for pending locations
                             if (locs.any((l) => l['is_active'] != true))
@@ -972,7 +997,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                     ),
                     Text(p['category'] ?? '',
                         style: GoogleFonts.cairo(
-                            color: C.textMuted, fontSize: 12)),
+                            color: _muted(context), fontSize: 12)),
                     Text(
                         _tr('عمولة: 80/20 (ثابتة)',
                             'Commission: 80/20 (fixed)'),
@@ -1015,9 +1040,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                   margin: const EdgeInsets.only(bottom: 8),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: C.surface,
+                    color: _surface(context),
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: C.border.withValues(alpha: 0.5)),
+                    border: Border.all(
+                        color: _divider(context).withValues(alpha: 0.5)),
                   ),
                   child: Row(
                     children: [
@@ -1035,12 +1061,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                             Text(u['name'] ?? _tr('مستخدم', 'User'),
                                 style: GoogleFonts.cairo(
                                     fontWeight: FontWeight.w600,
-                                    color: C.textPrimary,
+                                    color: _onSurface(context),
                                     fontSize: 14)),
                             Text(
                                 '${u['phone'] ?? '-'} • ${_roleLabel(u['role'])}',
                                 style: GoogleFonts.cairo(
-                                    color: C.textMuted, fontSize: 11)),
+                                    color: _muted(context), fontSize: 11)),
                           ],
                         ),
                       ),
@@ -1155,12 +1181,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: C.surface,
+        backgroundColor: _surface(context),
         title: Text(
           _tr('تعيين مالك للنادي', 'Assign gym owner'),
           style: GoogleFonts.cairo(
             fontWeight: FontWeight.w700,
-            color: C.textPrimary,
+            color: _onSurface(context),
           ),
         ),
         content: Column(
@@ -1169,13 +1195,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           children: [
             Text(
               '${_tr('النادي', 'Gym')}: $partnerName',
-              style: GoogleFonts.cairo(color: C.textSecondary, fontSize: 12),
+              style:
+                  GoogleFonts.cairo(color: _secondary(context), fontSize: 12),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: phoneCtrl,
               keyboardType: TextInputType.phone,
-              style: GoogleFonts.cairo(color: C.textPrimary),
+              style: GoogleFonts.cairo(color: _onSurface(context)),
               decoration: InputDecoration(
                 labelText: _tr('رقم هاتف المستخدم', 'User phone number'),
                 hintText: _tr('09XXXXXXXX', '09XXXXXXXX'),
@@ -1187,7 +1214,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                 'سيتم ربط المستخدم بالنادي وترقيته إلى gym_owner.',
                 'The user will be linked to this gym and promoted to gym_owner.',
               ),
-              style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11),
+              style: GoogleFonts.cairo(color: _muted(context), fontSize: 11),
             ),
           ],
         ),
@@ -1219,20 +1246,21 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: C.surface,
+        backgroundColor: _surface(context),
         title: Text('${_tr('فروع', 'Branches')} $partnerName',
             style: GoogleFonts.cairo(
-                fontWeight: FontWeight.w700, color: C.textPrimary)),
+                fontWeight: FontWeight.w700, color: _onSurface(context))),
         content: SizedBox(
           width: double.maxFinite,
           child: locations.isEmpty
               ? Center(
                   child: Text(_tr('لا توجد فروع', 'No branches'),
-                      style: GoogleFonts.cairo(color: C.textMuted)))
+                      style: GoogleFonts.cairo(color: _muted(context))))
               : ListView.separated(
                   shrinkWrap: true,
                   itemCount: locations.length,
-                  separatorBuilder: (_, __) => const Divider(color: C.border),
+                  separatorBuilder: (_, __) =>
+                      Divider(color: _divider(context)),
                   itemBuilder: (c, i) {
                     final l = locations[i];
                     final isActive = l['is_active'] ?? false;
@@ -1250,7 +1278,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                   child: Text(l['name'],
                                       style: GoogleFonts.cairo(
                                           fontWeight: FontWeight.bold,
-                                          color: C.textPrimary))),
+                                          color: _onSurface(context)))),
                               Switch(
                                 value: isActive,
                                 activeThumbColor: C.green,
@@ -1268,7 +1296,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                               Text(
                                   '${_tr('السعر الأساسي', 'Base price')} (${currencyLabel(context)}): ',
                                   style: GoogleFonts.cairo(
-                                      fontSize: 12, color: C.textSecondary)),
+                                      fontSize: 12,
+                                      color: _secondary(context))),
                               const SizedBox(width: 8),
                               SizedBox(
                                 width: 100,

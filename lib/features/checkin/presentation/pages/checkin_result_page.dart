@@ -42,7 +42,7 @@ class CheckinResultPage extends StatelessWidget {
           ).format(createdAt.toLocal());
 
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),

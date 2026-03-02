@@ -23,6 +23,21 @@ class _MyGymPageState extends State<MyGymPage> {
   Map<String, dynamic>? _partner;
   List<Map<String, dynamic>> _locations = [];
   String _tr(String ar, String en) => context.trd(ar, en);
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+  Color _secondary(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return _secondary(context);
+    }
+    return const Color(0xFF4E6580);
+  }
+
+  Color _muted(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return _muted(context);
+    }
+    return const Color(0xFF6D8199);
+  }
 
   @override
   void initState() {
@@ -61,11 +76,11 @@ class _MyGymPageState extends State<MyGymPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(_tr('ناديي', 'My gym'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-        backgroundColor: C.bg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         actions: [
           if (_partner == null && _canCreateGym)
             IconButton(
@@ -97,13 +112,13 @@ class _MyGymPageState extends State<MyGymPage> {
           : _partner == null
               ? Center(
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  const Icon(Icons.store, size: 64, color: C.textMuted),
+                  Icon(Icons.store, size: 64, color: _muted(context)),
                   const SizedBox(height: 12),
                   Text(
                       _tr('لم تُنشئ نادياً بعد',
                           'You have not created a gym yet'),
-                      style:
-                          GoogleFonts.cairo(color: C.textMuted, fontSize: 16)),
+                      style: GoogleFonts.cairo(
+                          color: _muted(context), fontSize: 16)),
                   const SizedBox(height: 6),
                   Text(
                     _role == 'gym_owner_pending'
@@ -120,7 +135,8 @@ class _MyGymPageState extends State<MyGymPage> {
                                 'النادي يُربط من قبل الإدارة بعد الموافقة.',
                                 'Gym linking is done by admin after approval.',
                               ),
-                    style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12),
+                    style:
+                        GoogleFonts.cairo(color: _muted(context), fontSize: 12),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -212,7 +228,7 @@ class _MyGymPageState extends State<MyGymPage> {
                                   'Branches & locations'),
                               style: GoogleFonts.cairo(
                                   fontWeight: FontWeight.w700,
-                                  color: C.textPrimary,
+                                  color: _onSurface(context),
                                   fontSize: 16)),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -223,7 +239,7 @@ class _MyGymPageState extends State<MyGymPage> {
                                 border: Border.all(color: C.border)),
                             child: Text('${_locations.length}',
                                 style: GoogleFonts.cairo(
-                                    color: C.textSecondary,
+                                    color: _secondary(context),
                                     fontWeight: FontWeight.w700,
                                     fontSize: 12)),
                           ),
@@ -239,7 +255,7 @@ class _MyGymPageState extends State<MyGymPage> {
                           child: Text(
                               _tr('لا توجد فروع مضافة بعد',
                                   'No branches added yet'),
-                              style: GoogleFonts.cairo(color: C.textMuted)),
+                              style: GoogleFonts.cairo(color: _muted(context))),
                         ),
 
                       ..._locations.asMap().entries.map((e) {
@@ -271,7 +287,7 @@ class _MyGymPageState extends State<MyGymPage> {
                                       child: Text(l['name'] ?? '',
                                           style: GoogleFonts.cairo(
                                               fontWeight: FontWeight.w700,
-                                              color: C.textPrimary,
+                                              color: _onSurface(context),
                                               fontSize: 15))),
                                   Container(
                                     padding: const EdgeInsets.symmetric(
@@ -303,13 +319,13 @@ class _MyGymPageState extends State<MyGymPage> {
                                     padding: const EdgeInsets.only(top: 8),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.location_on,
-                                            size: 14, color: C.textMuted),
+                                        Icon(Icons.location_on,
+                                            size: 14, color: _muted(context)),
                                         const SizedBox(width: 4),
                                         Expanded(
                                             child: Text(l['address_text'],
                                                 style: GoogleFonts.cairo(
-                                                    color: C.textMuted,
+                                                    color: _muted(context),
                                                     fontSize: 12))),
                                       ],
                                     ),
@@ -319,14 +335,14 @@ class _MyGymPageState extends State<MyGymPage> {
                                     padding: const EdgeInsets.only(top: 8),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.schedule,
-                                            size: 14, color: C.textMuted),
+                                        Icon(Icons.schedule,
+                                            size: 14, color: _muted(context)),
                                         const SizedBox(width: 4),
                                         Expanded(
                                           child: Text(
                                             '${_tr('الدوام', 'Hours')}: $hoursSummary',
                                             style: GoogleFonts.cairo(
-                                                color: C.textMuted,
+                                                color: _muted(context),
                                                 fontSize: 12),
                                           ),
                                         ),
@@ -338,13 +354,14 @@ class _MyGymPageState extends State<MyGymPage> {
                                     padding: const EdgeInsets.only(top: 8),
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.image_outlined,
-                                            size: 14, color: C.textMuted),
+                                        Icon(Icons.image_outlined,
+                                            size: 14, color: _muted(context)),
                                         const SizedBox(width: 4),
                                         Text(
                                           '${_tr('صور مرفوعة', 'Uploaded photos')}: $photosCount',
                                           style: GoogleFonts.cairo(
-                                              color: C.textMuted, fontSize: 12),
+                                              color: _muted(context),
+                                              fontSize: 12),
                                         ),
                                       ],
                                     ),

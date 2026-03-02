@@ -231,11 +231,11 @@ class _SettlementPageState extends State<SettlementPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(_tr('التسوية المالية', 'Settlement'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-        backgroundColor: C.bg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         actions: [
           IconButton(
             icon: const Icon(Icons.calendar_month, color: C.cyan),

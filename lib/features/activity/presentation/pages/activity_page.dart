@@ -16,6 +16,17 @@ class ActivityPage extends StatefulWidget {
 }
 
 class _ActivityPageState extends State<ActivityPage> {
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+  Color _surface(BuildContext context) => Theme.of(context).colorScheme.surface;
+  Color _divider(BuildContext context) => Theme.of(context).dividerColor;
+  Color _muted(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textMuted;
+    }
+    return const Color(0xFF6D8199);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -25,11 +36,14 @@ class _ActivityPageState extends State<ActivityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(context.trd('سجل النشاط', 'Activity'),
-            style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-        backgroundColor: C.bg,
+            style: GoogleFonts.cairo(
+              fontWeight: FontWeight.w700,
+              color: _onSurface(context),
+            )),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: BlocBuilder<ActivityCubit, ActivityState>(
         builder: (ctx, state) {
@@ -44,10 +58,11 @@ class _ActivityPageState extends State<ActivityPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.history,
-                        size: 64, color: C.textMuted.withValues(alpha: 0.3)),
+                        size: 64,
+                        color: _muted(context).withValues(alpha: 0.3)),
                     const SizedBox(height: 12),
                     Text(context.trd('لا توجد سجلات بعد', 'No activity yet'),
-                        style: GoogleFonts.cairo(color: C.textMuted)),
+                        style: GoogleFonts.cairo(color: _muted(context))),
                   ],
                 ),
               );
@@ -77,9 +92,9 @@ class _ActivityPageState extends State<ActivityPage> {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: C.surface,
+        color: _surface(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: C.border.withValues(alpha: 0.5)),
+        border: Border.all(color: _divider(context).withValues(alpha: 0.45)),
       ),
       child: Row(
         children: [
@@ -100,14 +115,15 @@ class _ActivityPageState extends State<ActivityPage> {
                 Text(locationName,
                     style: GoogleFonts.cairo(
                         fontWeight: FontWeight.w600,
-                        color: C.textPrimary,
+                        color: _onSurface(context),
                         fontSize: 14)),
                 Text(
                     DateFormat(
                       'yyyy/MM/dd - HH:mm',
                       AppLocalizations.of(context).isEnglish ? 'en' : 'ar',
                     ).format(ts),
-                    style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11)),
+                    style: GoogleFonts.cairo(
+                        color: _muted(context), fontSize: 11)),
               ],
             ),
           ),

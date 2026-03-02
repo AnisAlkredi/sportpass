@@ -158,7 +158,7 @@ class _QrScannerPageState extends State<QrScannerPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: C.bg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Stack(
           fit: StackFit.expand,
           children: [

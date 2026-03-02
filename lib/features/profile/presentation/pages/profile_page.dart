@@ -25,6 +25,23 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _role;
   String? _email;
 
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+
+  Color _secondary(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textSecondary;
+    }
+    return const Color(0xFF4E6580);
+  }
+
+  Color _muted(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textMuted;
+    }
+    return const Color(0xFF6D8199);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -96,18 +113,18 @@ class _ProfilePageState extends State<ProfilePage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: C.surface,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: Text(
           context.trd('تسجيل الخروج', 'Logout'),
           style: GoogleFonts.cairo(
             fontWeight: FontWeight.w700,
-            color: C.textPrimary,
+            color: _onSurface(context),
           ),
         ),
         content: Text(
           context.trd(
               'هل تريد تسجيل الخروج من حسابك؟', 'Do you want to sign out?'),
-          style: GoogleFonts.cairo(color: C.textSecondary),
+          style: GoogleFonts.cairo(color: _secondary(context)),
         ),
         actions: [
           TextButton(
@@ -141,7 +158,7 @@ class _ProfilePageState extends State<ProfilePage> {
     appState.setLocale(languageCode == null ? null : Locale(languageCode));
   }
 
-  void _setThemeMode(ThemeMode mode) {
+  void _setTheme(ThemeMode mode) {
     final appState = SportPassApp.maybeOf(context);
     if (appState == null) {
       return;
@@ -167,8 +184,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final appState = SportPassApp.maybeOf(context);
     final selectedLocale = appState?.currentLocale;
-    final selectedTheme = appState?.currentThemeMode ?? ThemeMode.system;
     final langCode = selectedLocale?.languageCode;
+    final selectedTheme = appState?.currentThemeMode ?? ThemeMode.system;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -242,7 +259,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context.trd('الاسم', 'Name'),
                         style: GoogleFonts.cairo(
                           fontWeight: FontWeight.w700,
-                          color: C.textPrimary,
+                          color: _onSurface(context),
                           fontSize: 16,
                         ),
                       ),
@@ -250,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       TextField(
                         controller: _nameCtrl,
                         style: GoogleFonts.cairo(
-                            color: C.textPrimary, fontSize: 16),
+                            color: _onSurface(context), fontSize: 16),
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Theme.of(context).colorScheme.surface,
@@ -263,7 +280,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             borderSide: const BorderSide(color: C.cyan),
                           ),
                           prefixIcon:
-                              const Icon(Icons.person, color: C.textMuted),
+                              Icon(Icons.person, color: _muted(context)),
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -296,7 +313,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 GlassCard(
                   child: Row(
                     children: [
-                      const Icon(Icons.email_outlined, color: C.textMuted),
+                      Icon(Icons.email_outlined, color: _muted(context)),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -305,12 +322,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             Text(
                               context.trd('البريد الإلكتروني', 'Email'),
                               style: GoogleFonts.cairo(
-                                  color: C.textMuted, fontSize: 12),
+                                  color: _muted(context), fontSize: 12),
                             ),
                             Text(
                               _email ?? _profile?['phone'] ?? '-',
                               style: GoogleFonts.cairo(
-                                color: C.textPrimary,
+                                color: _onSurface(context),
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -322,13 +339,15 @@ class _ProfilePageState extends State<ProfilePage> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: C.surfaceAlt,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           context.trd('للقراءة فقط', 'Read only'),
                           style: GoogleFonts.cairo(
-                              color: C.textMuted, fontSize: 10),
+                              color: _muted(context), fontSize: 10),
                         ),
                       ),
                     ],
@@ -343,7 +362,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context.trd('اللغة', 'Language'),
                         style: GoogleFonts.cairo(
                           fontWeight: FontWeight.w700,
-                          color: C.textPrimary,
+                          color: _onSurface(context),
                           fontSize: 16,
                         ),
                       ),
@@ -392,7 +411,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         context.trd('المظهر', 'Theme'),
                         style: GoogleFonts.cairo(
                           fontWeight: FontWeight.w700,
-                          color: C.textPrimary,
+                          color: _onSurface(context),
                           fontSize: 16,
                         ),
                       ),
@@ -403,7 +422,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: _choiceButton(
                               label: context.trd('تلقائي', 'System'),
                               selected: selectedTheme == ThemeMode.system,
-                              onTap: () => _setThemeMode(ThemeMode.system),
+                              onTap: () => _setTheme(ThemeMode.system),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -411,7 +430,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: _choiceButton(
                               label: context.trd('فاتح', 'Light'),
                               selected: selectedTheme == ThemeMode.light,
-                              onTap: () => _setThemeMode(ThemeMode.light),
+                              onTap: () => _setTheme(ThemeMode.light),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -419,7 +438,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: _choiceButton(
                               label: context.trd('داكن', 'Dark'),
                               selected: selectedTheme == ThemeMode.dark,
-                              onTap: () => _setThemeMode(ThemeMode.dark),
+                              onTap: () => _setTheme(ThemeMode.dark),
                             ),
                           ),
                         ],
@@ -477,7 +496,7 @@ class _ProfilePageState extends State<ProfilePage> {
         child: Text(
           label,
           style: GoogleFonts.cairo(
-            color: selected ? C.cyan : C.textSecondary,
+            color: selected ? C.cyan : _secondary(context),
             fontWeight: FontWeight.w700,
           ),
         ),

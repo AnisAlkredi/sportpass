@@ -30,6 +30,31 @@ class _TopupPageState extends State<TopupPage> {
 
   final _presets = [50000, 100000, 200000, 500000];
   String _tr(String ar, String en) => context.trd(ar, en);
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+  Color _surface(BuildContext context) => Theme.of(context).colorScheme.surface;
+  Color _surfaceAlt(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.surfaceAlt;
+    }
+    return const Color(0xFFF0F5FA);
+  }
+
+  Color _divider(BuildContext context) => Theme.of(context).dividerColor;
+
+  Color _secondary(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textSecondary;
+    }
+    return const Color(0xFF4E6580);
+  }
+
+  Color _muted(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textMuted;
+    }
+    return const Color(0xFF6D8199);
+  }
 
   InputDecoration _fieldDecoration({
     String? hintText,
@@ -39,12 +64,12 @@ class _TopupPageState extends State<TopupPage> {
   }) {
     return InputDecoration(
       hintText: hintText,
-      hintStyle: GoogleFonts.cairo(color: C.textMuted),
+      hintStyle: GoogleFonts.cairo(color: _muted(context)),
       suffixText: suffixText,
-      suffixStyle: suffixStyle ?? GoogleFonts.cairo(color: C.textMuted),
+      suffixStyle: suffixStyle ?? GoogleFonts.cairo(color: _muted(context)),
       prefixIcon: prefixIcon,
       filled: true,
-      fillColor: C.surfaceAlt,
+      fillColor: _surfaceAlt(context),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
@@ -55,7 +80,7 @@ class _TopupPageState extends State<TopupPage> {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: C.border.withValues(alpha: 0.6)),
+        borderSide: BorderSide(color: _divider(context).withValues(alpha: 0.6)),
       ),
     );
   }
@@ -72,7 +97,7 @@ class _TopupPageState extends State<TopupPage> {
     final picker = ImagePicker();
     final source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: C.surface,
+      backgroundColor: _surface(context),
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
       builder: (ctx) => Padding(
@@ -81,19 +106,19 @@ class _TopupPageState extends State<TopupPage> {
           Text(_tr('اختر مصدر الصورة', 'Choose image source'),
               style: GoogleFonts.cairo(
                   fontWeight: FontWeight.w700,
-                  color: C.textPrimary,
+                  color: _onSurface(context),
                   fontSize: 16)),
           const SizedBox(height: 16),
           ListTile(
             leading: const Icon(Icons.camera_alt, color: C.cyan),
             title: Text(_tr('الكاميرا', 'Camera'),
-                style: GoogleFonts.cairo(color: C.textPrimary)),
+                style: GoogleFonts.cairo(color: _onSurface(context))),
             onTap: () => Navigator.pop(ctx, ImageSource.camera),
           ),
           ListTile(
             leading: const Icon(Icons.photo_library, color: C.gold),
             title: Text(_tr('المعرض', 'Gallery'),
-                style: GoogleFonts.cairo(color: C.textPrimary)),
+                style: GoogleFonts.cairo(color: _onSurface(context))),
             onTap: () => Navigator.pop(ctx, ImageSource.gallery),
           ),
         ]),
@@ -133,11 +158,14 @@ class _TopupPageState extends State<TopupPage> {
 
     if (!canTopup) {
       return Scaffold(
-        backgroundColor: C.bg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: Text(_tr('شحن المحفظة', 'Top up wallet'),
-              style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-          backgroundColor: C.bg,
+              style: GoogleFonts.cairo(
+                fontWeight: FontWeight.w700,
+                color: _onSurface(context),
+              )),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         ),
         body: Center(
           child: Padding(
@@ -146,7 +174,7 @@ class _TopupPageState extends State<TopupPage> {
               _tr('ميزة شحن الرصيد متاحة لحساب الرياضي فقط.',
                   'Top-up is available for athlete accounts only.'),
               textAlign: TextAlign.center,
-              style: GoogleFonts.cairo(color: C.textMuted, fontSize: 15),
+              style: GoogleFonts.cairo(color: _muted(context), fontSize: 15),
             ),
           ),
         ),
@@ -178,11 +206,14 @@ class _TopupPageState extends State<TopupPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: C.bg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           title: Text(_tr('شحن المحفظة', 'Top up wallet'),
-              style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-          backgroundColor: C.bg,
+              style: GoogleFonts.cairo(
+                fontWeight: FontWeight.w700,
+                color: _onSurface(context),
+              )),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
@@ -228,7 +259,7 @@ class _TopupPageState extends State<TopupPage> {
                     style: GoogleFonts.cairo(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
-                        color: C.textPrimary)),
+                        color: _onSurface(context))),
                 const SizedBox(height: 12),
                 Row(
                   children: _presets.asMap().entries.map((e) {
@@ -248,10 +279,13 @@ class _TopupPageState extends State<TopupPage> {
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
                             gradient: selected ? C.cyanGradient : null,
-                            color: selected ? null : C.surfaceAlt,
+                            color: selected ? null : _surfaceAlt(context),
                             borderRadius: BorderRadius.circular(14),
-                            border:
-                                Border.all(color: selected ? C.cyan : C.border),
+                            border: Border.all(
+                              color: selected
+                                  ? C.cyan
+                                  : _divider(context).withValues(alpha: 0.8),
+                            ),
                           ),
                           child: Center(
                               child: Text(
@@ -262,7 +296,7 @@ class _TopupPageState extends State<TopupPage> {
                                       fontWeight: FontWeight.w700,
                                       color: selected
                                           ? C.navy
-                                          : C.textSecondary))),
+                                          : _secondary(context)))),
                         ),
                       ),
                     );
@@ -271,7 +305,7 @@ class _TopupPageState extends State<TopupPage> {
                 const SizedBox(height: 20),
                 Text(_tr('أو أدخل مبلغ مخصص', 'Or enter a custom amount'),
                     style: GoogleFonts.cairo(
-                        color: C.textSecondary, fontSize: 14)),
+                        color: _secondary(context), fontSize: 14)),
                 const SizedBox(height: 8),
               ],
 
@@ -281,11 +315,12 @@ class _TopupPageState extends State<TopupPage> {
                 keyboardType: TextInputType.number,
                 readOnly: widget.amount != null,
                 cursorColor: C.cyan,
-                style: GoogleFonts.cairo(color: C.textPrimary, fontSize: 20),
+                style:
+                    GoogleFonts.cairo(color: _onSurface(context), fontSize: 20),
                 decoration: _fieldDecoration(
                   hintText: _tr('مثال: 50000', 'Example: 50000'),
                   suffixText: currencyLabel(context),
-                  suffixStyle: GoogleFonts.cairo(color: C.textMuted),
+                  suffixStyle: GoogleFonts.cairo(color: _muted(context)),
                   prefixIcon: const Icon(Icons.attach_money, color: C.cyan),
                 ),
                 onChanged: (_) => setState(() => _selectedPreset = null),
@@ -295,18 +330,19 @@ class _TopupPageState extends State<TopupPage> {
 
               // TX ID
               Text(_tr('رقم معاملة شام كاش', 'ShamCash transaction ID'),
-                  style:
-                      GoogleFonts.cairo(color: C.textSecondary, fontSize: 14)),
+                  style: GoogleFonts.cairo(
+                      color: _secondary(context), fontSize: 14)),
               const SizedBox(height: 4),
               Text(
                   _tr('أدخل رقم العملية كما يظهر في إيصال شام كاش',
                       'Enter the transaction number exactly as shown on the ShamCash receipt'),
-                  style: GoogleFonts.cairo(color: C.textMuted, fontSize: 11)),
+                  style:
+                      GoogleFonts.cairo(color: _muted(context), fontSize: 11)),
               const SizedBox(height: 8),
               TextField(
                 controller: _txIdCtrl,
                 cursorColor: C.cyan,
-                style: GoogleFonts.cairo(color: C.textPrimary),
+                style: GoogleFonts.cairo(color: _onSurface(context)),
                 decoration: _fieldDecoration(
                   hintText: _tr('مثال: SC-12345678', 'Example: SC-12345678'),
                   prefixIcon: const Icon(Icons.receipt, color: C.cyan),
@@ -317,8 +353,8 @@ class _TopupPageState extends State<TopupPage> {
 
               // Receipt upload
               Text(_tr('صورة الإيصال (اختياري)', 'Receipt image (optional)'),
-                  style:
-                      GoogleFonts.cairo(color: C.textSecondary, fontSize: 14)),
+                  style: GoogleFonts.cairo(
+                      color: _secondary(context), fontSize: 14)),
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: _pickReceipt,
@@ -327,10 +363,12 @@ class _TopupPageState extends State<TopupPage> {
                   width: double.infinity,
                   height: _receiptImage != null ? 200 : 100,
                   decoration: BoxDecoration(
-                    color: C.surfaceAlt,
+                    color: _surfaceAlt(context),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                        color: _receiptImage != null ? C.green : C.border,
+                        color: _receiptImage != null
+                            ? C.green
+                            : _divider(context).withValues(alpha: 0.6),
                         style: _receiptImage != null
                             ? BorderStyle.solid
                             : BorderStyle.none),
@@ -343,14 +381,14 @@ class _TopupPageState extends State<TopupPage> {
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                              const Icon(Icons.add_a_photo,
-                                  color: C.textMuted, size: 32),
+                              Icon(Icons.add_a_photo,
+                                  color: _muted(context), size: 32),
                               const SizedBox(height: 8),
                               Text(
                                   _tr('التقط صورة الإيصال أو اختر من المعرض',
                                       'Take a receipt photo or choose one from gallery'),
                                   style: GoogleFonts.cairo(
-                                      color: C.textMuted, fontSize: 12)),
+                                      color: _muted(context), fontSize: 12)),
                             ])
                       : Align(
                           alignment: Alignment.topLeft,
@@ -443,7 +481,7 @@ class _TopupPageState extends State<TopupPage> {
                                 'Your request will be reviewed and your balance charged within minutes. Platform fee is 20% and is deducted on each gym check-in.',
                               ),
                               style: GoogleFonts.cairo(
-                                  color: C.textMuted,
+                                  color: _muted(context),
                                   fontSize: 12,
                                   height: 1.6))),
                     ]),

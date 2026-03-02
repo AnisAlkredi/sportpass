@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -24,7 +27,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
   final _addressCtrl = TextEditingController();
   final _latCtrl = TextEditingController(text: '33.5138');
   final _lngCtrl = TextEditingController(text: '36.2765');
-  final _photosCtrl = TextEditingController();
+  final _extraPhotoUrlsCtrl = TextEditingController();
+  final _imagePicker = ImagePicker();
   final MapController _mapCtrl = MapController();
 
   double _radius = 150;
@@ -32,6 +36,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
   LatLng _pickedPoint = const LatLng(33.5138, 36.2765);
   TimeOfDay? _openTime;
   TimeOfDay? _closeTime;
+  final List<File> _pickedPhotos = [];
   String _tr(String ar, String en) => context.trd(ar, en);
 
   @override
@@ -57,7 +62,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
     _addressCtrl.dispose();
     _latCtrl.dispose();
     _lngCtrl.dispose();
-    _photosCtrl.dispose();
+    _extraPhotoUrlsCtrl.dispose();
     super.dispose();
   }
 
@@ -105,12 +110,79 @@ class _AddLocationPageState extends State<AddLocationPage> {
     };
   }
 
-  List<String> _parsePhotos() {
-    return _photosCtrl.text
+  List<String> _parseAdditionalPhotoUrls() {
+    return _extraPhotoUrlsCtrl.text
         .split(RegExp(r'[\n,]'))
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
         .toList();
+  }
+
+  Future<void> _pickPhoto({required bool fromCamera}) async {
+    if (fromCamera) {
+      final capture = await _imagePicker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 82,
+        maxWidth: 1600,
+      );
+      if (capture == null || !mounted) {
+        return;
+      }
+      setState(() => _pickedPhotos.add(File(capture.path)));
+      return;
+    }
+
+    final files = await _imagePicker.pickMultiImage(
+      imageQuality: 82,
+      maxWidth: 1600,
+    );
+    if (files.isEmpty || !mounted) {
+      return;
+    }
+    setState(() {
+      _pickedPhotos.addAll(files.map((file) => File(file.path)));
+    });
+  }
+
+  Future<String?> _uploadToFirstAvailableBucket({
+    required File imageFile,
+    required String path,
+  }) async {
+    final storage = Supabase.instance.client.storage;
+    const buckets = ['gym-photos', 'partner-media', 'receipts'];
+    for (final bucket in buckets) {
+      try {
+        await storage.from(bucket).upload(
+              path,
+              imageFile,
+              fileOptions: const FileOptions(cacheControl: '3600'),
+            );
+        return storage.from(bucket).getPublicUrl(path);
+      } catch (_) {
+        // Try next available bucket.
+      }
+    }
+    return null;
+  }
+
+  Future<List<String>> _uploadPickedPhotos() async {
+    if (_pickedPhotos.isEmpty) {
+      return const [];
+    }
+    final uid = Supabase.instance.client.auth.currentUser?.id ?? 'anon';
+    final stamp = DateTime.now().millisecondsSinceEpoch;
+    final urls = <String>[];
+    for (var i = 0; i < _pickedPhotos.length; i++) {
+      final path = 'locations/$uid/${widget.partnerId}/$stamp-$i.jpg';
+      final uploaded = await _uploadToFirstAvailableBucket(
+        imageFile: _pickedPhotos[i],
+        path: path,
+      );
+      if (uploaded != null) {
+        urls.add(uploaded);
+      }
+    }
+    return urls;
   }
 
   Future<void> _useCurrentLocation() async {
@@ -178,7 +250,28 @@ class _AddLocationPageState extends State<AddLocationPage> {
 
     setState(() => _loading = true);
     try {
-      final photos = _parsePhotos();
+      final uploadedPhotos = await _uploadPickedPhotos();
+      if (_pickedPhotos.isNotEmpty && uploadedPhotos.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                _tr(
+                  'تعذر رفع الصور المختارة. تحقق من الإنترنت أو صلاحيات التخزين.',
+                  'Unable to upload selected photos. Check internet or storage permissions.',
+                ),
+                style: GoogleFonts.cairo(),
+              ),
+              backgroundColor: C.red,
+            ),
+          );
+        }
+        return;
+      }
+      final photos = {
+        ...uploadedPhotos,
+        ..._parseAdditionalPhotoUrls(),
+      }.toList();
       final operatingHours = _buildOperatingHours();
       final payload = <String, dynamic>{
         'partner_id': widget.partnerId,
@@ -225,18 +318,21 @@ class _AddLocationPageState extends State<AddLocationPage> {
               backgroundColor: C.red),
         );
       }
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
     }
-    setState(() => _loading = false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(_tr('إضافة فرع', 'Add branch'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-        backgroundColor: C.bg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
@@ -430,10 +526,107 @@ class _AddLocationPageState extends State<AddLocationPage> {
             ).animate().fadeIn(delay: 170.ms),
 
             const SizedBox(height: 20),
-            _label(_tr('صور الفرع (روابط - اختياري)',
-                'Branch photos (URLs - optional)')),
+            _label(_tr('صور الفرع (اختياري)', 'Branch photos (optional)')),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed:
+                        _loading ? null : () => _pickPhoto(fromCamera: true),
+                    icon: const Icon(Icons.camera_alt_rounded, size: 18),
+                    label: Text(
+                      _tr('التقاط صورة', 'Take photo'),
+                      style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed:
+                        _loading ? null : () => _pickPhoto(fromCamera: false),
+                    icon: const Icon(Icons.photo_library_rounded, size: 18),
+                    label: Text(
+                      _tr('اختيار من المعرض', 'Choose from gallery'),
+                      style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+              ],
+            ).animate().fadeIn(delay: 180.ms),
+            const SizedBox(height: 10),
+            if (_pickedPhotos.isNotEmpty)
+              SizedBox(
+                height: 88,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final file = _pickedPhotos[index];
+                    return Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            file,
+                            width: 88,
+                            height: 88,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        Positioned(
+                          top: 4,
+                          right: 4,
+                          child: GestureDetector(
+                            onTap: _loading
+                                ? null
+                                : () => setState(() {
+                                      _pickedPhotos.removeAt(index);
+                                    }),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: C.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 12,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  separatorBuilder: (_, __) => const SizedBox(width: 8),
+                  itemCount: _pickedPhotos.length,
+                ),
+              ).animate().fadeIn(delay: 190.ms)
+            else
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: C.surfaceAlt.withValues(alpha: 0.6),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: C.border.withValues(alpha: 0.5)),
+                ),
+                child: Text(
+                  _tr(
+                    'أضف صورًا من الكاميرا أو المعرض لإظهار الفرع بشكل أفضل.',
+                    'Add camera/gallery photos to present your branch better.',
+                  ),
+                  style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12),
+                ),
+              ).animate().fadeIn(delay: 190.ms),
+
+            const SizedBox(height: 14),
+            _label(_tr(
+                'روابط صور إضافية (اختياري)', 'Extra image URLs (optional)')),
             TextField(
-              controller: _photosCtrl,
+              controller: _extraPhotoUrlsCtrl,
               maxLines: 3,
               style: GoogleFonts.cairo(color: C.textPrimary),
               decoration: InputDecoration(

@@ -23,6 +23,28 @@ class PartnerDetailsPage extends StatefulWidget {
 class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
   late Future<Partner?> _partnerFuture;
   String _tr(String ar, String en) => context.trd(ar, en);
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+  Color _surfaceAlt(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.surfaceAlt;
+    }
+    return const Color(0xFFEAF1F8);
+  }
+
+  Color _secondary(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textSecondary;
+    }
+    return const Color(0xFF4E6580);
+  }
+
+  Color _muted(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textMuted;
+    }
+    return const Color(0xFF6D8199);
+  }
 
   @override
   void initState() {
@@ -33,11 +55,14 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
           _tr('تفاصيل المركز', 'Center details'),
-          style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
+          style: GoogleFonts.cairo(
+            fontWeight: FontWeight.w700,
+            color: _onSurface(context),
+          ),
         ),
         backgroundColor: Colors.transparent,
       ),
@@ -54,7 +79,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
             return Center(
               child: Text(
                 _tr('تعذر تحميل بيانات المركز', 'Failed to load center data'),
-                style: GoogleFonts.cairo(color: C.textSecondary),
+                style: GoogleFonts.cairo(color: _secondary(context)),
               ),
             );
           }
@@ -69,7 +94,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                   child: Text(
                     partner.description!,
                     style: GoogleFonts.cairo(
-                      color: C.textSecondary,
+                      color: _secondary(context),
                       fontSize: 14,
                       height: 1.55,
                     ),
@@ -83,7 +108,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                   child: Text(
                     _tr('لا توجد فروع مضافة بعد', 'No branches added yet'),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.cairo(color: C.textSecondary),
+                    style: GoogleFonts.cairo(color: _secondary(context)),
                   ),
                 ),
             ],
@@ -128,7 +153,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                 Text(
                   partner.name,
                   style: GoogleFonts.cairo(
-                    color: C.textPrimary,
+                    color: _onSurface(context),
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                   ),
@@ -137,7 +162,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                 Text(
                   _categoryLabel(partner.category),
                   style: GoogleFonts.cairo(
-                    color: C.textSecondary,
+                    color: _secondary(context),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -183,7 +208,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                 child: Text(
                   location.name,
                   style: GoogleFonts.cairo(
-                    color: C.textPrimary,
+                    color: _onSurface(context),
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                   ),
@@ -211,7 +236,8 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
             const SizedBox(height: 6),
             Text(
               location.addressText!,
-              style: GoogleFonts.cairo(color: C.textSecondary, fontSize: 13),
+              style:
+                  GoogleFonts.cairo(color: _secondary(context), fontSize: 13),
             ),
           ],
           const SizedBox(height: 8),
@@ -252,7 +278,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
             Text(
               _tr('ساعات الدوام', 'Working hours'),
               style: GoogleFonts.cairo(
-                color: C.textPrimary,
+                color: _onSurface(context),
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),
@@ -278,9 +304,9 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => Container(
                         width: 130,
-                        color: C.surfaceAlt,
-                        child: const Icon(Icons.image_not_supported_outlined,
-                            color: C.textMuted),
+                        color: _surfaceAlt(context),
+                        child: Icon(Icons.image_not_supported_outlined,
+                            color: _muted(context)),
                       ),
                     ),
                   );
@@ -346,7 +372,7 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
         Text(
           '${labels[day]}: $open - $close',
           style: GoogleFonts.cairo(
-            color: C.textSecondary,
+            color: _secondary(context),
             fontSize: 12,
           ),
         ),
@@ -377,12 +403,12 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: C.textMuted),
+        Icon(icon, size: 14, color: _muted(context)),
         const SizedBox(width: 4),
         Text(
           value,
           style: GoogleFonts.cairo(
-            color: C.textMuted,
+            color: _muted(context),
             fontSize: 12,
             fontWeight: FontWeight.w600,
           ),

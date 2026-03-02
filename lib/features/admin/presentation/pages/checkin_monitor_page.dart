@@ -79,7 +79,7 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
             0, (s, c) => s + ((c['platform_fee'] as num?)?.toDouble() ?? 0));
 
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: C.textPrimary),
@@ -88,7 +88,7 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
         ),
         title: Text(_tr('مراقبة تسجيلات الدخول', 'Check-in monitor'),
             style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-        backgroundColor: C.bg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         actions: [
           IconButton(
               icon: const Icon(Icons.refresh, color: C.cyan),

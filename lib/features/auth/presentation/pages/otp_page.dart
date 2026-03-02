@@ -33,7 +33,7 @@ class _OtpPageState extends State<OtpPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: C.bg,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(

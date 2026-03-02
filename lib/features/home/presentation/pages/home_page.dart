@@ -12,6 +12,7 @@ import '../../../../core/widgets/utils.dart';
 import '../../../auth/presentation/cubit/auth_cubit.dart';
 import '../../../wallet/presentation/cubit/wallet_cubit.dart';
 import '../../../partners/presentation/cubit/partners_cubit.dart';
+import '../../../partners/domain/models/partner.dart';
 import '../cubit/home_cubit.dart';
 
 import '../../../admin/presentation/pages/admin_dashboard.dart';
@@ -47,9 +48,9 @@ class _HomePageState extends State<HomePage> {
               }
             });
           }
-          return const Scaffold(
-            backgroundColor: C.bg,
-            body: Center(
+          return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: const Center(
               child: CircularProgressIndicator(color: C.cyan),
             ),
           );
@@ -73,12 +74,15 @@ class _HomePageState extends State<HomePage> {
                     child: CircularProgressIndicator(color: C.cyan));
               }
               if (homeState is HomeError) {
+                final errorColor =
+                    Theme.of(context).textTheme.bodyMedium?.color ??
+                        const Color(0xFF4E6580);
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(homeState.message,
-                          style: GoogleFonts.cairo(color: C.textSecondary)),
+                          style: GoogleFonts.cairo(color: errorColor)),
                       const SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () =>
@@ -124,6 +128,10 @@ class _HomePageState extends State<HomePage> {
                                 .animate()
                                 .fadeIn(delay: 300.ms)
                                 .scale(begin: const Offset(0.95, 0.95)),
+                            const SizedBox(height: 18),
+                            _buildEntryGymsSection(context)
+                                .animate()
+                                .fadeIn(delay: 360.ms),
                             const SizedBox(height: 32),
                             // Quick Actions for Athlete
                             _buildQuickActions(context)
@@ -170,7 +178,15 @@ class _HomePageState extends State<HomePage> {
               Text(
                   context.trd(
                       'بطاقتك الرياضية الذكية', 'Your smart fitness pass'),
-                  style: GoogleFonts.cairo(fontSize: 12, color: C.textMuted)),
+                  style: GoogleFonts.cairo(
+                    fontSize: 12,
+                    color: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.color
+                            ?.withValues(alpha: 0.8) ??
+                        C.textMuted,
+                  )),
             ],
           );
         },
@@ -197,7 +213,15 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         IconButton(
-          icon: const Icon(Icons.logout_rounded, color: C.textMuted),
+          icon: Icon(
+            Icons.logout_rounded,
+            color: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.color
+                    ?.withValues(alpha: 0.75) ??
+                C.textMuted,
+          ),
           onPressed: () => _showLogout(context),
         ),
       ],
@@ -346,7 +370,7 @@ class _HomePageState extends State<HomePage> {
                       'Gym owner request is under review',
                     ),
                     style: GoogleFonts.cairo(
-                      color: C.textPrimary,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
                     ),
@@ -357,7 +381,12 @@ class _HomePageState extends State<HomePage> {
                       'Owner permissions will be activated after admin approval.',
                     ),
                     style: GoogleFonts.cairo(
-                      color: C.textSecondary,
+                      color: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.color
+                              ?.withValues(alpha: 0.86) ??
+                          const Color(0xFF4E6580),
                       fontSize: 12,
                     ),
                   ),
@@ -412,6 +441,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildQuickActions(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final secondary =
+        Theme.of(context).textTheme.bodyMedium?.color ?? C.textSecondary;
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (ctx, authState) {
         final role =
@@ -424,7 +456,7 @@ class _HomePageState extends State<HomePage> {
                 style: GoogleFonts.cairo(
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: C.textPrimary)),
+                    color: onSurface)),
             const SizedBox(height: 12),
             if (role == 'gym_owner')
               Column(
@@ -459,7 +491,7 @@ class _HomePageState extends State<HomePage> {
                       _quickAction(
                           Icons.person_outline,
                           context.trd('حسابي', 'My account'),
-                          C.textSecondary,
+                          secondary,
                           () => context.push(AppRouter.profile)),
                       const SizedBox(width: 12),
                       const Expanded(child: SizedBox()),
@@ -487,7 +519,7 @@ class _HomePageState extends State<HomePage> {
                       _quickAction(
                           Icons.person_outline,
                           context.trd('حسابي', 'My account'),
-                          C.textSecondary,
+                          secondary,
                           () => context.push(AppRouter.profile)),
                     ],
                   ),
@@ -501,6 +533,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _quickAction(
       IconData icon, String label, Color color, VoidCallback onTap) {
+    final secondary =
+        Theme.of(context).textTheme.bodyMedium?.color ?? C.textSecondary;
     return Expanded(
       child: GlassCard(
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -518,13 +552,185 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 8),
             Text(label,
                 style: GoogleFonts.cairo(
-                    color: C.textSecondary,
+                    color: secondary,
                     fontSize: 12,
                     fontWeight: FontWeight.w600)),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildEntryGymsSection(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final secondary =
+        Theme.of(context).textTheme.bodyMedium?.color ?? C.textSecondary;
+
+    return BlocBuilder<PartnersCubit, PartnersState>(
+      builder: (context, state) {
+        if (state is! PartnersLoaded) {
+          return const SizedBox.shrink();
+        }
+
+        final entries = _entryLocations(state.partners);
+        if (entries.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(
+                  context.trd('نوادٍ جاهزة للدخول', 'Gyms ready to check in'),
+                  style: GoogleFonts.cairo(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: onSurface,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(
+                  onPressed: () => context.go(AppRouter.map),
+                  child: Text(
+                    context.trd('عرض الكل', 'View all'),
+                    style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              height: 236,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: entries.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final point = entries[index];
+                  final image = point.location.photos.isNotEmpty
+                      ? point.location.photos.first
+                      : null;
+                  return SizedBox(
+                    width: 250,
+                    child: GlassCard(
+                      padding: const EdgeInsets.all(12),
+                      onTap: () =>
+                          context.push('/partners/${point.partner.id}'),
+                      borderColor: C.cyan.withValues(alpha: 0.22),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: image == null
+                                ? Container(
+                                    height: 88,
+                                    color: C.surfaceAlt.withValues(alpha: 0.6),
+                                    child: Center(
+                                      child: Text(
+                                        point.partner.categoryIcon,
+                                        style: const TextStyle(fontSize: 30),
+                                      ),
+                                    ),
+                                  )
+                                : Image.network(
+                                    image,
+                                    height: 88,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => Container(
+                                      height: 88,
+                                      color:
+                                          C.surfaceAlt.withValues(alpha: 0.6),
+                                      child: Center(
+                                        child: Text(
+                                          point.partner.categoryIcon,
+                                          style: const TextStyle(fontSize: 30),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            point.partner.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.cairo(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 14,
+                              color: onSurface,
+                            ),
+                          ),
+                          Text(
+                            point.location.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.cairo(
+                              color: secondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
+                              Text(
+                                formatCurrency(
+                                    context, point.location.userPrice),
+                                style: GoogleFonts.cairo(
+                                  color: C.gold,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 13,
+                                ),
+                              ),
+                              const Spacer(),
+                              OutlinedButton(
+                                onPressed: () =>
+                                    context.push(AppRouter.scanner),
+                                style: OutlinedButton.styleFrom(
+                                  minimumSize: const Size(0, 38),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 8),
+                                ),
+                                child: Text(
+                                  context.trd('شيك إن', 'Check-in'),
+                                  style: GoogleFonts.cairo(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  List<_EntryLocation> _entryLocations(List<Partner> partners) {
+    final output = <_EntryLocation>[];
+    for (final partner in partners) {
+      if (!partner.isActive) {
+        continue;
+      }
+      for (final location in partner.locations) {
+        if (!location.isActive) {
+          continue;
+        }
+        output.add(_EntryLocation(partner: partner, location: location));
+      }
+    }
+    return output.take(8).toList();
   }
 
   Widget _buildTodayStatus(BuildContext context) {
@@ -551,7 +757,14 @@ class _HomePageState extends State<HomePage> {
                 Text(
                     context.trd('تم تسجيل دخولك. استمتع بتمرينك!',
                         'Check-in complete. Enjoy your workout!'),
-                    style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12)),
+                    style: GoogleFonts.cairo(
+                        color: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.color
+                                ?.withValues(alpha: 0.8) ??
+                            const Color(0xFF6D8199),
+                        fontSize: 12)),
               ],
             ),
           ),
@@ -584,4 +797,14 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
+
+class _EntryLocation {
+  final Partner partner;
+  final PartnerLocation location;
+
+  const _EntryLocation({
+    required this.partner,
+    required this.location,
+  });
 }

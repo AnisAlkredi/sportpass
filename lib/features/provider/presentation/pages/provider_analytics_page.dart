@@ -67,11 +67,11 @@ class _ProviderAnalyticsPageState extends State<ProviderAnalyticsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: C.bg,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
           title: Text(_tr('التحليلات والتسوية', 'Analytics & settlement'),
               style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
-          backgroundColor: C.bg),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor),
       body: _loading
           ? const Center(child: CircularProgressIndicator(color: C.cyan))
           : ListView(

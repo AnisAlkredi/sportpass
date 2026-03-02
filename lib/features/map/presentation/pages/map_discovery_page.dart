@@ -42,6 +42,23 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
   static const String _allCitiesToken = 'all';
 
   String _tr(String ar, String en) => context.trd(ar, en);
+  Color _surface(BuildContext context) => Theme.of(context).colorScheme.surface;
+  Color _divider(BuildContext context) => Theme.of(context).dividerColor;
+  Color _onSurface(BuildContext context) =>
+      Theme.of(context).colorScheme.onSurface;
+  Color _secondary(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textSecondary;
+    }
+    return const Color(0xFF4E6580);
+  }
+
+  Color _muted(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.dark) {
+      return C.textMuted;
+    }
+    return const Color(0xFF6D8199);
+  }
 
   String _cityLabel(String value) =>
       value == _allCitiesToken ? _tr('الكل', 'All') : value;
@@ -239,7 +256,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: _selected == point ? C.cyan : C.surface,
+                    color: _selected == point ? C.cyan : _surface(context),
                     shape: BoxShape.circle,
                     border: Border.all(color: C.cyan, width: 2.5),
                     boxShadow: [
@@ -308,7 +325,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                 _mapCtrl.move(_userPos!, 15);
               }
             },
-            backgroundColor: C.surface,
+            backgroundColor: _surface(context),
             child: const Icon(Icons.my_location, color: C.cyan, size: 20),
           ),
         ),
@@ -351,7 +368,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                         'Location permission denied. You can continue with search and filters.',
                       ),
                       style: GoogleFonts.cairo(
-                        color: C.textPrimary,
+                        color: _onSurface(context),
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
@@ -384,7 +401,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                         'Failed to load map tiles. Check your internet and retry.',
                       ),
                       style: GoogleFonts.cairo(
-                        color: C.textPrimary,
+                        color: _onSurface(context),
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
                       ),
@@ -426,7 +443,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                       'لا توجد نتائج مطابقة للفلاتر',
                       'No results match the selected filters',
                     ),
-                    style: GoogleFonts.cairo(color: C.textSecondary),
+                    style: GoogleFonts.cairo(color: _secondary(context)),
                   ),
                 )
               : ListView.builder(
@@ -449,10 +466,10 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                         margin: const EdgeInsets.only(bottom: 10),
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: C.surface,
+                          color: _surface(context),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                              color: C.border.withValues(alpha: 0.5)),
+                              color: _divider(context).withValues(alpha: 0.5)),
                         ),
                         child: Column(
                           children: [
@@ -481,7 +498,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                                       Text(
                                         point.partner.name,
                                         style: GoogleFonts.cairo(
-                                          color: C.textPrimary,
+                                          color: _onSurface(context),
                                           fontWeight: FontWeight.w800,
                                           fontSize: 15,
                                         ),
@@ -489,7 +506,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                                       Text(
                                         point.location.name,
                                         style: GoogleFonts.cairo(
-                                          color: C.textSecondary,
+                                          color: _secondary(context),
                                           fontSize: 12,
                                         ),
                                       ),
@@ -497,7 +514,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                                         Text(
                                           _distanceText(distance),
                                           style: GoogleFonts.cairo(
-                                            color: C.textMuted,
+                                            color: _muted(context),
                                             fontSize: 11,
                                           ),
                                         ),
@@ -563,27 +580,29 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: C.surface.withValues(alpha: 0.92),
+        color: _surface(context).withValues(alpha: 0.92),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: C.border.withValues(alpha: 0.6)),
+        border: Border.all(color: _divider(context).withValues(alpha: 0.6)),
       ),
       child: Row(
         children: [
           Expanded(
             child: TextField(
               onChanged: (value) => setState(() => _search = value),
-              style: GoogleFonts.cairo(color: C.textPrimary, fontSize: 14),
+              style:
+                  GoogleFonts.cairo(color: _onSurface(context), fontSize: 14),
               decoration: InputDecoration(
                 isDense: true,
                 hintText: _tr(
                   'ابحث باسم النادي أو الفرع',
                   'Search by gym or branch name',
                 ),
-                hintStyle: GoogleFonts.cairo(color: C.textMuted),
+                hintStyle: GoogleFonts.cairo(color: _muted(context)),
                 filled: true,
-                fillColor: C.bg.withValues(alpha: 0.45),
-                prefixIcon:
-                    const Icon(Icons.search_rounded, color: C.textMuted),
+                fillColor: Theme.of(context)
+                    .scaffoldBackgroundColor
+                    .withValues(alpha: 0.55),
+                prefixIcon: Icon(Icons.search_rounded, color: _muted(context)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -611,13 +630,15 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
             height: 34,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: C.bg.withValues(alpha: 0.45),
+              color: Theme.of(context)
+                  .scaffoldBackgroundColor
+                  .withValues(alpha: 0.55),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
               '${filtered.length}',
               style: GoogleFonts.cairo(
-                color: C.textPrimary,
+                color: _onSurface(context),
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
               ),
@@ -648,7 +669,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: C.surface,
+      backgroundColor: _surface(context),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -671,7 +692,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                         width: 46,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: C.border,
+                          color: _divider(context),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -680,7 +701,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     Text(
                       _tr('فلاتر الخريطة', 'Map filters'),
                       style: GoogleFonts.cairo(
-                        color: C.textPrimary,
+                        color: _onSurface(context),
                         fontWeight: FontWeight.w800,
                         fontSize: 20,
                       ),
@@ -688,7 +709,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     const SizedBox(height: 14),
                     Text(_tr('المدينة', 'City'),
                         style: GoogleFonts.cairo(
-                            color: C.textSecondary,
+                            color: _secondary(context),
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 8),
                     Wrap(
@@ -705,7 +726,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                           },
                           selectedColor: C.cyan.withValues(alpha: 0.2),
                           labelStyle: GoogleFonts.cairo(
-                            color: selected ? C.cyan : C.textSecondary,
+                            color: selected ? C.cyan : _secondary(context),
                             fontWeight: FontWeight.w700,
                           ),
                         );
@@ -714,7 +735,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     const SizedBox(height: 14),
                     Text(_tr('الفئة', 'Category'),
                         style: GoogleFonts.cairo(
-                            color: C.textSecondary,
+                            color: _secondary(context),
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 8),
                     Wrap(
@@ -738,7 +759,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                           selectedColor: C.cyan.withValues(alpha: 0.2),
                           checkmarkColor: C.cyan,
                           labelStyle: GoogleFonts.cairo(
-                            color: selected ? C.cyan : C.textSecondary,
+                            color: selected ? C.cyan : _secondary(context),
                           ),
                         );
                       }).toList(),
@@ -746,7 +767,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     const SizedBox(height: 14),
                     Text(_tr('المرافق', 'Amenities'),
                         style: GoogleFonts.cairo(
-                            color: C.textSecondary,
+                            color: _secondary(context),
                             fontWeight: FontWeight.w700)),
                     const SizedBox(height: 8),
                     Wrap(
@@ -770,7 +791,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                           selectedColor: C.cyan.withValues(alpha: 0.2),
                           checkmarkColor: C.cyan,
                           labelStyle: GoogleFonts.cairo(
-                            color: selected ? C.cyan : C.textSecondary,
+                            color: selected ? C.cyan : _secondary(context),
                           ),
                         );
                       }).toList(),
@@ -782,7 +803,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                         'Price range (${priceRange.start.toInt()} - ${priceRange.end.toInt()} ${currencyLabel(context)})',
                       ),
                       style: GoogleFonts.cairo(
-                        color: C.textSecondary,
+                        color: _secondary(context),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -811,7 +832,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                       title: Text(
                         _tr('تفعيل فلتر المسافة', 'Enable distance filter'),
                         style: GoogleFonts.cairo(
-                          color: C.textSecondary,
+                          color: _secondary(context),
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -826,7 +847,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                                 'Hide gyms farther than selected distance',
                               ),
                         style: GoogleFonts.cairo(
-                          color: C.textMuted,
+                          color: _muted(context),
                           fontSize: 12,
                         ),
                       ),
@@ -837,8 +858,9 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                         'Distance from your location (${distanceKm.toStringAsFixed(0)} km)',
                       ),
                       style: GoogleFonts.cairo(
-                        color:
-                            useDistanceFilter ? C.textSecondary : C.textMuted,
+                        color: useDistanceFilter
+                            ? _secondary(context)
+                            : _muted(context),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -923,12 +945,15 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: C.surface,
+        color: _surface(context),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         border: Border(top: BorderSide(color: C.cyan.withValues(alpha: 0.28))),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.42),
+            color: Colors.black.withValues(
+                alpha: Theme.of(context).brightness == Brightness.dark
+                    ? 0.42
+                    : 0.12),
             blurRadius: 20,
           ),
         ],
@@ -940,7 +965,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: C.border,
+              color: _divider(context),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -967,7 +992,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     Text(
                       point.partner.name,
                       style: GoogleFonts.cairo(
-                        color: C.textPrimary,
+                        color: _onSurface(context),
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
                       ),
@@ -975,13 +1000,13 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     Text(
                       location.name,
                       style: GoogleFonts.cairo(
-                          color: C.textSecondary, fontSize: 12),
+                          color: _secondary(context), fontSize: 12),
                     ),
                     if (distance != null)
                       Text(
                         _distanceText(distance),
-                        style:
-                            GoogleFonts.cairo(color: C.textMuted, fontSize: 11),
+                        style: GoogleFonts.cairo(
+                            color: _muted(context), fontSize: 11),
                       ),
                   ],
                 ),
@@ -998,8 +1023,8 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     ),
                   ),
                   Text(_tr('لكل زيارة', 'Per visit'),
-                      style:
-                          GoogleFonts.cairo(color: C.textMuted, fontSize: 10)),
+                      style: GoogleFonts.cairo(
+                          color: _muted(context), fontSize: 10)),
                 ],
               ),
             ],
