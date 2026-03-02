@@ -449,52 +449,78 @@ class _ScanFrame extends StatelessWidget {
     const size = 36.0;
     const stroke = 4.0;
 
-    Widget corner(Alignment align, BorderRadius radius) {
+    Widget corner(Alignment align) {
+      final drawTop = align.y <= 0;
+      final drawBottom = align.y >= 0;
+      final drawLeft = align.x <= 0;
+      final drawRight = align.x >= 0;
+
       return Align(
         alignment: align,
-        child: Container(
+        child: SizedBox(
           width: size,
           height: size,
-          decoration: BoxDecoration(
-            borderRadius: radius,
-            border: Border(
-              top: BorderSide(
-                color: align.y <= 0 ? C.cyan : Colors.transparent,
-                width: stroke,
-              ),
-              bottom: BorderSide(
-                color: align.y >= 0 ? C.cyan : Colors.transparent,
-                width: stroke,
-              ),
-              left: BorderSide(
-                color: align.x <= 0 ? C.cyan : Colors.transparent,
-                width: stroke,
-              ),
-              right: BorderSide(
-                color: align.x >= 0 ? C.cyan : Colors.transparent,
-                width: stroke,
-              ),
-            ),
+          child: Stack(
+            children: [
+              if (drawTop)
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    height: stroke,
+                    width: size,
+                    decoration: BoxDecoration(
+                      color: C.cyan,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+              if (drawBottom)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    height: stroke,
+                    width: size,
+                    decoration: BoxDecoration(
+                      color: C.cyan,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+              if (drawLeft)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    width: stroke,
+                    height: size,
+                    decoration: BoxDecoration(
+                      color: C.cyan,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+              if (drawRight)
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: stroke,
+                    height: size,
+                    decoration: BoxDecoration(
+                      color: C.cyan,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
       );
     }
 
     return [
-      corner(Alignment.topLeft,
-          const BorderRadius.only(topLeft: Radius.circular(12))),
-      corner(
-        Alignment.topRight,
-        const BorderRadius.only(topRight: Radius.circular(12)),
-      ),
-      corner(
-        Alignment.bottomLeft,
-        const BorderRadius.only(bottomLeft: Radius.circular(12)),
-      ),
-      corner(
-        Alignment.bottomRight,
-        const BorderRadius.only(bottomRight: Radius.circular(12)),
-      ),
+      corner(Alignment.topLeft),
+      corner(Alignment.topRight),
+      corner(Alignment.bottomLeft),
+      corner(Alignment.bottomRight),
     ];
   }
 }
