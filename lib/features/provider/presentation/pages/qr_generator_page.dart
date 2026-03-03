@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/theme_text.dart';
 
 class QrGeneratorPage extends StatefulWidget {
   final String partnerId;
@@ -251,12 +252,12 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
           title,
           style: GoogleFonts.cairo(
             fontWeight: FontWeight.w700,
-            color: C.textPrimary,
+            color: appTextPrimary(context),
           ),
         ),
         content: Text(
           body,
-          style: GoogleFonts.cairo(color: C.textSecondary),
+          style: GoogleFonts.cairo(color: appTextSecondary(context)),
         ),
         actions: [
           TextButton(
@@ -400,7 +401,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                   child: Text(
                       _tr('لا توجد فروع مرتبطة بهذا النادي',
                           'No branches linked to this gym'),
-                      style: GoogleFonts.cairo(color: C.textMuted)))
+                      style: GoogleFonts.cairo(color: appTextMuted(context))))
               : ListView.builder(
                   padding: const EdgeInsets.all(20),
                   itemCount: _locations.length,
@@ -540,7 +541,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                           _tr('اطبع هذا الرمز وضعه عند مدخل النادي',
                               'Print this code and place it at gym entrance'),
                           style: GoogleFonts.cairo(
-                              color: C.textMuted, fontSize: 12)),
+                              color: appTextMuted(context), fontSize: 12)),
                       if (!_isAdmin && hasReview) ...[
                         const SizedBox(height: 10),
                         _buildReviewNotice(
@@ -665,14 +666,16 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                   )
                 : Column(
                     children: [
-                      const Icon(Icons.qr_code_2, size: 64, color: C.textMuted),
+                      Icon(Icons.qr_code_2,
+                          size: 64, color: appTextMuted(context)),
                       const SizedBox(height: 12),
                       Text(
                           _isAdmin
                               ? _tr(
                                   'لم يُنشأ رمز QR بعد', 'No QR generated yet')
                               : _tr('لا يوجد QR فعال بعد', 'No active QR yet'),
-                          style: GoogleFonts.cairo(color: C.textMuted)),
+                          style:
+                              GoogleFonts.cairo(color: appTextMuted(context))),
                       if (!_isAdmin) ...[
                         const SizedBox(height: 8),
                         Text(
@@ -683,7 +686,9 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
                                   'QR creation/regeneration requires admin approval'),
                           textAlign: TextAlign.center,
                           style: GoogleFonts.cairo(
-                              color: hasPendingRequest ? C.gold : C.textMuted,
+                              color: hasPendingRequest
+                                  ? C.gold
+                                  : appTextMuted(context),
                               fontSize: 12),
                         ),
                         if (hasReview) ...[
@@ -790,7 +795,7 @@ class _QrGeneratorPageState extends State<QrGeneratorPage> {
             Text(
               '${_tr('ملاحظة الإدارة', 'Admin note')}: $notes',
               style: GoogleFonts.cairo(
-                color: C.textSecondary,
+                color: appTextSecondary(context),
                 fontSize: 12,
               ),
             ),

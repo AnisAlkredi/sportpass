@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/theme_text.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/glass_card.dart';
 
@@ -162,12 +163,12 @@ class _GymSetupPageState extends State<GymSetupPage> {
             Text(_tr('اسم النادي', 'Gym name'),
                 style: GoogleFonts.cairo(
                     fontWeight: FontWeight.w600,
-                    color: C.textPrimary,
+                    color: appTextPrimary(context),
                     fontSize: 15)),
             const SizedBox(height: 8),
             TextField(
               controller: _nameCtrl,
-              style: GoogleFonts.cairo(color: C.textPrimary),
+              style: GoogleFonts.cairo(color: appTextPrimary(context)),
               decoration: InputDecoration(
                 hintText: _tr('مثال: Olympia Health Club',
                     'Example: Olympia Health Club'),
@@ -181,7 +182,7 @@ class _GymSetupPageState extends State<GymSetupPage> {
             Text(_tr('تصنيف النادي', 'Gym category'),
                 style: GoogleFonts.cairo(
                     fontWeight: FontWeight.w600,
-                    color: C.textPrimary,
+                    color: appTextPrimary(context),
                     fontSize: 15)),
             const SizedBox(height: 12),
             Wrap(
@@ -209,7 +210,9 @@ class _GymSetupPageState extends State<GymSetupPage> {
                         const SizedBox(width: 6),
                         Text(_tr(e.value['label']!, _categoryEn(e.key)),
                             style: GoogleFonts.cairo(
-                              color: selected ? Colors.white : C.textSecondary,
+                              color: selected
+                                  ? Colors.white
+                                  : appTextSecondary(context),
                               fontWeight:
                                   selected ? FontWeight.w700 : FontWeight.w400,
                               fontSize: 13,
@@ -227,12 +230,12 @@ class _GymSetupPageState extends State<GymSetupPage> {
             Text(_tr('وصف النادي (اختياري)', 'Gym description (optional)'),
                 style: GoogleFonts.cairo(
                     fontWeight: FontWeight.w600,
-                    color: C.textPrimary,
+                    color: appTextPrimary(context),
                     fontSize: 15)),
             const SizedBox(height: 8),
             TextField(
               controller: _descCtrl,
-              style: GoogleFonts.cairo(color: C.textPrimary),
+              style: GoogleFonts.cairo(color: appTextPrimary(context)),
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: _tr('اكتب وصفاً مختصراً يجذب الرياضيين...',
@@ -272,11 +275,12 @@ class _GymSetupPageState extends State<GymSetupPage> {
             const SizedBox(height: 16),
 
             GlassCard(
-              borderColor: C.textMuted.withValues(alpha: 0.2),
+              borderColor: appTextMuted(context).withValues(alpha: 0.2),
               padding: const EdgeInsets.all(14),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline, color: C.textMuted, size: 18),
+                  Icon(Icons.info_outline,
+                      color: appTextMuted(context), size: 18),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -285,7 +289,9 @@ class _GymSetupPageState extends State<GymSetupPage> {
                         'Platform fee is 20%, deducted automatically per visit. You set the price paid by the athlete.',
                       ),
                       style: GoogleFonts.cairo(
-                          color: C.textMuted, fontSize: 11, height: 1.5),
+                          color: appTextMuted(context),
+                          fontSize: 11,
+                          height: 1.5),
                     ),
                   ),
                 ],

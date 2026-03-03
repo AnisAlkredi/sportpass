@@ -48,7 +48,11 @@ class _MyGymPageState extends State<MyGymPage> {
   Future<void> _load() async {
     final sb = Supabase.instance.client;
     final uid = sb.auth.currentUser?.id;
-    if (uid == null) return;
+    if (uid == null) {
+      if (!mounted) return;
+      setState(() => _loading = false);
+      return;
+    }
     try {
       final profile = await sb
           .from('profiles')
@@ -67,8 +71,10 @@ class _MyGymPageState extends State<MyGymPage> {
             .select()
             .eq('partner_id', _partner!['id']);
       }
+      if (!mounted) return;
       setState(() => _loading = false);
     } catch (_) {
+      if (!mounted) return;
       setState(() => _loading = false);
     }
   }

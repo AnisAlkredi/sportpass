@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/theme_text.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/utils.dart';
 
@@ -82,7 +83,7 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: C.textPrimary),
+          icon: Icon(Icons.arrow_back_rounded, color: appTextPrimary(context)),
           onPressed: _exitPage,
           tooltip: _tr('رجوع', 'Back'),
         ),
@@ -140,12 +141,13 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
                         child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.sensors_off,
-                              size: 64, color: C.textMuted),
+                          Icon(Icons.sensors_off,
+                              size: 64, color: appTextMuted(context)),
                           const SizedBox(height: 12),
                           Text(
                               _tr('لا توجد تسجيلات دخول', 'No check-ins found'),
-                              style: GoogleFonts.cairo(color: C.textMuted)),
+                              style: GoogleFonts.cairo(
+                                  color: appTextMuted(context))),
                         ],
                       ))
                     : RefreshIndicator(
@@ -181,7 +183,8 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis),
             Text(label,
-                style: GoogleFonts.cairo(color: C.textMuted, fontSize: 9)),
+                style: GoogleFonts.cairo(
+                    color: appTextMuted(context), fontSize: 9)),
           ],
         ),
       ),
@@ -204,7 +207,7 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
         ),
         child: Text(label,
             style: GoogleFonts.cairo(
-                color: selected ? C.cyan : C.textMuted,
+                color: selected ? C.cyan : appTextMuted(context),
                 fontSize: 12,
                 fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
       ),
@@ -263,11 +266,11 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
                     Text(userName,
                         style: GoogleFonts.cairo(
                             fontWeight: FontWeight.w600,
-                            color: C.textPrimary,
+                            color: appTextPrimary(context),
                             fontSize: 14)),
                     Text(userPhone,
                         style: GoogleFonts.cairo(
-                            color: C.textMuted, fontSize: 11)),
+                            color: appTextMuted(context), fontSize: 11)),
                   ],
                 ),
               ),
@@ -294,7 +297,8 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
                                 ? 'en'
                                 : 'ar',
                           ).format(ts),
-                    style: GoogleFonts.cairo(color: C.textMuted, fontSize: 10),
+                    style: GoogleFonts.cairo(
+                        color: appTextMuted(context), fontSize: 10),
                   ),
                 ],
               ),
@@ -303,12 +307,12 @@ class _CheckinMonitorPageState extends State<CheckinMonitorPage> {
           const SizedBox(height: 8),
           Row(
             children: [
-              const Icon(Icons.location_on, size: 14, color: C.textMuted),
+              Icon(Icons.location_on, size: 14, color: appTextMuted(context)),
               const SizedBox(width: 4),
               Expanded(
                   child: Text(locName,
                       style: GoogleFonts.cairo(
-                          color: C.textSecondary, fontSize: 11))),
+                          color: appTextSecondary(context), fontSize: 11))),
               if (approved && commission > 0) ...[
                 Container(
                   padding:

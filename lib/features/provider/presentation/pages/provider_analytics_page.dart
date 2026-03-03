@@ -6,6 +6,7 @@ import 'package:fl_chart/fl_chart.dart';
 
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/theme_text.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/utils.dart';
 
@@ -109,7 +110,7 @@ class _ProviderAnalyticsPageState extends State<ProviderAnalyticsPage> {
                     Text(_tr('ساعات الذروة', 'Peak hours'),
                         style: GoogleFonts.cairo(
                             fontWeight: FontWeight.w700,
-                            color: C.textPrimary,
+                            color: appTextPrimary(context),
                             fontSize: 16)),
                     const SizedBox(height: 16),
                     SizedBox(
@@ -130,7 +131,8 @@ class _ProviderAnalyticsPageState extends State<ProviderAnalyticsPage> {
                                     getTitlesWidget: (v, _) => Text(
                                         '${v.toInt()}',
                                         style: GoogleFonts.cairo(
-                                            color: C.textMuted, fontSize: 9)))),
+                                            color: appTextMuted(context),
+                                            fontSize: 9)))),
                           ),
                           borderData: FlBorderData(show: false),
                           gridData: const FlGridData(show: false),

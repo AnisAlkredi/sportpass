@@ -12,6 +12,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/theme_text.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/glass_card.dart';
 
@@ -366,7 +367,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
             _label(_tr('اسم الفرع', 'Branch name')),
             TextField(
               controller: _nameCtrl,
-              style: GoogleFonts.cairo(color: C.textPrimary),
+              style: GoogleFonts.cairo(color: appTextPrimary(context)),
               decoration: InputDecoration(
                   hintText:
                       _tr('مثال: فرع المالكي', 'Example: Al-Malki branch'),
@@ -377,7 +378,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
             _label(_tr('العنوان', 'Address')),
             TextField(
               controller: _addressCtrl,
-              style: GoogleFonts.cairo(color: C.textPrimary),
+              style: GoogleFonts.cairo(color: appTextPrimary(context)),
               decoration: InputDecoration(
                   hintText: _tr('دمشق - المالكي', 'Damascus - Al-Malki'),
                   prefixIcon: const Icon(Icons.pin_drop, color: C.cyan)),
@@ -440,8 +441,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
                     controller: _latCtrl,
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true, signed: true),
-                    style:
-                        GoogleFonts.cairo(color: C.textPrimary, fontSize: 13),
+                    style: GoogleFonts.cairo(
+                        color: appTextPrimary(context), fontSize: 13),
                     decoration:
                         InputDecoration(labelText: _tr('خط العرض', 'Latitude')),
                     onSubmitted: (_) {
@@ -459,8 +460,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
                     controller: _lngCtrl,
                     keyboardType: const TextInputType.numberWithOptions(
                         decimal: true, signed: true),
-                    style:
-                        GoogleFonts.cairo(color: C.textPrimary, fontSize: 13),
+                    style: GoogleFonts.cairo(
+                        color: appTextPrimary(context), fontSize: 13),
                     decoration: InputDecoration(
                         labelText: _tr('خط الطول', 'Longitude')),
                     onSubmitted: (_) {
@@ -618,7 +619,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
                     'أضف صورًا من الكاميرا أو المعرض لإظهار الفرع بشكل أفضل.',
                     'Add camera/gallery photos to present your branch better.',
                   ),
-                  style: GoogleFonts.cairo(color: C.textMuted, fontSize: 12),
+                  style: GoogleFonts.cairo(
+                      color: appTextMuted(context), fontSize: 12),
                 ),
               ).animate().fadeIn(delay: 190.ms),
 
@@ -628,11 +630,12 @@ class _AddLocationPageState extends State<AddLocationPage> {
             TextField(
               controller: _extraPhotoUrlsCtrl,
               maxLines: 3,
-              style: GoogleFonts.cairo(color: C.textPrimary),
+              style: GoogleFonts.cairo(color: appTextPrimary(context)),
               decoration: InputDecoration(
                 hintText: _tr('ضع روابط الصور مفصولة بفاصلة أو سطر جديد',
                     'Add image links separated by commas or new lines'),
-                hintStyle: GoogleFonts.cairo(color: C.textMuted, fontSize: 12),
+                hintStyle: GoogleFonts.cairo(
+                    color: appTextMuted(context), fontSize: 12),
                 prefixIcon: const Padding(
                   padding: EdgeInsets.only(bottom: 42),
                   child: Icon(Icons.image_outlined, color: C.cyan),
@@ -675,7 +678,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
         child: Text(text,
             style: GoogleFonts.cairo(
                 fontWeight: FontWeight.w600,
-                color: C.textPrimary,
+                color: appTextPrimary(context),
                 fontSize: 14)),
       );
 }

@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/theme_text.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../cubit/auth_cubit.dart';
@@ -56,7 +57,7 @@ class _OtpPageState extends State<OtpPage> {
                         style: GoogleFonts.cairo(
                             fontSize: 28,
                             fontWeight: FontWeight.w800,
-                            color: C.textPrimary))
+                            color: appTextPrimary(context)))
                     .animate()
                     .fadeIn(delay: 200.ms),
                 const SizedBox(height: 8),
@@ -65,8 +66,8 @@ class _OtpPageState extends State<OtpPage> {
                     'تم إرسال رمز التحقق إلى ${widget.phoneNumber}',
                     'A verification code has been sent to ${widget.phoneNumber}',
                   ),
-                  style:
-                      GoogleFonts.cairo(fontSize: 14, color: C.textSecondary),
+                  style: GoogleFonts.cairo(
+                      fontSize: 14, color: appTextSecondary(context)),
                   textAlign: TextAlign.center,
                 ).animate().fadeIn(delay: 300.ms),
                 const SizedBox(height: 32),
@@ -82,13 +83,13 @@ class _OtpPageState extends State<OtpPage> {
                         style: GoogleFonts.cairo(
                             fontSize: 28,
                             fontWeight: FontWeight.w700,
-                            color: C.textPrimary,
+                            color: appTextPrimary(context),
                             letterSpacing: 8),
                         decoration: InputDecoration(
                           counterText: '',
                           hintText: '000000',
                           hintStyle: GoogleFonts.cairo(
-                              color: C.textMuted,
+                              color: appTextMuted(context),
                               fontSize: 28,
                               letterSpacing: 8),
                         ),

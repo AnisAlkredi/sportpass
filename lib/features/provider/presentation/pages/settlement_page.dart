@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/theme_text.dart';
 import '../../../../core/widgets/glass_card.dart';
 import '../../../../core/widgets/utils.dart';
 
@@ -146,7 +147,7 @@ class _SettlementPageState extends State<SettlementPage> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(_tr('طلب تسوية', 'Request settlement'),
             style: GoogleFonts.cairo(
-                fontWeight: FontWeight.w700, color: C.textPrimary)),
+                fontWeight: FontWeight.w700, color: appTextPrimary(context))),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,13 +155,13 @@ class _SettlementPageState extends State<SettlementPage> {
             Text(
                 _tr('هل أنت متأكد من طلب تسوية المبلغ التالي؟',
                     'Are you sure you want to request settlement for this amount?'),
-                style: GoogleFonts.cairo(color: C.textSecondary)),
+                style: GoogleFonts.cairo(color: appTextSecondary(context))),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(_tr('المبلغ الصافي:', 'Net amount:'),
-                    style: GoogleFonts.cairo(color: C.textMuted)),
+                    style: GoogleFonts.cairo(color: appTextMuted(context))),
                 Text(formatCurrency(context, _net),
                     style: GoogleFonts.cairo(
                         color: C.green,
@@ -173,10 +174,11 @@ class _SettlementPageState extends State<SettlementPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(_tr('عدد الزيارات:', 'Visit count:'),
-                    style: GoogleFonts.cairo(color: C.textMuted)),
+                    style: GoogleFonts.cairo(color: appTextMuted(context))),
                 Text('$_checkinCount',
                     style: GoogleFonts.cairo(
-                        color: C.textPrimary, fontWeight: FontWeight.w600)),
+                        color: appTextPrimary(context),
+                        fontWeight: FontWeight.w600)),
               ],
             ),
           ],
@@ -264,7 +266,7 @@ class _SettlementPageState extends State<SettlementPage> {
                       Text(
                         '${DateFormat('yyyy/MM/dd', AppLocalizations.of(context).isEnglish ? 'en' : 'ar').format(_dateRange!.start)} → ${DateFormat('yyyy/MM/dd', AppLocalizations.of(context).isEnglish ? 'en' : 'ar').format(_dateRange!.end)}',
                         style: GoogleFonts.cairo(
-                            color: C.textSecondary, fontSize: 13),
+                            color: appTextSecondary(context), fontSize: 13),
                       ),
                     ],
                   ),
@@ -328,7 +330,7 @@ class _SettlementPageState extends State<SettlementPage> {
                 Text(_tr('تفصيل أسبوعي', 'Weekly breakdown'),
                     style: GoogleFonts.cairo(
                         fontWeight: FontWeight.w700,
-                        color: C.textPrimary,
+                        color: appTextPrimary(context),
                         fontSize: 16)),
                 const SizedBox(height: 12),
 
@@ -339,7 +341,7 @@ class _SettlementPageState extends State<SettlementPage> {
                     child: Text(
                         _tr('لا توجد بيانات في هذه الفترة',
                             'No data in this period'),
-                        style: GoogleFonts.cairo(color: C.textMuted)),
+                        style: GoogleFonts.cairo(color: appTextMuted(context))),
                   )),
 
                 ..._weeklyBreakdown.asMap().entries.map((entry) {
@@ -363,7 +365,7 @@ class _SettlementPageState extends State<SettlementPage> {
                             Text('${_tr('أسبوع', 'Week')} ${w['week']}',
                                 style: GoogleFonts.cairo(
                                     fontWeight: FontWeight.w700,
-                                    color: C.textPrimary)),
+                                    color: appTextPrimary(context))),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 8, vertical: 3),
@@ -387,7 +389,7 @@ class _SettlementPageState extends State<SettlementPage> {
                                     _tr('إجمالي', 'Total'),
                                     formatCurrency(
                                         context, w['gross'] as double),
-                                    C.textSecondary)),
+                                    appTextSecondary(context))),
                             Expanded(
                                 child: _miniInfo(
                                     _tr('عمولة', 'Fee'),
@@ -436,7 +438,9 @@ class _SettlementPageState extends State<SettlementPage> {
                 color: color, fontSize: 11, fontWeight: FontWeight.w700),
             maxLines: 1,
             overflow: TextOverflow.ellipsis),
-        Text(label, style: GoogleFonts.cairo(color: C.textMuted, fontSize: 10)),
+        Text(label,
+            style:
+                GoogleFonts.cairo(color: appTextMuted(context), fontSize: 10)),
       ],
     );
   }
