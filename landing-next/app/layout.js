@@ -10,19 +10,24 @@ const cairo = Cairo({
 const tajawal = Tajawal({
   variable: "--font-tajawal",
   subsets: ["arabic", "latin"],
-  weight: ["700", "800"],
+  weight: ["700", "800", "900"],
 });
 
 export const metadata = {
-  title: "SportPass للشركاء | انضم كنادي رياضي",
+  title: "SportPass | Train Without Subscription",
   description:
-    "صفحة شراكة SportPass للأندية الرياضية في سوريا: زبائن إضافيون بدون اشتراك شهري مع نظام QR وتقسيم 80% للنادي.",
+    "SportPass منصة دخول نوادي ذكية: اشحن المحفظة، اختر النادي، امسح QR، وادفع فقط عند التمرين.",
+  icons: {
+    icon: [{ url: "/favicon.ico" }],
+    shortcut: ["/favicon.ico"],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ar" dir="rtl">
-      <body className={`${cairo.variable} ${tajawal.variable}`}>{children}</body>
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <body className={`${cairo.variable} ${tajawal.variable} antialiased`}>{children}</body>
     </html>
   );
 }
