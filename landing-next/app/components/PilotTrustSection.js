@@ -1,9 +1,15 @@
 const trustPoints = [
-  "برنامج شركاء المرحلة الأولى لمدة 3 أشهر",
-  "عدد محدود من النوادي في البداية",
-  "مراجعة واعتماد يدوي لضمان الجودة",
-  "فريق دعم تشغيلي مباشر خلال فترة التجربة",
-  "مصمم خصيصًا للسوق السوري",
+  "عدد محدود من النوادي في أول 3 أشهر",
+  "مراجعة واعتماد يدوي لكل شريك قبل التفعيل",
+  "تهيئة تشغيلية مباشرة للفريق داخل النادي",
+  "متابعة أسبوعية لمؤشرات الزيارات والدخل",
+  "نظام موحد مناسب للسوق السوري",
+];
+
+const pilotPlan = [
+  { month: "الشهر 1", task: "اعتماد الشركاء وتجهيز الفروع" },
+  { month: "الشهر 2", task: "تشغيل فعلي + تحسين التحويل داخل النادي" },
+  { month: "الشهر 3", task: "تقييم النتائج وتوسيع الشراكة" },
 ];
 
 export default function PilotTrustSection() {
@@ -11,7 +17,7 @@ export default function PilotTrustSection() {
     <section className="container section" id="pilot-trust">
       <div className="section-head reveal">
         <p className="eyebrow">الثقة والمرحلة التجريبية</p>
-        <h2>انضم مبكرًا واستفد من برنامج الشركاء المؤسسين</h2>
+        <h2>برنامج مؤسسين مصمم للنوادي الجادة في النمو</h2>
       </div>
 
       <div className="trust-layout reveal">
@@ -22,18 +28,12 @@ export default function PilotTrustSection() {
         </ul>
 
         <div className="pilot-timeline">
-          <div>
-            <span>الشهر 1</span>
-            <p>تجهيز الحسابات والفروع</p>
-          </div>
-          <div>
-            <span>الشهر 2</span>
-            <p>تشغيل فعلي وتتبع الأداء</p>
-          </div>
-          <div>
-            <span>الشهر 3</span>
-            <p>تقييم النتائج وخطة التوسع</p>
-          </div>
+          {pilotPlan.map((item) => (
+            <div key={item.month}>
+              <span>{item.month}</span>
+              <p>{item.task}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>

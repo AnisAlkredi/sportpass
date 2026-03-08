@@ -129,6 +129,56 @@ SUPABASE_ANON_KEY=eyJ...
 # Done! 🎉
 ```
 
+## 🌐 Web App v1 (Flutter Web + Landing)
+
+لإصدار نسخة Web App وربطها مباشرة بزر `سجّل ناديك` داخل صفحة الهبوط:
+
+```bash
+cd ~/Downloads/SportPass_v2
+./tools/publish_webapp_to_landing.sh
+cd landing-next
+npm run build
+```
+
+- سكربت النشر يبني Flutter Web بقاعدة `/webapp/`.
+- ثم ينسخ الخرج إلى: `landing-next/public/webapp`.
+- رابط النسخة يصبح: `/webapp/index.html`.
+- زر `سجّل ناديك` في اللاندنغ يستخدم:
+  - `NEXT_PUBLIC_PARTNER_WEBAPP_URL` إذا كان معرفًا.
+  - وإلا افتراضيًا `/webapp/index.html`.
+
+### Important: New SYP Cutover For Existing Databases
+
+If your project was running before the new Syrian Pound redenomination rollout,
+you must apply:
+
+`supabase/2026_03_04_syp_new_currency_cutover.sql`
+
+This migration:
+- converts legacy stored financial values by `/100` (one-time),
+- updates `perform_checkin()` pricing rounding to nearest `5` SYP,
+- writes a migration marker (`system_migrations`) to prevent double conversion.
+
+After applying, verify quickly:
+
+```sql
+-- Should exist after migration
+select * from public.system_migrations
+where migration_key = 'syp_redenomination_2026_03_04';
+
+-- New-scale prices should be small ranges (example: 80, 120, 150...)
+select max(base_price) as max_base_price from public.partner_locations;
+select max(final_price) as max_final_price from public.checkins;
+```
+
+Or run automated checks:
+
+```bash
+python3 tools/verify_new_syp_scale.py \
+  --admin-email anis@sport.com \
+  --admin-password password
+```
+
 ---
 
 ## 📊 How It Works
@@ -173,20 +223,20 @@ Gym accumulates earnings in gym wallet
 
 ## 💰 Pricing Example
 
-**Gym sets:** `base_price = 10,000 SYP` (their 80% share)
+**Gym sets:** `base_price = 80 SYP` (their 80% share)
 
 **System calculates:**
 ```
-user_price = CEIL((10,000 / 0.80) / 500) × 500 = 12,500 SYP
-platform_fee = 12,500 - 10,000 = 2,500 SYP
+user_price = CEIL((80 / 0.80) / 5) × 5 = 100 SYP
+platform_fee = 100 - 80 = 20 SYP
 ```
 
 **On check-in:**
-- User pays: **12,500 SYP** (100%)
-- Gym receives: **10,000 SYP** (80%)
-- Platform receives: **2,500 SYP** (20%)
+- User pays: **100 SYP** (100%)
+- Gym receives: **80 SYP** (80%)
+- Platform receives: **20 SYP** (20%)
 
-All amounts are **rounded up to nearest 500 SYP**.
+All amounts are **rounded up to nearest 5 SYP**.
 
 ---
 
@@ -250,7 +300,7 @@ All amounts are **rounded up to nearest 500 SYP**.
 
 # Expected output:
 # ✅ 3 users created (admin, athlete, gym owner)
-# ✅ 1 top-up approved (athlete balance = 500,000 SYP)
+# ✅ 1 top-up approved (athlete balance = 500 SYP)
 # ✅ 1 check-in completed (balance deducted, gym credited)
 # ✅ All wallet balances match ledger sums
 ```

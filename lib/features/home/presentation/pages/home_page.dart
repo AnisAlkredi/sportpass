@@ -291,7 +291,7 @@ class _HomePageState extends State<HomePage> {
                     color: Colors.white,
                   )),
               const SizedBox(height: 4),
-              Text(context.trd('ليرة سورية', 'SYP'),
+              Text(context.trd('ل.س جديدة', 'New SYP'),
                   style:
                       GoogleFonts.cairo(color: Colors.white60, fontSize: 12)),
             ],

@@ -233,6 +233,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
     final name = profile?['name'] ?? _tr('مستخدم', 'User');
     final isPending = status == 'pending';
     final proofUrl = p['proof_url'] as String?;
+    final notes = p['notes']?.toString() ?? '';
+    final txId =
+        _extractTopupValue(notes, 'TX', fallback: p['tx_id']?.toString()) ??
+            '-';
+    final method = _extractTopupValue(notes, 'Method') ??
+        _extractTopupValue(notes, 'طريقة') ??
+        _tr('غير محدد', 'Not specified');
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -278,7 +285,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           Text('${_tr('المبلغ', 'Amount')}: ${formatCurrency(context, amount)}',
               style: GoogleFonts.cairo(
                   color: C.cyan, fontSize: 14, fontWeight: FontWeight.w600)),
-          Text('${_tr('رقم المعاملة', 'Transaction ID')}: ${p['tx_id'] ?? '-'}',
+          Text('${_tr('طريقة الدفع', 'Payment method')}: $method',
+              style: GoogleFonts.cairo(color: _muted(context), fontSize: 11)),
+          Text('${_tr('رقم المعاملة', 'Transaction ID')}: $txId',
               style: GoogleFonts.cairo(color: _muted(context), fontSize: 11)),
           if (proofUrl != null && proofUrl.isNotEmpty) ...[
             const SizedBox(height: 10),
@@ -351,6 +360,26 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
         ],
       ),
     );
+  }
+
+  String? _extractTopupValue(
+    String notes,
+    String key, {
+    String? fallback,
+  }) {
+    if (notes.isNotEmpty) {
+      final match = RegExp(
+        '$key\\s*:\\s*([^|\\n]+)',
+        caseSensitive: false,
+      ).firstMatch(notes);
+      final value = match?.group(1)?.trim();
+      if (value != null && value.isNotEmpty) {
+        return value;
+      }
+    }
+    if (fallback == null) return null;
+    final clean = fallback.trim();
+    return clean.isEmpty ? null : clean;
   }
 
   Widget _buildQrRegenCard(Map<String, dynamic> request) {
@@ -999,8 +1028,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                         style: GoogleFonts.cairo(
                             color: _muted(context), fontSize: 12)),
                     Text(
-                        _tr('عمولة: 80/20 (ثابتة)',
-                            'Commission: 80/20 (fixed)'),
+                        _tr('عمولة المنصة 20% على النادي',
+                            'Platform commission 20% on gym side'),
                         style: GoogleFonts.cairo(color: C.gold, fontSize: 12)),
                   ],
                 ),
@@ -1264,8 +1293,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                   itemBuilder: (c, i) {
                     final l = locations[i];
                     final isActive = l['is_active'] ?? false;
-                    final priceCtrl =
-                        TextEditingController(text: '${l['base_price']}');
+                    final basePriceStorage =
+                        (l['base_price'] as num?)?.toDouble() ?? 0;
+                    final priceCtrl = TextEditingController(
+                      text: sypStorageToDisplay(basePriceStorage)
+                          .toStringAsFixed(0),
+                    );
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: Column(
@@ -1294,7 +1327,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                           Row(
                             children: [
                               Text(
-                                  '${_tr('السعر الأساسي', 'Base price')} (${currencyLabel(context)}): ',
+                                  '${_tr('سعر الدخول النهائي', 'Final entry price')} (${currencyLabel(context)}): ',
                                   style: GoogleFonts.cairo(
                                       fontSize: 12,
                                       color: _secondary(context))),
@@ -1313,8 +1346,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                       contentPadding: EdgeInsets.symmetric(
                                           vertical: 8, horizontal: 8)),
                                   onSubmitted: (v) {
-                                    final p = double.tryParse(v);
-                                    if (p != null) {
+                                    final display = parseSypDisplayInput(v);
+                                    if (display != null) {
+                                      final p = sypDisplayToStorage(display);
                                       context
                                           .read<AdminCubit>()
                                           .updateLocationPrice(l['id'], p);
@@ -1327,8 +1361,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
                                 icon: const Icon(Icons.save,
                                     size: 18, color: C.green),
                                 onPressed: () {
-                                  final p = double.tryParse(priceCtrl.text);
-                                  if (p != null) {
+                                  final display =
+                                      parseSypDisplayInput(priceCtrl.text);
+                                  if (display != null) {
+                                    final p = sypDisplayToStorage(display);
                                     context
                                         .read<AdminCubit>()
                                         .updateLocationPrice(l['id'], p);

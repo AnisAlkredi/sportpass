@@ -1,48 +1,38 @@
 import LineIcon from "./LineIcon";
 
-const benefitCards = [
-  {
-    icon: "noFee",
-    title: "لا يوجد اشتراك شهري",
-    text: "تبدأ بدون أي تكلفة ثابتة. تدفع المنصة حصتها فقط عند وجود دخول فعلي.",
-  },
+const gymPoints = [
   {
     icon: "extraTraffic",
-    title: "دخول إضافي فقط",
-    text: "SportPass لا يلغي نظام ناديك؛ بل يضيف لك فئة عملاء جديدة فوق اشتراكاتك المعتادة.",
+    title: "عملاء جدد بدون تغيير نظامك",
+    text: "تستقبل زوارًا إضافيين بدون المساس باشتراكات النادي الحالية.",
+  },
+  {
+    icon: "noFee",
+    title: "لا رسوم شهرية ثابتة",
+    text: "الدفع للمنصة مرتبط بالدخولات الفعلية فقط.",
   },
   {
     icon: "qr",
-    title: "QR سريع عند الباب",
-    text: "كل فرع يحصل على QR واضح للدخول السريع بدون ازدحام أو تعقيد تشغيلي.",
-  },
-  {
-    icon: "transparency",
-    title: "شفافية مالية كاملة",
-    text: "كل عملية دخول موثقة. تعرف عدد الزيارات وقيمة حصتك بشكل لحظي.",
+    title: "تشغيل بسيط عند الباب",
+    text: "(QR) واضح لكل فرع لتسريع الدخول وتقليل الضغط على الاستقبال.",
   },
   {
     icon: "dashboard",
-    title: "لوحة أرباح واضحة",
-    text: "تقارير مبسطة تساعدك تعرف الفروع الأكثر نشاطًا ومواعيد الذروة اليومية.",
-  },
-  {
-    icon: "localMarket",
-    title: "مناسب للسوق السوري",
-    text: "هيكل تسعير وتجربة استخدام مصممة فعليًا لطبيعة الأندية الرياضية المحلية.",
+    title: "لوحة تحكم تشغيلية",
+    text: "تشوف الزيارات، أوقات الدخول، والإيراد لكل فرع بشكل لحظي.",
   },
 ];
 
 export default function PartnerBenefits() {
   return (
-    <section className="container section" id="partner-benefits">
+    <section className="container section" id="gym-benefits">
       <div className="section-head reveal">
-        <p className="eyebrow">لماذا ينضم صاحب النادي؟</p>
-        <h2>نمو إضافي بدون المخاطرة بتشغيلك الحالي</h2>
+        <p className="eyebrow">مزايا للنوادي</p>
+        <h2>دخل إضافي واضح بدون تعقيد تشغيلي</h2>
       </div>
 
       <div className="benefits-grid">
-        {benefitCards.map((card) => (
+        {gymPoints.map((card) => (
           <article className="benefit-card reveal" key={card.title}>
             <div className="benefit-card-head">
               <span className="icon-badge" aria-hidden="true">
@@ -54,6 +44,15 @@ export default function PartnerBenefits() {
           </article>
         ))}
       </div>
+
+      <article className="revenue-share-card reveal" aria-label="تقسيم الإيراد">
+        <h3>تقسيم الإيراد</h3>
+        <p>واضح وثابت لكل دخول عبر التطبيق:</p>
+        <div className="share-lines">
+          <strong>80% للنادي</strong>
+          <strong>20% للمنصة</strong>
+        </div>
+      </article>
     </section>
   );
 }

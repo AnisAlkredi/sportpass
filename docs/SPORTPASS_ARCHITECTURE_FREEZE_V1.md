@@ -59,17 +59,17 @@ platform_fee = user_price - base_price
 ```
 
 **Example:**  
-- Gym sets base_price = 10,000 SYP  
-- user_price = 10,000 / 0.80 = 12,500 SYP  
-- platform_fee = 12,500 - 10,000 = 2,500 SYP  
-- Gym receives 10,000. Platform receives 2,500. User pays 12,500.
+- Gym sets base_price = 80 SYP  
+- user_price = 80 / 0.80 = 100 SYP  
+- platform_fee = 100 - 80 = 20 SYP  
+- Gym receives 80. Platform receives 20. User pays 100.
 
 ### 1.4 Rounding Rule
 
-All user-facing prices are rounded **up** to the nearest 500 SYP.
+All user-facing prices are rounded **up** to the nearest 5 SYP.
 
 ```
-user_price = CEIL((base_price / 0.80) / 500) × 500
+user_price = CEIL((base_price / 0.80) / 5) × 5
 platform_fee = user_price - base_price
 ```
 
@@ -228,7 +228,7 @@ Admin > Gym Owner > Athlete
 
 ```
 1. User scans QR → perform_checkin() called
-2. user_price = CEIL((base_price / 0.80) / 500) × 500
+2. user_price = CEIL((base_price / 0.80) / 5) × 5
 3. platform_fee = user_price - base_price
 4. Lock User Wallet (SELECT ... FOR UPDATE)
 5. Verify balance >= user_price → else REJECT

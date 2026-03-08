@@ -254,11 +254,12 @@ class _PartnerDetailsPageState extends State<PartnerDetailsPage> {
               ),
               _pill(
                 Icons.paid_outlined,
-                '${_tr('حصة النادي', 'Gym share')} ${formatCurrency(context, location.basePrice)}',
+                '${_tr('سعر الدخول', 'Entry price')} ${formatCurrency(context, location.userPrice)}',
               ),
               _pill(
-                Icons.account_balance_wallet_outlined,
-                '${_tr('عمولة المنصة', 'Platform fee')} ${formatCurrency(context, location.platformFee)}',
+                Icons.verified_user_outlined,
+                _tr('السعر شامل والدخول فوري',
+                    'Price is final and instant access'),
               ),
             ],
           ),

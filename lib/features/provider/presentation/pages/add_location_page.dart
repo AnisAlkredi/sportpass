@@ -14,6 +14,7 @@ import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/theme_text.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/widgets/utils.dart';
 import '../../../../core/widgets/glass_card.dart';
 
 class AddLocationPage extends StatefulWidget {
@@ -28,6 +29,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
   final _addressCtrl = TextEditingController();
   final _latCtrl = TextEditingController(text: '33.5138');
   final _lngCtrl = TextEditingController(text: '36.2765');
+  final _entryPriceCtrl = TextEditingController(text: '100');
   final _extraPhotoUrlsCtrl = TextEditingController();
   final _imagePicker = ImagePicker();
   final MapController _mapCtrl = MapController();
@@ -63,6 +65,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
     _addressCtrl.dispose();
     _latCtrl.dispose();
     _lngCtrl.dispose();
+    _entryPriceCtrl.dispose();
     _extraPhotoUrlsCtrl.dispose();
     super.dispose();
   }
@@ -237,12 +240,23 @@ class _AddLocationPageState extends State<AddLocationPage> {
     }
     final lat = double.tryParse(_latCtrl.text.trim());
     final lng = double.tryParse(_lngCtrl.text.trim());
+    final entryPriceDisplay = parseSypDisplayInput(_entryPriceCtrl.text);
     if (lat == null || lng == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
             content: Text(
                 _tr('حدد موقعًا صحيحًا على الخريطة',
                     'Select a valid location on the map'),
+                style: GoogleFonts.cairo()),
+            backgroundColor: C.red),
+      );
+      return;
+    }
+    if (entryPriceDisplay == null || entryPriceDisplay <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                _tr('أدخل سعر دخول صحيح', 'Enter a valid entry price'),
                 style: GoogleFonts.cairo()),
             backgroundColor: C.red),
       );
@@ -274,6 +288,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
         ..._parseAdditionalPhotoUrls(),
       }.toList();
       final operatingHours = _buildOperatingHours();
+      final entryPriceStorage = sypDisplayToStorage(entryPriceDisplay);
       final payload = <String, dynamic>{
         'partner_id': widget.partnerId,
         'name': _nameCtrl.text.trim(),
@@ -281,7 +296,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
         'lat': lat,
         'lng': lng,
         'radius_m': _radius,
-        'base_price': 8000, // Default: admin will adjust
+        'base_price': entryPriceStorage,
         'is_active': false, // Requires admin approval
       };
       if (photos.isNotEmpty) {
@@ -291,8 +306,7 @@ class _AddLocationPageState extends State<AddLocationPage> {
         payload['operating_hours'] = operatingHours;
       }
 
-      // Note: base_price will be set by admin later
-      // Gym owner only provides location details
+      // Entry price is set by gym owner and kept pending until admin approval.
       await Supabase.instance.client.from('partner_locations').insert(payload);
 
       if (mounted) {
@@ -350,8 +364,8 @@ class _AddLocationPageState extends State<AddLocationPage> {
                   Expanded(
                     child: Text(
                       _tr(
-                        'سيقوم المدير بمراجعة الفرع وتحديد السعر قبل تفعيله',
-                        'The admin will review this branch and set the final price before activation',
+                        'سيقوم المدير بمراجعة الفرع قبل التفعيل. سعر الدخول الذي أدخلته هو السعر النهائي الذي يدفعه الرياضي.',
+                        'Admin will review the branch before activation. The price you enter is the final price paid by the athlete.',
                       ),
                       style: GoogleFonts.cairo(
                           color: Colors.white, fontSize: 13, height: 1.5),
@@ -490,6 +504,31 @@ class _AddLocationPageState extends State<AddLocationPage> {
               inactiveColor: C.surfaceAlt,
               onChanged: (v) => setState(() => _radius = v),
             ).animate().fadeIn(delay: 150.ms),
+
+            const SizedBox(height: 20),
+
+            _label(_tr('سعر الدخول النهائي', 'Final entry price')),
+            TextField(
+              controller: _entryPriceCtrl,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              style: GoogleFonts.cairo(color: appTextPrimary(context)),
+              decoration: InputDecoration(
+                labelText:
+                    '${_tr('سعر الدخول', 'Entry price')} (${currencyLabel(context)})',
+                hintText: _tr('مثال: 100', 'Example: 100'),
+                prefixIcon: const Icon(Icons.paid_rounded, color: C.cyan),
+              ),
+            ).animate().fadeIn(delay: 160.ms),
+            const SizedBox(height: 8),
+            Text(
+              _tr(
+                'الرياضي يدفع هذا السعر كما هو، وعمولة المنصة تُقتطع من حصة النادي.',
+                'Athletes pay this exact price; platform commission is deducted from the gym side.',
+              ),
+              style:
+                  GoogleFonts.cairo(color: appTextMuted(context), fontSize: 12),
+            ),
 
             const SizedBox(height: 20),
 

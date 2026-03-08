@@ -446,6 +446,90 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ).animate().fadeIn(delay: 280.ms),
+                const SizedBox(height: 16),
+                GlassCard(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading:
+                            const Icon(Icons.policy_outlined, color: C.cyan),
+                        title: Text(
+                          context.trd('سياسة الاستخدام', 'Usage policy'),
+                          style: GoogleFonts.cairo(
+                            fontWeight: FontWeight.w700,
+                            color: _onSurface(context),
+                          ),
+                        ),
+                        subtitle: Text(
+                          context.trd(
+                            'اطلع على السياسة الرسمية للتطبيق',
+                            'Read the official app policy',
+                          ),
+                          style: GoogleFonts.cairo(
+                            color: _secondary(context),
+                            fontSize: 12,
+                          ),
+                        ),
+                        trailing: Icon(Icons.chevron_right_rounded,
+                            color: _muted(context)),
+                        onTap: () => context.push(AppRouter.usagePolicy),
+                      ),
+                      Divider(color: C.border, height: 1),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.privacy_tip_outlined,
+                            color: C.cyan),
+                        title: Text(
+                          context.trd('سياسة الخصوصية', 'Privacy policy'),
+                          style: GoogleFonts.cairo(
+                            fontWeight: FontWeight.w700,
+                            color: _onSurface(context),
+                          ),
+                        ),
+                        subtitle: Text(
+                          context.trd(
+                            'كيف نحمي بياناتك ونتعامل معها',
+                            'How we handle and protect your data',
+                          ),
+                          style: GoogleFonts.cairo(
+                            color: _secondary(context),
+                            fontSize: 12,
+                          ),
+                        ),
+                        trailing: Icon(Icons.chevron_right_rounded,
+                            color: _muted(context)),
+                        onTap: () => context.push(AppRouter.privacyPolicy),
+                      ),
+                      Divider(color: C.border, height: 1),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.support_agent_outlined,
+                            color: C.cyan),
+                        title: Text(
+                          context.trd('اتصل بنا', 'Contact us'),
+                          style: GoogleFonts.cairo(
+                            fontWeight: FontWeight.w700,
+                            color: _onSurface(context),
+                          ),
+                        ),
+                        subtitle: Text(
+                          context.trd(
+                            'الدعم الفني والشكاوى والاستفسارات',
+                            'Support, complaints, and inquiries',
+                          ),
+                          style: GoogleFonts.cairo(
+                            color: _secondary(context),
+                            fontSize: 12,
+                          ),
+                        ),
+                        trailing: Icon(Icons.chevron_right_rounded,
+                            color: _muted(context)),
+                        onTap: () => context.push(AppRouter.contactUs),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn(delay: 320.ms),
                 const SizedBox(height: 24),
                 SizedBox(
                   width: double.infinity,

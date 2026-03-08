@@ -23,7 +23,7 @@ class PartnerLocation extends Equatable {
     this.city = 'Damascus',
     required this.lat,
     required this.lng,
-    this.basePrice = 8000,
+    this.basePrice = 80,
     this.radiusM = 150,
     this.amenities = const [],
     this.photos = const [],
@@ -31,13 +31,14 @@ class PartnerLocation extends Equatable {
     this.isActive = false,
   });
 
-  // Freeze V1: base_price represents gym 80% share.
+  // base_price is the final entry price paid by the athlete.
   double get userPrice {
-    final calculated = basePrice / 0.80;
-    return (calculated / 500).ceil() * 500;
+    return basePrice;
   }
 
-  double get platformFee => userPrice - basePrice;
+  double get platformFee => (userPrice * 0.20).roundToDouble();
+
+  double get gymNet => userPrice - platformFee;
 
   factory PartnerLocation.fromJson(Map<String, dynamic> j) => PartnerLocation(
         id: j['id'] as String,
@@ -47,7 +48,7 @@ class PartnerLocation extends Equatable {
         city: (j['city'] as String?) ?? 'Damascus',
         lat: (j['lat'] as num).toDouble(),
         lng: (j['lng'] as num).toDouble(),
-        basePrice: (j['base_price'] as num?)?.toDouble() ?? 8000,
+        basePrice: (j['base_price'] as num?)?.toDouble() ?? 80,
         radiusM: (j['radius_m'] as num?)?.toDouble() ?? 150,
         amenities: ((j['amenities'] as List?) ?? const [])
             .map((e) => e.toString())

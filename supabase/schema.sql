@@ -21,8 +21,8 @@ CREATE TYPE public.user_role AS ENUM ('athlete', 'gym_owner', 'admin');
 CREATE TYPE public.ledger_entry_type AS ENUM (
   'topup',                    -- User wallet credit (admin approved)
   'checkin_debit',            -- User wallet debit (gym visit)
-  'checkin_credit_gym',       -- Gym wallet credit (80% share)
-  'checkin_credit_platform',  -- Platform wallet credit (20% share)
+  'checkin_credit_gym',       -- Gym wallet credit (net after commission)
+  'checkin_credit_platform',  -- Platform wallet credit (commission)
   'refund',                   -- User wallet credit (reversal)
   'refund_debit_gym',         -- Gym wallet debit (reversal)
   'refund_debit_platform',    -- Platform wallet debit (reversal)
@@ -103,7 +103,7 @@ CREATE TABLE public.gym_wallets (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMENT ON TABLE public.gym_wallets IS 'Gym wallets holding ledger credits (80% share accumulator)';
+COMMENT ON TABLE public.gym_wallets IS 'Gym wallets holding net earnings after platform commission';
 COMMENT ON COLUMN public.gym_wallets.balance IS 'Unsettled earnings awaiting admin payout';
 COMMENT ON COLUMN public.gym_wallets.total_earned IS 'Lifetime earnings from check-ins';
 COMMENT ON COLUMN public.gym_wallets.total_settled IS 'Lifetime settled amount paid out';
@@ -120,7 +120,7 @@ CREATE TABLE public.platform_wallet (
     CONSTRAINT only_one_platform_wallet CHECK (id = '00000000-0000-0000-0000-000000000001')
 );
 
-COMMENT ON TABLE public.platform_wallet IS 'Singleton wallet holding platform commission (20% share)';
+COMMENT ON TABLE public.platform_wallet IS 'Singleton wallet holding platform commission';
 
 -- Insert the singleton platform wallet
 INSERT INTO public.platform_wallet (id) VALUES ('00000000-0000-0000-0000-000000000001');
@@ -205,7 +205,7 @@ CREATE TABLE public.partner_locations (
     lng DOUBLE PRECISION NOT NULL,
     radius_m DOUBLE PRECISION NOT NULL DEFAULT 150 CHECK (radius_m >= 50 AND radius_m <= 500),
     
-    -- Pricing (base_price is the gym's 80% share)
+    -- Pricing (base_price is the final entry price paid by athlete)
     base_price DECIMAL(12, 2) NOT NULL CHECK (base_price > 0),
     
     -- Metadata
@@ -220,7 +220,7 @@ CREATE TABLE public.partner_locations (
 );
 
 COMMENT ON TABLE public.partner_locations IS 'Physical gym branches with pricing and geo-fencing';
-COMMENT ON COLUMN public.partner_locations.base_price IS 'Gym share (80% of final user price)';
+COMMENT ON COLUMN public.partner_locations.base_price IS 'Final entry price charged to athlete';
 COMMENT ON COLUMN public.partner_locations.radius_m IS 'Geo-fence radius in meters (50-500)';
 
 -- -----------------------------------------------------------------------------
@@ -248,8 +248,8 @@ CREATE TABLE public.checkins (
     partner_location_id UUID NOT NULL REFERENCES public.partner_locations(id) ON DELETE CASCADE,
     
     -- Financial snapshot (immutable)
-    base_price DECIMAL(12, 2) NOT NULL,      -- Gym's 80% share
-    platform_fee DECIMAL(12, 2) NOT NULL,    -- Platform's 20% share
+    base_price DECIMAL(12, 2) NOT NULL,      -- Gym net amount after commission
+    platform_fee DECIMAL(12, 2) NOT NULL,    -- Platform commission
     final_price DECIMAL(12, 2) NOT NULL,     -- What user paid (100%)
     
     status public.checkin_status NOT NULL DEFAULT 'approved',
@@ -266,8 +266,8 @@ CREATE TABLE public.checkins (
 
 COMMENT ON TABLE public.checkins IS 'User gym check-in records with price snapshots';
 COMMENT ON COLUMN public.checkins.final_price IS 'Total amount user paid';
-COMMENT ON COLUMN public.checkins.base_price IS 'Amount credited to gym (80%)';
-COMMENT ON COLUMN public.checkins.platform_fee IS 'Amount credited to platform (20%)';
+COMMENT ON COLUMN public.checkins.base_price IS 'Net amount credited to gym after commission';
+COMMENT ON COLUMN public.checkins.platform_fee IS 'Amount credited to platform as commission';
 
 -- -----------------------------------------------------------------------------
 -- B11. SETTLEMENTS (Gym wallet payouts)
@@ -501,24 +501,41 @@ BEGIN
         );
     END IF;
 
-    -- Step 5: Calculate pricing per Freeze V1 formula
-    -- base_price is 80% share (what gym gets)
-    -- user_price = CEIL((base_price / 0.80) / 500) * 500
-    v_base_price := v_location.base_price;
-    v_user_price := CEIL((v_base_price / 0.80) / 500.0) * 500.0;
-    v_platform_fee := v_user_price - v_base_price;
+    -- Step 5: Calculate pricing
+    -- Gym enters final entry price once (what athlete pays).
+    -- Platform commission is deducted from gym side, not added to user.
+    v_user_price := v_location.base_price;
+    v_platform_fee := ROUND(v_user_price * 0.20, 0);
+    v_base_price := v_user_price - v_platform_fee;
+
+    -- Step 6: Ensure wallet rows exist (legacy/partial data safety)
+    INSERT INTO public.wallets (user_id, balance)
+    VALUES (v_user_id, 0)
+    ON CONFLICT (user_id) DO NOTHING;
+
+    INSERT INTO public.gym_wallets (partner_id, balance)
+    VALUES (v_partner.id, 0)
+    ON CONFLICT (partner_id) DO NOTHING;
+
+    INSERT INTO public.platform_wallet (id, balance, total_earned)
+    VALUES ('00000000-0000-0000-0000-000000000001', 0, 0)
+    ON CONFLICT (id) DO NOTHING;
 
     -- Step 6: Lock user wallet and check balance
     SELECT * INTO v_wallet 
     FROM public.wallets 
     WHERE user_id = v_user_id 
     FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Wallet row not found for user %', v_user_id;
+    END IF;
     
     IF v_wallet.balance < v_user_price THEN
         RETURN jsonb_build_object(
             'success', false,
             'code', 'LOW_BALANCE',
-            'message', 'رصيدك غير كافٍ. الكلفة: ' || v_user_price || ' ل.س',
+            'message', 'رصيدك غير كافٍ. الكلفة: ' || v_user_price || ' ل.س جديدة',
             'required', v_user_price,
             'balance', v_wallet.balance
         );
@@ -530,10 +547,19 @@ BEGIN
     WHERE partner_id = v_partner.id 
     FOR UPDATE;
 
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Gym wallet row not found for partner %', v_partner.id;
+    END IF;
+
     -- Step 8: Lock platform wallet
     SELECT * INTO v_platform_wallet 
     FROM public.platform_wallet 
+    WHERE id = '00000000-0000-0000-0000-000000000001'
     FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Platform wallet singleton row not found';
+    END IF;
 
     -- Step 9: Create checkin record
     INSERT INTO public.checkins (
@@ -1317,7 +1343,7 @@ INSERT INTO public.partner_locations (
         'Olympia - Mazzeh',
         'شارع مزة - قرب ساحة المحافظة',
         'Damascus', 'Syria',
-        33.5042, 36.2415, 200, 8000.00,
+        33.5042, 36.2415, 200, 100.00,
         ARRAY['weights', 'cardio', 'sauna']
     ),
     (
@@ -1326,7 +1352,7 @@ INSERT INTO public.partner_locations (
         'Golden - Abu Rummaneh',
         'أبو رمانة - شارع بغداد',
         'Damascus', 'Syria',
-        33.5185, 36.2820, 150, 12000.00,
+        33.5185, 36.2820, 150, 150.00,
         ARRAY['weights', 'cardio', 'pool', 'sauna']
     );
 

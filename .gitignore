@@ -49,3 +49,10 @@ app.*.map.json
 
 # Android generated build outputs
 /android/build/
+
+# Local reverse-engineering / tooling binaries (not project source)
+/analysis/
+/tools/android-build-tools/
+/tools/mitmproxy/
+/tools/jadx-1.5.4/
+/tools/jadx-1.5.4.zip

@@ -24,7 +24,7 @@ WHERE id = '11111111-1111-1111-1111-111111111111';
 UPDATE public.profiles SET role = 'athlete' WHERE phone = 'ATHLETE_PHONE';
 
 UPDATE public.wallets 
-SET balance = 50000 
+SET balance = 500 
 WHERE user_id = (SELECT user_id FROM public.profiles WHERE phone = 'ATHLETE_PHONE');
 
 -- 5. VERIFY LINKING

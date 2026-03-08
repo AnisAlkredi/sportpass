@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -92,6 +94,27 @@ class _SportPassAppState extends State<SportPassApp>
 
   @override
   Widget build(BuildContext context) {
+    final app = MaterialApp.router(
+      title: 'SportPass',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: _themeMode,
+      locale: _locale,
+      supportedLocales: const [Locale('ar'), Locale('en')],
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      routerConfig: AppRouter.router,
+    );
+
+    final isMobilePlatform = !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS);
+
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthCubit>(create: (_) => sl<AuthCubit>()..checkAuth()),
@@ -102,22 +125,20 @@ class _SportPassAppState extends State<SportPassApp>
         BlocProvider<AdminCubit>(create: (_) => sl<AdminCubit>()),
         BlocProvider<WalletCubit>(create: (_) => sl<WalletCubit>()),
       ],
-      child: MaterialApp.router(
-        title: 'SportPass',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: _themeMode,
-        locale: _locale,
-        supportedLocales: const [Locale('ar'), Locale('en')],
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        routerConfig: AppRouter.router,
-      ),
+      child: isMobilePlatform
+          ? Shortcuts(
+              shortcuts: const <ShortcutActivator, Intent>{
+                SingleActivator(LogicalKeyboardKey.arrowUp): DoNothingIntent(),
+                SingleActivator(LogicalKeyboardKey.arrowDown):
+                    DoNothingIntent(),
+                SingleActivator(LogicalKeyboardKey.arrowLeft):
+                    DoNothingIntent(),
+                SingleActivator(LogicalKeyboardKey.arrowRight):
+                    DoNothingIntent(),
+              },
+              child: app,
+            )
+          : app,
     );
   }
 }

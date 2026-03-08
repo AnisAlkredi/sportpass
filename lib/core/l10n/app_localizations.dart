@@ -50,7 +50,7 @@ class AppLocalizations {
       'no_subscription': 'لا يوجد رصيد كافٍ',
       'subscribe_now': 'اشحن الآن',
       'currency': 'ل.س',
-      'syp': 'ليرة سورية',
+      'syp': 'ل.س جديدة',
       'commission': 'عمولة',
       'gym_earned': 'أرباح النادي',
       'athlete': 'رياضي',

@@ -42,7 +42,7 @@ This report confirms that all critical issues identified in the previous complia
 ### 2.1 Map System Logic
 - **Action:** Verified `PartnerLocation.userPrice` calculation and usage in `map_discovery_page.dart`.
 - **Finding:**
-  - Formula used: `(basePrice / 0.80).ceil() * 500` (logic matches the requirement: basePrice is 80%, calculate 100% and round).
+  - Formula used: `(basePrice / 0.80 / 5).ceil() * 5` (basePrice is 80% share, user price is rounded up to nearest 5 SYP).
   - Map displays `userPrice` (what user pays), not `basePrice`.
 - **Result:** Compliant.
 

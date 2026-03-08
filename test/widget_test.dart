@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sportpass/core/widgets/utils.dart';
 
 void main() {
-  test('formatSYP formats Syrian pounds with separators', () {
-    expect(formatSYP(12500), '12,500 ل.س');
-    expect(formatSYP(500000), '500,000 ل.س');
+  test('formatSYP formats new Syrian pound values with separators', () {
+    expect(formatSYP(125), '125 ل.س جديدة');
+    expect(formatSYP(5000), '5,000 ل.س جديدة');
   });
 }

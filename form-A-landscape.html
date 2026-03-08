@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>النموذج 2 - استمارة بيانات عائلية (نسخة أفقية)</title>
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 5mm;
+    }
+
+    :root {
+      --ink: #000;
+      --bw: 1px;
+      --head: #d9d9d9;
+      --sub: #efefef;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: var(--ink);
+      font-family: Tahoma, Arial, sans-serif;
+      font-size: 12.75px;
+      line-height: 1.24;
+    }
+
+    .sheet {
+      width: 281mm;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: grid;
+      grid-template-columns: 44mm 1fr 16mm;
+      gap: 0.5mm;
+      align-items: center;
+      direction: ltr;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 0;
+      margin-bottom: 0.1mm;
+    }
+
+    .logo-box {
+      height: 7.2mm;
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+
+    .logo-right {
+      align-items: start;
+      padding-top: 0;
+      padding-bottom: 0;
+      overflow: visible;
+      height: 8.8mm;
+    }
+
+    .logo-left img,
+    .logo-right img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .logo-left img {
+      height: 72%;
+      width: auto;
+      max-height: none;
+      transform: translateY(-0.95mm);
+    }
+
+    .logo-right img {
+      height: 9mm;
+      width: auto;
+      max-height: none;
+      transform: translateY(-0.35mm);
+    }
+
+    .head-text {
+      direction: rtl;
+      text-align: center;
+      line-height: 1.06;
+    }
+
+    .head-text .gov {
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .head-text .title {
+      font-size: 14.7px;
+      font-weight: 400;
+      margin-top: 0.1mm;
+    }
+
+    .head-text .sub {
+      font-size: 10.2px;
+      font-weight: 700;
+      margin-top: 0;
+    }
+
+    .hint {
+      border: var(--bw) solid var(--ink);
+      text-align: center;
+      font-size: 10.8px;
+      font-weight: 700;
+      padding: 0.45mm 0.7mm;
+      margin-bottom: 0.2mm;
+    }
+
+    .sec-head {
+      border: var(--bw) solid var(--ink);
+      border-bottom: none;
+      background: var(--head);
+      font-weight: 700;
+      font-size: 11.8px;
+      padding: 0.5mm 0.85mm;
+      margin-top: 0.2mm;
+    }
+
+    .sec-head .note {
+      font-size: 10.2px;
+      margin-right: 1.2mm;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border: var(--bw) solid var(--ink);
+      padding: 0.5mm 0.7mm;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--sub);
+      font-weight: 700;
+      font-size: 10.75px;
+      text-align: center;
+      line-height: 1.12;
+      vertical-align: middle;
+      padding: 0.45mm 0.3mm;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .th-note {
+      font-size: 9.4px;
+      font-weight: 700;
+    }
+
+    .faith-sub {
+      font-size: 50%;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .label {
+      display: block;
+      font-weight: 700;
+      font-size: 11.6px;
+      margin-bottom: 0.25mm;
+    }
+
+    .line {
+      display: block;
+      border-bottom: none;
+      height: 0;
+    }
+
+    .line-lg {
+      display: block;
+      border-bottom: none;
+      height: 0;
+    }
+
+    .row-sm td {
+      height: 7.35mm;
+      vertical-align: middle;
+    }
+
+    .row-md td {
+      height: 8mm;
+      vertical-align: middle;
+    }
+
+    .wives td {
+      height: 6.2mm;
+      vertical-align: middle;
+      padding: 0.4mm 0.45mm;
+    }
+
+    .children td {
+      height: 6.05mm;
+      vertical-align: middle;
+      padding: 0.4mm 0.45mm;
+    }
+
+    .children th {
+      font-size: 10.1px;
+      padding: 0.35mm 0.22mm;
+      line-height: 1.1;
+    }
+
+    .children .social-head {
+      white-space: nowrap;
+      word-break: normal;
+      overflow-wrap: normal;
+      font-size: 9.4px;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .box {
+      display: inline-block;
+      width: 2.8mm;
+      height: 2.8mm;
+      border: var(--bw) solid var(--ink);
+      margin: 0 0.4mm;
+      vertical-align: middle;
+    }
+
+    .yn {
+      font-weight: 700;
+      font-size: 10px;
+      text-align: center;
+      line-height: 1.2;
+      white-space: normal;
+    }
+
+    .yn-inline {
+      font-weight: 700;
+      font-size: 10px;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.1;
+    }
+
+    .status-cell {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .status-cell .box {
+      margin: 0 auto;
+      display: block;
+      width: 2.3mm;
+      height: 2.3mm;
+    }
+
+    .include-boxes {
+      text-align: center;
+      line-height: 1.05;
+    }
+
+    .include-boxes .box {
+      display: block;
+      margin: 0.15mm auto;
+      width: 2mm;
+      height: 2mm;
+    }
+
+    .attach td {
+      height: 6.05mm;
+      vertical-align: middle;
+    }
+
+    .attach-item {
+      font-weight: 700;
+      font-size: 11.4px;
+      white-space: nowrap;
+    }
+
+    .attach-item .box {
+      margin-left: 0.6mm;
+      margin-right: 0;
+    }
+
+    .declaration {
+      border: var(--bw) solid var(--ink);
+      padding: 0.45mm 0.8mm 0.55mm;
+      margin-top: 0.25mm;
+    }
+
+    .declaration p {
+      margin: 0 0 0.25mm;
+      font-size: 9.8px;
+      font-weight: 700;
+      line-height: 1.22;
+    }
+
+    .declaration .label {
+      font-size: 9.8px;
+      margin-bottom: 0.1mm;
+    }
+
+    .declaration .row-sm td {
+      height: 4.8mm;
+    }
+
+    .sig-line {
+      border-bottom: var(--bw) solid var(--ink);
+      height: 1.8mm;
+    }
+
+    @media print {
+      * {
+        color: #000 !important;
+        border-color: #000 !important;
+      }
+
+      .sheet {
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+    <header class="header">
+      <div class="logo-box logo-left">
+        <img src="./logo_try2.svg" alt="شعار الإدارة العامة للشؤون المدنية" />
+      </div>
+
+      <div class="head-text">
+        <div class="gov">الجمهورية العربية السورية - وزارة الداخلية - الإدارة العامة للشؤون المدنية</div>
+        <div class="title">النموذج 2 - استمارة بيانات عائلية</div>
+        <div class="sub">بموجب المرسوم التشريعي رقم /13/ لعام 2026</div>
+      </div>
+
+      <div class="logo-box logo-right">
+        <img src="./civil-affairs-logo.svg" alt="شعار الجمهورية" />
+      </div>
+    </header>
+
+    <div class="hint">يرجى تعبئة جميع الحقول المطلوبة بوضوح.</div>
+
+    <div class="sec-head">1) بيانات الطلب <span class="note">- تملأ من قبل الموظف</span></div>
+    <table>
+      <colgroup>
+        <col style="width:25%" />
+        <col style="width:25%" />
+        <col style="width:25%" />
+        <col style="width:25%" />
+      </colgroup>
+      <tr class="row-sm">
+        <td><span class="label">رقم الطلب</span><span class="line"></span></td>
+        <td><span class="label">المحافظة</span><span class="line"></span></td>
+        <td><span class="label">المركز</span><span class="line"></span></td>
+        <td><span class="label">تاريخ الاستلام</span><span class="line"></span></td>
+      </tr>
+    </table>
+
+    <div class="sec-head">2) بيانات رب الأسرة</div>
+    <table>
+      <colgroup>
+        <col style="width:9%" />
+        <col style="width:9%" />
+        <col style="width:13%" />
+        <col style="width:14%" />
+        <col style="width:9%" />
+        <col style="width:8%" />
+        <col style="width:21%" />
+        <col style="width:16%" />
+      </colgroup>
+      <tr class="row-sm">
+        <td><span class="label">الاسم</span><span class="line"></span></td>
+        <td><span class="label">النسبة</span><span class="line"></span></td>
+        <td><span class="label">اسم الأب</span><span class="line"></span></td>
+        <td><span class="label">اسم الأم</span><span class="line"></span></td>
+        <td><span class="label">اسم الجد</span><span class="line"></span></td>
+        <td><span class="label">الجنسية</span><span class="line"></span></td>
+        <td><span class="label">الرقم الوطني</span><span class="line"></span></td>
+        <td><span class="label">الدين/<span class="faith-sub">المذهب للديانة المسيحية</span></span><span class="line"></span></td>
+      </tr>
+      <tr class="row-sm">
+        <td colspan="2"><span class="label">مكان الولادة</span><span class="line-lg"></span></td>
+        <td colspan="2"><span class="label">تاريخ الولادة رقماً وكتابةً</span><span class="line-lg"></span></td>
+        <td colspan="2"><span class="label">مكان وتاريخ الوفاة</span><span class="line"></span></td>
+        <td colspan="2" class="yn-inline">
+          <span class="th-note">(يملأ من الموظف)</span>&nbsp;
+          <span class="box"></span>مشمول بالطلب&nbsp;&nbsp;
+          <span class="box"></span>غير مشمول
+        </td>
+      </tr>
+    </table>
+
+    <div class="sec-head">3) الزوجات</div>
+    <table class="wives">
+      <colgroup>
+        <col style="width:2.3%" />
+        <col style="width:6%" />
+        <col style="width:4.5%" />
+        <col style="width:4.5%" />
+        <col style="width:6.5%" />
+        <col style="width:4.5%" />
+        <col style="width:6.5%" />
+        <col style="width:11%" />
+        <col style="width:4.5%" />
+        <col style="width:7.5%" />
+        <col style="width:7.5%" />
+        <col style="width:7.5%" />
+        <col style="width:15%" />
+        <col style="width:4.5%" />
+        <col style="width:7.7%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th>م</th>
+          <th>الاسم</th>
+          <th>النسبة</th>
+          <th>اسم الأب</th>
+          <th>اسم الأم ونسبتها</th>
+          <th>اسم الجد</th>
+          <th>مكان الولادة</th>
+          <th>تاريخ الولادة رقماً وكتابةً</th>
+          <th>الدين/<span class="faith-sub">المذهب للديانة المسيحية</span></th>
+          <th>مكان/تاريخ الزواج</th>
+          <th>مكان/تاريخ الطلاق</th>
+          <th>مكان/تاريخ الوفاة</th>
+          <th>الرقم الوطني</th>
+          <th>الجنسية</th>
+          <th>مشمولة<br />بالطلب<br /><span class="th-note">(يملأ من الموظف)</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="center">1</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">2</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">3</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">4</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sec-head">4) الأولاد</div>
+    <table class="children">
+      <colgroup>
+        <col style="width:3%" />
+        <col style="width:8.5%" />
+        <col style="width:11.5%" />
+        <col style="width:8.5%" />
+        <col style="width:12.5%" />
+        <col style="width:4.5%" />
+        <col style="width:2.8%" />
+        <col style="width:2.8%" />
+        <col style="width:2.8%" />
+        <col style="width:2.8%" />
+        <col style="width:12%" />
+        <col style="width:5%" />
+        <col style="width:5%" />
+        <col style="width:4.8%" />
+        <col style="width:13.5%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th rowspan="2">م</th>
+          <th rowspan="2">الاسم</th>
+          <th rowspan="2">اسم الأم الثلاثي</th>
+          <th rowspan="2">مكان الولادة</th>
+          <th rowspan="2">تاريخ الولادة رقماً وكتابةً</th>
+          <th rowspan="2">الجنس</th>
+          <th colspan="4">الحالة الاجتماعية</th>
+          <th rowspan="2">الرقم الوطني</th>
+          <th rowspan="2">جنسية أخرى</th>
+          <th rowspan="2">الدين/<br /><span class="faith-sub">المذهب للديانة المسيحية</span></th>
+          <th rowspan="2">مكان/تاريخ الوفاة</th>
+          <th rowspan="2">مشمول<br />بالطلب<br /><span class="th-note">(يملأ من الموظف)</span></th>
+        </tr>
+        <tr>
+          <th class="social-head">أعزب</th>
+          <th class="social-head">متزوج</th>
+          <th class="social-head">مطلق</th>
+          <th class="social-head">أرمل</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="center">1</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">2</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">3</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">4</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">5</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">6</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">7</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">8</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">9</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+        <tr><td class="center">10</td><td></td><td></td><td></td><td></td><td></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td class="status-cell"><span class="box"></span></td><td></td><td></td><td></td><td></td><td class="yn-inline"><span class="box"></span>نعم&nbsp;&nbsp;<span class="box"></span>لا</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sec-head">5) الوثائق المرفقة</div>
+    <table class="attach">
+      <colgroup>
+        <col style="width:33.33%" />
+        <col style="width:33.33%" />
+        <col style="width:33.34%" />
+      </colgroup>
+      <tr>
+        <td><span class="attach-item"><span class="box"></span>شهادة مختار</span></td>
+        <td><span class="attach-item"><span class="box"></span>سند إقامة</span></td>
+        <td><span class="attach-item"><span class="box"></span>وثائق دراسية</span></td>
+      </tr>
+      <tr>
+        <td><span class="attach-item"><span class="box"></span>فواتير خدمات (كهرباء، ماء، هاتف)</span></td>
+        <td><span class="attach-item"><span class="box"></span>مستندات أخرى</span></td>
+        <td><span class="label">عدد المرفقات / عدد الأوراق</span><span class="line"></span></td>
+      </tr>
+    </table>
+
+    <div class="declaration">
+      <p>إقرار: أقر أنا مقدم الطلب بأن جميع المعلومات الواردة في هذا النموذج صحيحة وكاملة، وأتحمل المسؤولية القانونية عن المستندات والبيانات المقدمة.</p>
+      <table>
+        <colgroup>
+          <col style="width:25%" />
+          <col style="width:25%" />
+          <col style="width:25%" />
+          <col style="width:25%" />
+        </colgroup>
+        <tr class="row-sm">
+          <td><span class="label">اسم صاحب الطلب</span><span class="sig-line"></span></td>
+          <td><span class="label">الصفة</span><span class="sig-line"></span></td>
+          <td><span class="label">التوقيع</span><span class="sig-line"></span></td>
+          <td><span class="label">التاريخ</span><span class="sig-line"></span></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

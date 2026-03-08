@@ -79,5 +79,7 @@ flutter:
   
   assets:
     - .env
+    - assets/env/app.env
     - assets/lottie/
     - assets/images/
+    - assets/fonts/google_fonts/

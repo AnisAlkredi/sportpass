@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../core/config/payment_config.dart';
 import '../../../../core/l10n/app_localizations.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/glass_card.dart';
@@ -28,7 +31,7 @@ class _TopupPageState extends State<TopupPage> {
   File? _receiptImage;
   bool _uploading = false;
 
-  final _presets = [50000, 100000, 200000, 500000];
+  final _presets = [500, 1000, 2000, 5000];
   String _tr(String ar, String en) => context.trd(ar, en);
   Color _onSurface(BuildContext context) =>
       Theme.of(context).colorScheme.onSurface;
@@ -54,6 +57,17 @@ class _TopupPageState extends State<TopupPage> {
       return C.textMuted;
     }
     return const Color(0xFF6D8199);
+  }
+
+  Future<void> _copyText(String value, String arDone, String enDone) async {
+    await Clipboard.setData(ClipboardData(text: value));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_tr(arDone, enDone), style: GoogleFonts.cairo()),
+        backgroundColor: C.green,
+      ),
+    );
   }
 
   InputDecoration _fieldDecoration({
@@ -89,7 +103,7 @@ class _TopupPageState extends State<TopupPage> {
   void initState() {
     super.initState();
     if (widget.amount != null) {
-      _amountCtrl.text = widget.amount!.toStringAsFixed(0);
+      _amountCtrl.text = sypStorageToDisplay(widget.amount!).toStringAsFixed(0);
     }
   }
 
@@ -148,6 +162,106 @@ class _TopupPageState extends State<TopupPage> {
     } finally {
       setState(() => _uploading = false);
     }
+  }
+
+  Widget _buildShamCashTransferCard() {
+    return GlassCard(
+      borderColor: C.cyan.withValues(alpha: 0.35),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.account_balance_wallet, color: C.cyan, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                _tr('التحويل عبر شام كاش', 'Transfer via ShamCash'),
+                style: GoogleFonts.cairo(
+                  color: _onSurface(context),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            _tr('اسم المستفيد', 'Beneficiary name'),
+            style: GoogleFonts.cairo(color: _muted(context), fontSize: 11),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            PaymentConfig.shamCashBeneficiaryName,
+            style: GoogleFonts.cairo(
+              color: _onSurface(context),
+              fontWeight: FontWeight.w700,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _tr('رقم الحساب', 'Account ID'),
+            style: GoogleFonts.cairo(color: _muted(context), fontSize: 11),
+          ),
+          const SizedBox(height: 2),
+          SelectableText(
+            PaymentConfig.shamCashAccountId,
+            style: GoogleFonts.cairo(
+              color: _onSurface(context),
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: C.border),
+              ),
+              child: QrImageView(
+                data: PaymentConfig.shamCashQrData,
+                size: 160,
+                backgroundColor: Colors.white,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _copyText(
+                    PaymentConfig.shamCashAccountId,
+                    'تم نسخ رقم الحساب',
+                    'Account ID copied',
+                  ),
+                  icon: const Icon(Icons.copy_rounded, size: 16),
+                  label: Text(
+                    _tr('نسخ رقم الحساب', 'Copy account ID'),
+                    style: GoogleFonts.cairo(fontWeight: FontWeight.w700),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _tr(
+              'بعد التحويل: أدخل رقم العملية وارفع صورة الإيصال لإرسال طلب الشحن.',
+              'After transfer: enter the transaction ID and upload receipt image to submit top-up request.',
+            ),
+            style: GoogleFonts.cairo(
+              color: _secondary(context),
+              fontSize: 12,
+              height: 1.6,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -253,6 +367,10 @@ class _TopupPageState extends State<TopupPage> {
 
               const SizedBox(height: 28),
 
+              _buildShamCashTransferCard().animate().fadeIn(delay: 80.ms),
+
+              const SizedBox(height: 20),
+
               // Presets
               if (widget.amount == null) ...[
                 Text(_tr('اختر مبلغ الشحن', 'Choose top-up amount'),
@@ -290,7 +408,8 @@ class _TopupPageState extends State<TopupPage> {
                           child: Center(
                               child: Text(
                                   formatCurrency(context, v,
-                                      includeCurrency: false),
+                                      includeCurrency: false,
+                                      valueIsStorage: false),
                                   style: GoogleFonts.cairo(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w700,
@@ -318,7 +437,7 @@ class _TopupPageState extends State<TopupPage> {
                 style:
                     GoogleFonts.cairo(color: _onSurface(context), fontSize: 20),
                 decoration: _fieldDecoration(
-                  hintText: _tr('مثال: 50000', 'Example: 50000'),
+                  hintText: _tr('مثال: 500', 'Example: 500'),
                   suffixText: currencyLabel(context),
                   suffixStyle: GoogleFonts.cairo(color: _muted(context)),
                   prefixIcon: const Icon(Icons.attach_money, color: C.cyan),
@@ -416,9 +535,10 @@ class _TopupPageState extends State<TopupPage> {
                       : () async {
                           final messenger = ScaffoldMessenger.of(context);
                           final walletCubit = context.read<WalletCubit>();
-                          final amount = double.tryParse(_amountCtrl.text);
+                          final amountDisplay =
+                              parseSypDisplayInput(_amountCtrl.text);
                           final txId = _txIdCtrl.text.trim();
-                          if (amount == null || amount <= 0) {
+                          if (amountDisplay == null || amountDisplay <= 0) {
                             messenger.showSnackBar(SnackBar(
                                 content: Text(
                                     _tr('أدخل مبلغ صحيح',
@@ -442,8 +562,14 @@ class _TopupPageState extends State<TopupPage> {
                             receiptUrl = await _uploadReceipt();
                           }
                           if (!mounted) return;
-                          final notes = 'TX: $txId';
-                          walletCubit.submitTopup(amount,
+                          final notes =
+                              'Method: ${PaymentConfig.shamCashProvider} | '
+                              'Beneficiary: ${PaymentConfig.shamCashBeneficiaryName} | '
+                              'Account: ${PaymentConfig.shamCashAccountId} | '
+                              'TX: $txId';
+                          final amountStorage =
+                              sypDisplayToStorage(amountDisplay);
+                          walletCubit.submitTopup(amountStorage,
                               proofUrl: receiptUrl, notes: notes);
                         },
                   style: ElevatedButton.styleFrom(
@@ -477,8 +603,8 @@ class _TopupPageState extends State<TopupPage> {
                       Expanded(
                           child: Text(
                               _tr(
-                                'سيتم مراجعة طلبك وشحن رصيدك خلال دقائق. عمولة التطبيق 20% يتم خصمها عند كل تسجيل دخول لنادي.',
-                                'Your request will be reviewed and your balance charged within minutes. Platform fee is 20% and is deducted on each gym check-in.',
+                                'سيتم مراجعة طلبك وشحن رصيدك خلال دقائق. أنت تدفع فقط سعر الدخول المعلن لكل نادي.',
+                                'Your request will be reviewed and your balance charged within minutes. You only pay each gym published entry price.',
                               ),
                               style: GoogleFonts.cairo(
                                   color: _muted(context),

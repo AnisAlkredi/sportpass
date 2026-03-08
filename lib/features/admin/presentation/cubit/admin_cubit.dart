@@ -223,7 +223,7 @@ class AdminCubit extends Cubit<AdminState> {
         'address_text': address ?? '',
         'lat': lat,
         'lng': lng,
-        'base_price': basePrice, // Gym's 80% share
+        'base_price': basePrice, // Final entry price paid by athlete
         'radius_m': radiusMeters,
         'is_active': true,
       });

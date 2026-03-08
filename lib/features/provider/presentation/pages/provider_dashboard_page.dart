@@ -206,8 +206,8 @@ class _ProviderDashboardPageState extends State<ProviderDashboardPage> {
                         color: Colors.white)),
                 const SizedBox(height: 4),
                 Text(
-                    _tr('عمولة المنصة: 80/20 (ثابتة)',
-                        'Platform split: 80/20 (fixed)'),
+                    _tr('عمولة المنصة 20% تُخصم من النادي',
+                        'Platform commission 20% (deducted from gym side)'),
                     style:
                         GoogleFonts.cairo(color: Colors.white70, fontSize: 12)),
                 Text(

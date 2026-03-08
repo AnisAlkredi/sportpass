@@ -246,6 +246,52 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ],
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 2,
+            runSpacing: 0,
+            children: [
+              TextButton.icon(
+                onPressed: () => context.push(AppRouter.usagePolicy),
+                icon: const Icon(Icons.policy_outlined,
+                    size: 18, color: C.cyan),
+                label: Text(
+                  context.trd('سياسة الاستخدام', 'Usage policy'),
+                  style: GoogleFonts.cairo(
+                    color: C.cyan,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () => context.push(AppRouter.privacyPolicy),
+                icon: const Icon(Icons.privacy_tip_outlined,
+                    size: 18, color: C.cyan),
+                label: Text(
+                  context.trd('سياسة الخصوصية', 'Privacy policy'),
+                  style: GoogleFonts.cairo(
+                    color: C.cyan,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+              TextButton.icon(
+                onPressed: () => context.push(AppRouter.contactUs),
+                icon: const Icon(Icons.support_agent_outlined,
+                    size: 18, color: C.cyan),
+                label: Text(
+                  context.trd('اتصل بنا', 'Contact us'),
+                  style: GoogleFonts.cairo(
+                    color: C.cyan,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: 22),
           BlocBuilder<AuthCubit, AuthState>(
             builder: (ctx, state) {

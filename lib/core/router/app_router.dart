@@ -25,6 +25,9 @@ import '../../features/provider/presentation/pages/provider_analytics_page.dart'
 import '../../features/provider/presentation/pages/my_gym_page.dart';
 import '../../features/provider/presentation/pages/settlement_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/legal/presentation/pages/contact_us_page.dart';
+import '../../features/legal/presentation/pages/privacy_policy_page.dart';
+import '../../features/legal/presentation/pages/usage_policy_page.dart';
 import '../widgets/main_shell.dart';
 
 class AppRouter {
@@ -55,6 +58,9 @@ class AppRouter {
   static const String checkinMonitor = '/admin/checkin-monitor';
   static const String settlement = '/settlement';
   static const String profile = '/profile';
+  static const String usagePolicy = '/usage-policy';
+  static const String privacyPolicy = '/privacy-policy';
+  static const String contactUs = '/contact-us';
 
   static final _rootKey = GlobalKey<NavigatorState>();
   static final _shellKey = GlobalKey<NavigatorState>();
@@ -66,7 +72,10 @@ class AppRouter {
       final loggedIn = Supabase.instance.client.auth.currentUser != null;
       final onAuth = state.matchedLocation == login ||
           state.matchedLocation == otp ||
-          state.matchedLocation == onboarding;
+          state.matchedLocation == onboarding ||
+          state.matchedLocation == usagePolicy ||
+          state.matchedLocation == privacyPolicy ||
+          state.matchedLocation == contactUs;
       if (!loggedIn && !onAuth) return login;
       if (loggedIn && state.matchedLocation == login) return home;
       return null;
@@ -193,6 +202,18 @@ class AppRouter {
           path: profile,
           name: 'profile',
           builder: (_, __) => const ProfilePage()),
+      GoRoute(
+          path: usagePolicy,
+          name: 'usagePolicy',
+          builder: (_, __) => const UsagePolicyPage()),
+      GoRoute(
+          path: privacyPolicy,
+          name: 'privacyPolicy',
+          builder: (_, __) => const PrivacyPolicyPage()),
+      GoRoute(
+          path: contactUs,
+          name: 'contactUs',
+          builder: (_, __) => const ContactUsPage()),
     ],
   );
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../../../core/widgets/utils.dart';
 import '../../domain/checkin_repository.dart';
 
 abstract class CheckinState extends Equatable {
@@ -61,7 +62,8 @@ class CheckinCubit extends Cubit<CheckinState> {
       if (result['success'] == true) {
         emit(CheckinSuccess(result));
       } else {
-        final msg = result['message']?.toString() ?? 'فشل تسجيل الدخول';
+        final rawMsg = result['message']?.toString() ?? 'فشل تسجيل الدخول';
+        final msg = normalizeLegacySypText(rawMsg);
         emit(CheckinError(msg));
       }
     } catch (e) {

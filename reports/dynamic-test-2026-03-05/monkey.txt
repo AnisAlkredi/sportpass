@@ -1,0 +1,166 @@
+  bash arg: -p
+  bash arg: com.sportpass.app
+  bash arg: --pct-syskeys
+  bash arg: 0
+  bash arg: --pct-nav
+  bash arg: 20
+  bash arg: --pct-majornav
+  bash arg: 15
+  bash arg: --pct-touch
+  bash arg: 45
+  bash arg: --pct-motion
+  bash arg: 20
+  bash arg: --ignore-crashes
+  bash arg: --ignore-timeouts
+  bash arg: --monitor-native-crashes
+  bash arg: --throttle
+  bash arg: 40
+  bash arg: -v
+  bash arg: 3500
+:Monkey: seed=1772937277322 count=3500
+:AllowPackage: com.sportpass.app
+:IncludeCategory: android.intent.category.LAUNCHER
+:IncludeCategory: android.intent.category.MONKEY
+// Event percentages:
+//   0: 45.0%
+//   1: 20.0%
+//   2: 0.0%
+//   3: 0.0%
+//   4: -0.0%
+//   5: -0.0%
+//   6: 20.0%
+//   7: 15.0%
+//   8: -0.0%
+//   9: 0.0%
+//   10: 0.0%
+//   11: 0.0%
+** New tombstone found: /data/tombstones/tombstone_00.pb, size: 333762
+** New tombstone found: /data/tombstones/tombstone_00, size: 523785
+** New tombstone found: /data/tombstones/tombstone_01.pb, size: 333735
+** New tombstone found: /data/tombstones/tombstone_01, size: 523088
+** New tombstone found: /data/tombstones/tombstone_02.pb, size: 332057
+** New tombstone found: /data/tombstones/tombstone_02, size: 520700
+** New tombstone found: /data/tombstones/tombstone_03.pb, size: 326570
+** New tombstone found: /data/tombstones/tombstone_03, size: 512659
+** New tombstone found: /data/tombstones/tombstone_04.pb, size: 330050
+** New tombstone found: /data/tombstones/tombstone_04, size: 517659
+** New tombstone found: /data/tombstones/tombstone_05.pb, size: 460954
+** New tombstone found: /data/tombstones/tombstone_05, size: 707157
+:Switch: #Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;launchFlags=0x10200000;component=com.sportpass.app/.MainActivity;end
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.sportpass.app/.MainActivity } in package com.sportpass.app
+    //[calendar_time:2026-03-05 08:38:51.893  system_uptime:208181]
+    // Sending event #100
+    //[calendar_time:2026-03-05 08:38:53.357  system_uptime:209632]
+    // Sending event #200
+    //[calendar_time:2026-03-05 08:38:53.489  system_uptime:209764]
+    // Sending event #200
+    // Rejecting start of Intent { act=android.intent.action.MAIN cmp=com.google.android.inputmethod.latin/com.google.android.apps.inputmethod.latin.preference.SettingsActivity } in package com.google.android.inputmethod.latin
+    //[calendar_time:2026-03-05 08:38:55.980  system_uptime:212255]
+    // Sending event #300
+    //[calendar_time:2026-03-05 08:38:57.546  system_uptime:213822]
+    // Sending event #400
+    //[calendar_time:2026-03-05 08:39:02.753  system_uptime:219028]
+    // Sending event #500
+    //[calendar_time:2026-03-05 08:39:02.795  system_uptime:219069]
+    // Sending event #500
+    //[calendar_time:2026-03-05 08:39:06.120  system_uptime:222395]
+    // Sending event #600
+    //[calendar_time:2026-03-05 08:39:10.130  system_uptime:226405]
+    // Sending event #700
+    //[calendar_time:2026-03-05 08:39:12.662  system_uptime:228937]
+    // Sending event #800
+    // Rejecting start of Intent { act=com.android.vending.PLAY_PROTECT_DEFAULT_ON_NOTIFICATION_CLICKED pkg=com.android.vending cmp=com.android.vending/com.google.android.finsky.activities.MainActivity } in package com.android.vending
+    //[calendar_time:2026-03-05 08:39:14.572  system_uptime:230847]
+    // Sending event #900
+    //[calendar_time:2026-03-05 08:39:16.423  system_uptime:232698]
+    // Sending event #1000
+    //[calendar_time:2026-03-05 08:39:19.847  system_uptime:236123]
+    // Sending event #1100
+    // Rejecting start of Intent { cmp=com.google.android.inputmethod.latin/com.google.android.libraries.inputmethod.permissions.PermissionsActivity } in package com.google.android.inputmethod.latin
+    //[calendar_time:2026-03-05 08:39:21.796  system_uptime:238072]
+    // Sending event #1200
+    //[calendar_time:2026-03-05 08:39:25.955  system_uptime:242230]
+    // Sending event #1300
+    //[calendar_time:2026-03-05 08:39:25.997  system_uptime:242272]
+    // Sending event #1300
+    //[calendar_time:2026-03-05 08:39:28.495  system_uptime:244770]
+    // Sending event #1400
+    //[calendar_time:2026-03-05 08:39:28.547  system_uptime:244822]
+    // Sending event #1400
+    // Rejecting start of Intent { cmp=com.google.android.apps.nexuslauncher/com.android.launcher3.proxy.ProxyActivityStarter } in package com.google.android.apps.nexuslauncher
+    // Rejecting start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.google.android.apps.photos/.home.HomeActivity } in package com.google.android.apps.photos
+    // Rejecting start of Intent { act=android.intent.action.MAIN cmp=com.google.android.inputmethod.latin/com.google.android.apps.inputmethod.latin.preference.SettingsActivity } in package com.google.android.inputmethod.latin
+    // Rejecting start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.google.android.youtube/.app.honeycomb.Shell$HomeActivity } in package com.google.android.youtube
+    //[calendar_time:2026-03-05 08:39:32.068  system_uptime:248352]
+    // Sending event #1500
+    // Rejecting start of Intent { act=android.intent.action.APPLICATION_PREFERENCES pkg=com.google.android.apps.nexuslauncher cmp=com.google.android.apps.nexuslauncher/com.android.launcher3.settings.SettingsActivity } in package com.google.android.apps.nexuslauncher
+    // Rejecting start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.google.android.apps.accessibility.voiceaccess/.activities.LaunchActivity } in package com.google.android.apps.accessibility.voiceaccess
+    //[calendar_time:2026-03-05 08:39:35.573  system_uptime:251847]
+    // Sending event #1600
+    // Rejecting start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.google.android.youtube/.app.honeycomb.Shell$HomeActivity } in package com.google.android.youtube
+    // Rejecting start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.android.settings/.Settings } in package com.android.settings
+    // Allowing start of Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] cmp=com.sportpass.app/.MainActivity } in package com.sportpass.app
+    // Rejecting start of Intent { cat=[android.intent.category.DEFAULT] cmp=com.android.systemui/.inputdevice.tutorial.ui.view.KeyboardTouchpadTutorialActivity } in package com.android.systemui
+    //[calendar_time:2026-03-05 08:39:41.154  system_uptime:257429]
+    // Sending event #1700
+    //[calendar_time:2026-03-05 08:39:41.359  system_uptime:257633]
+    // Sending event #1700
+    //[calendar_time:2026-03-05 08:39:44.268  system_uptime:260543]
+    // Sending event #1800
+    //[calendar_time:2026-03-05 08:39:46.892  system_uptime:263167]
+    // Sending event #1900
+    //[calendar_time:2026-03-05 08:39:46.939  system_uptime:263213]
+    // Sending event #1900
+    //[calendar_time:2026-03-05 08:39:51.517  system_uptime:267794]
+    // Sending event #2000
+    //[calendar_time:2026-03-05 08:39:51.562  system_uptime:267836]
+    // Sending event #2000
+    //[calendar_time:2026-03-05 08:39:54.857  system_uptime:271133]
+    // Sending event #2100
+    // Rejecting start of Intent { act=android.settings.NOTIFICATION_SETTINGS cmp=com.android.settings/.Settings$ConfigureNotificationSettingsActivity } in package com.android.settings
+    //[calendar_time:2026-03-05 08:39:59.383  system_uptime:275658]
+    // Sending event #2200
+    //[calendar_time:2026-03-05 08:40:01.961  system_uptime:278236]
+    // Sending event #2300
+    //[calendar_time:2026-03-05 08:40:02.004  system_uptime:278279]
+    // Sending event #2300
+    // Rejecting start of Intent { act=android.intent.action.MAIN cmp=com.google.android.inputmethod.latin/com.google.android.apps.inputmethod.latin.preference.SettingsActivity } in package com.google.android.inputmethod.latin
+    //[calendar_time:2026-03-05 08:40:04.547  system_uptime:280822]
+    // Sending event #2400
+    //[calendar_time:2026-03-05 08:40:04.591  system_uptime:280865]
+    // Sending event #2400
+    // Rejecting start of Intent { cmp=com.google.android.inputmethod.latin/com.google.android.libraries.inputmethod.permissions.PermissionsActivity } in package com.google.android.inputmethod.latin
+    //[calendar_time:2026-03-05 08:40:09.134  system_uptime:285413]
+    // Sending event #2500
+    //[calendar_time:2026-03-05 08:40:09.185  system_uptime:285460]
+    // Sending event #2500
+    //[calendar_time:2026-03-05 08:40:13.206  system_uptime:289481]
+    // Sending event #2600
+    //[calendar_time:2026-03-05 08:40:15.534  system_uptime:291812]
+    // Sending event #2700
+    //[calendar_time:2026-03-05 08:40:19.468  system_uptime:295756]
+    // Sending event #2800
+    //[calendar_time:2026-03-05 08:40:21.643  system_uptime:297919]
+    // Sending event #2900
+    // Rejecting start of Intent { act=android.intent.action.MAIN cmp=com.google.android.inputmethod.latin/com.google.android.apps.inputmethod.latin.preference.SettingsActivity } in package com.google.android.inputmethod.latin
+    //[calendar_time:2026-03-05 08:40:24.493  system_uptime:300768]
+    // Sending event #3000
+    // Rejecting start of Intent { act=android.intent.action.MAIN cmp=com.google.android.inputmethod.latin/com.google.android.apps.inputmethod.latin.preference.SettingsActivity } in package com.google.android.inputmethod.latin
+    //[calendar_time:2026-03-05 08:40:26.262  system_uptime:302538]
+    // Sending event #3100
+    //[calendar_time:2026-03-05 08:40:26.316  system_uptime:302590]
+    // Sending event #3100
+    // Rejecting start of Intent { act=com.google.android.gms.RECEIVE_NEARBY cmp=com.google.android.gms/.nearby.sharing.main.MainActivity } in package com.google.android.gms
+    //[calendar_time:2026-03-05 08:40:28.830  system_uptime:305105]
+    // Sending event #3200
+    //[calendar_time:2026-03-05 08:40:31.439  system_uptime:307714]
+    // Sending event #3300
+    //[calendar_time:2026-03-05 08:40:31.541  system_uptime:307816]
+    // Sending event #3300
+    //[calendar_time:2026-03-05 08:40:33.683  system_uptime:309960]
+    // Sending event #3400
+Events injected: 3500
+:Sending rotation degree=0, persist=false
+:Dropped: keys=0 pointers=0 trackballs=0 flips=0 rotations=0
+## Network stats: elapsed time=123506ms (0ms mobile, 0ms wifi, 123506ms not connected)
+// Monkey finished

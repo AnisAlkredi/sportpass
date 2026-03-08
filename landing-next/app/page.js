@@ -177,9 +177,9 @@ export default function HomePage() {
               <Image
                 src="/brand/sportpass-icon-192.png"
                 alt="SportPass App Icon"
-                width={36}
-                height={36}
-                className="h-9 w-9"
+                width={44}
+                height={44}
+                className="h-11 w-11"
               />
             </span>
             <span>

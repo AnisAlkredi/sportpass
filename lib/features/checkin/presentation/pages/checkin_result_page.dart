@@ -29,8 +29,6 @@ class CheckinResultPage extends StatelessWidget {
         result['location_name']?.toString() ?? tr('غير متاح', 'Unavailable');
 
     final pricePaid = (result['price_paid'] as num?)?.toDouble() ?? 0;
-    final basePrice = (result['base_price'] as num?)?.toDouble();
-    final platformFee = (result['platform_fee'] as num?)?.toDouble();
     final newBalance = (result['new_balance'] as num?)?.toDouble() ?? 0;
 
     final createdAt = DateTime.tryParse(result['created_at']?.toString() ?? '');
@@ -100,28 +98,20 @@ class CheckinResultPage extends StatelessWidget {
                     const SizedBox(height: 8),
                     const Divider(color: C.border),
                     const SizedBox(height: 8),
-                    _valueLine(
-                      tr('حصة النادي', 'Gym share'),
-                      basePrice == null
-                          ? tr('غير متاح', 'Unavailable')
-                          : formatCurrency(context, basePrice),
-                      C.cyan,
-                    ),
-                    const SizedBox(height: 8),
-                    const Divider(color: C.border),
-                    const SizedBox(height: 8),
-                    _valueLine(
-                      tr('عمولة المنصة', 'Platform fee'),
-                      platformFee == null
-                          ? tr('غير متاح', 'Unavailable')
-                          : formatCurrency(context, platformFee),
-                      C.textSecondary,
-                    ),
-                    const SizedBox(height: 8),
-                    const Divider(color: C.border),
-                    const SizedBox(height: 8),
                     _valueLine(tr('الرصيد الجديد', 'New balance'),
                         formatCurrency(context, newBalance), C.green),
+                    const SizedBox(height: 10),
+                    Text(
+                      tr(
+                        'تدفع فقط سعر الدخول المعلن للنادي.',
+                        'You only pay the gym entry price shown.',
+                      ),
+                      style: GoogleFonts.cairo(
+                        color: C.textMuted,
+                        fontSize: 12,
+                        height: 1.5,
+                      ),
+                    ),
                   ],
                 ),
               ).animate().fadeIn(delay: 360.ms).slideY(begin: 0.06),

@@ -2,31 +2,31 @@ import LineIcon from "./LineIcon";
 
 const steps = [
   {
-    number: "01",
-    icon: "register",
-    title: "سجّل ناديك وبياناتك",
-    text: "ترسل بيانات النادي الأساسية، الفريق يراجع الطلب بسرعة ويبدأ تجهيز الحساب.",
-  },
-  {
-    number: "02",
+    number: "١",
     icon: "pricing",
-    title: "أضف الفروع وحدد السعر الأساسي",
-    text: "تحدد الفروع المتاحة وسعر الدخول لكل فرع ضمن لوحة إدارة واضحة وبسيطة.",
+    title: "اشحن المحفظة",
+    text: "اشحن رصيدك عبر تحويل محلي معتمد مثل شام كاش أو أي وسيلة دفع معتمدة.",
   },
   {
-    number: "03",
+    number: "٢",
+    icon: "localMarket",
+    title: "اختر النادي",
+    text: "تصفح النوادي المشاركة وشاهد سعر الدخول لكل نادي قبل أن تذهب.",
+  },
+  {
+    number: "٣",
     icon: "scan",
-    title: "استخرج QR واطبعه عند الباب",
-    text: "كل زيارة عبر SportPass تُسجل تلقائيًا ويظهر نصيب النادي فورًا في لوحة الأرباح.",
+    title: "امسح (QR) وتدرّب",
+    text: "عند المدخل امسح رمز (QR)، يتم الخصم تلقائيًا وتدخل مباشرة.",
   },
 ];
 
 export default function PartnerHowItWorks() {
   return (
-    <section className="container section" id="owner-flow">
+    <section className="container section" id="how-it-works">
       <div className="section-head reveal">
-        <p className="eyebrow">كيف يعمل النظام لصاحب النادي</p>
-        <h2>تشغيل بسيط من أول يوم</h2>
+        <p className="eyebrow">كيف يعمل</p>
+        <h2>٣ خطوات سريعة من الشحن إلى التمرين</h2>
       </div>
 
       <div className="flow-grid">
@@ -43,14 +43,6 @@ export default function PartnerHowItWorks() {
           </article>
         ))}
       </div>
-
-      <aside className="economy-note reveal" aria-label="تقسيم الأرباح">
-        <h3>كل دخول عبر التطبيق</h3>
-        <p>
-          <strong>80% للنادي</strong> - <strong>20% عمولة تشغيل للمنصة</strong>
-        </p>
-        <small>بدون رسوم ثابتة. بدون اشتراك شهري.</small>
-      </aside>
     </section>
   );
 }

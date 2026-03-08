@@ -3,28 +3,68 @@ import 'package:google_fonts/google_fonts.dart';
 import '../l10n/app_localizations.dart';
 import '../theme/colors.dart';
 
-/// Formats Syrian Pounds with proper formatting
-String formatAmount(num amount) {
-  return amount.toStringAsFixed(0).replaceAllMapped(
+/// System now stores and displays the new Syrian Pound units directly.
+/// Keep this as a constant for one-place control if policy changes.
+const double kSypRedenominationFactor = 1.0;
+
+double sypStorageToDisplay(num storageAmount) =>
+    storageAmount / kSypRedenominationFactor;
+
+double sypDisplayToStorage(num displayAmount) =>
+    displayAmount * kSypRedenominationFactor;
+
+double? parseSypDisplayInput(String raw) {
+  final normalized = raw.replaceAll(',', '').trim();
+  if (normalized.isEmpty) return null;
+  return double.tryParse(normalized);
+}
+
+String normalizeLegacySypText(String input) {
+  final pattern = RegExp(r'(\d[\d,]*(?:\.\d+)?)\s*(ل\.س|SYP)');
+  return input.replaceAllMapped(pattern, (match) {
+    final raw = (match.group(1) ?? '').replaceAll(',', '');
+    final unit = match.group(2) ?? 'ل.س';
+    final legacy = double.tryParse(raw);
+    if (legacy == null) {
+      return match.group(0) ?? input;
+    }
+    final display = sypStorageToDisplay(legacy);
+    final formatted = formatAmount(display, valueIsStorage: false);
+    return '$formatted $unit';
+  });
+}
+
+/// Formats numbers with separators.
+/// If [valueIsStorage] is true, value is converted from storage to display.
+String formatAmount(
+  num amount, {
+  bool valueIsStorage = true,
+}) {
+  final value = valueIsStorage ? sypStorageToDisplay(amount) : amount;
+  return value.toStringAsFixed(0).replaceAllMapped(
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
         (m) => '${m[1]},',
       );
 }
 
 String formatSYP(num amount) {
-  return '${formatAmount(amount)} ل.س';
+  return '${formatAmount(amount)} ل.س جديدة';
 }
 
 String currencyLabel(BuildContext context) {
-  return AppLocalizations.of(context).isEnglish ? 'SYP' : 'ل.س';
+  return AppLocalizations.of(context).isEnglish ? 'SYP (new)' : 'ل.س جديدة';
 }
 
 String formatCurrency(
   BuildContext context,
   num amount, {
   bool includeCurrency = true,
+  bool valueIsStorage = true,
 }) {
-  final value = formatAmount(amount);
+  final value = formatAmount(
+    amount,
+    valueIsStorage: valueIsStorage,
+  );
   if (!includeCurrency) {
     return value;
   }

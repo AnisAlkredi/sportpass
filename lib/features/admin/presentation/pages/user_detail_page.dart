@@ -219,12 +219,13 @@ class _UserDetailPageState extends State<UserDetailPage> {
                     Text(_tr('إلغاء', 'Cancel'), style: GoogleFonts.cairo())),
             ElevatedButton(
               onPressed: () {
-                final amount = double.tryParse(amountCtrl.text);
-                if (amount == null ||
-                    amount <= 0 ||
+                final amountDisplay = parseSypDisplayInput(amountCtrl.text);
+                if (amountDisplay == null ||
+                    amountDisplay <= 0 ||
                     reasonCtrl.text.trim().isEmpty) {
                   return;
                 }
+                final amount = sypDisplayToStorage(amountDisplay);
                 Navigator.pop(ctx, {
                   'amount': isCredit ? amount : -amount,
                   'reason': reasonCtrl.text.trim(),

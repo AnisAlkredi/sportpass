@@ -1,0 +1,46 @@
+[
+  {
+    "name": "account_admin_sportpass_app",
+    "email": "Admin@sportpass.app",
+    "login": false,
+    "reason": "still_on_login_screen",
+    "labels_after_login": [
+      "SportPass",
+      "Sign in to your account",
+      "Sign in",
+      "Sign up",
+      "Email",
+      "Password",
+      "Forgot password?",
+      "Usage policy"
+    ],
+    "actions": [],
+    "video": "/home/programming/Downloads/SportPass_v2/reports/dynamic-test-2026-03-05/account_admin_sportpass_app.mp4",
+    "screenshots": [
+      "/home/programming/Downloads/SportPass_v2/reports/dynamic-test-2026-03-05/account_admin_sportpass_app_01_login.png",
+      "/home/programming/Downloads/SportPass_v2/reports/dynamic-test-2026-03-05/account_admin_sportpass_app_02_after_login.png"
+    ]
+  },
+  {
+    "name": "account_anis_sport_com",
+    "email": "anis@sport.com",
+    "login": false,
+    "reason": "still_on_login_screen",
+    "labels_after_login": [
+      "SportPass",
+      "Sign in to your account",
+      "Sign in",
+      "Sign up",
+      "Email",
+      "Password",
+      "Forgot password?",
+      "Usage policy"
+    ],
+    "actions": [],
+    "video": "/home/programming/Downloads/SportPass_v2/reports/dynamic-test-2026-03-05/account_anis_sport_com.mp4",
+    "screenshots": [
+      "/home/programming/Downloads/SportPass_v2/reports/dynamic-test-2026-03-05/account_anis_sport_com_01_login.png",
+      "/home/programming/Downloads/SportPass_v2/reports/dynamic-test-2026-03-05/account_anis_sport_com_02_after_login.png"
+    ]
+  }
+]

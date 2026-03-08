@@ -8,22 +8,33 @@ export default function BrochureFlowSection() {
   return (
     <section className="container section" id="club-brochure">
       <div className="section-head reveal">
-        <p className="eyebrow">بروشور داخل النادي</p>
-        <h2>امسح QR التعريفي وخلّي المستخدم يفهم النظام خلال 30 ثانية</h2>
+        <p className="eyebrow">سيناريو التحويل داخل النادي</p>
+        <h2>صفحة تعريف النادي تعمل كبروشور بيع خلال 30 ثانية</h2>
       </div>
 
       <div className="brochure-box reveal">
         <p>
-          لكل نادي نعطيك <strong>QRين</strong>:
+          عند الاستقبال، يمكن عرض صفحة النادي على العميل ليفهم النظام مباشرة: السعر، خطوات الدخول،
+          وكيف يحمّل التطبيق في لحظتها.
         </p>
-        <ul>
-          <li>
-            <strong>QR التعريفي:</strong> يفتح صفحة النادي كبروشور (سعر، فرع، خطوات الدخول).
-          </li>
-          <li>
-            <strong>QR الدخول:</strong> يستخدمه المشترك داخل التطبيق لتنفيذ check-in الفعلي.
-          </li>
-        </ul>
+
+        <div className="brochure-flow">
+          <article>
+            <span>1</span>
+            <h3>QR تعريفي</h3>
+            <p>يفتح صفحة النادي كمادة تعريفية سريعة قبل أول تجربة.</p>
+          </article>
+          <article>
+            <span>2</span>
+            <h3>QR الدخول</h3>
+            <p>يُستخدم داخل التطبيق لتنفيذ check-in الفعلي عند الباب.</p>
+          </article>
+          <article>
+            <span>3</span>
+            <h3>تحويل مباشر</h3>
+            <p>المستخدم يفهم الفكرة، يشحن، ويدخل خلال دقائق.</p>
+          </article>
+        </div>
 
         <div className="brochure-links">
           {clubs.map((club) => (

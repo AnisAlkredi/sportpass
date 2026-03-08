@@ -35,7 +35,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
   String _city = _allCitiesToken;
   final Set<String> _categories = {};
   final Set<String> _amenities = {};
-  RangeValues _priceRange = const RangeValues(0, 60000);
+  RangeValues _priceRange = const RangeValues(0, 600);
   double _distanceKm = 25;
   bool _useDistanceFilter = false;
 
@@ -187,7 +187,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
         return false;
       }
 
-      final userPrice = location.userPrice;
+      final userPrice = sypStorageToDisplay(location.userPrice);
       if (userPrice < _priceRange.start || userPrice > _priceRange.end) {
         return false;
       }
@@ -810,7 +810,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                     RangeSlider(
                       values: priceRange,
                       min: 0,
-                      max: 60000,
+                      max: 600,
                       divisions: 120,
                       activeColor: C.cyan,
                       labels: RangeLabels(
@@ -887,7 +887,7 @@ class _MapDiscoveryPageState extends State<MapDiscoveryPage> {
                                 _city = _allCitiesToken;
                                 _categories.clear();
                                 _amenities.clear();
-                                _priceRange = const RangeValues(0, 60000);
+                                _priceRange = const RangeValues(0, 600);
                                 _distanceKm = 25;
                                 _useDistanceFilter = false;
                               });
