@@ -2,5 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "cd landing-next && npm install",
   "buildCommand": "cd landing-next && npm run build",
-  "outputDirectory": "landing-next/out"
+  "outputDirectory": "landing-next/out",
+  "cleanUrls": true
 }
