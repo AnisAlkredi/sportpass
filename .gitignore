@@ -56,3 +56,12 @@ app.*.map.json
 /tools/mitmproxy/
 /tools/jadx-1.5.4/
 /tools/jadx-1.5.4.zip
+
+# Non-product artifacts (forms, ad-hoc media, and local reports)
+/reports/
+/form-*
+/einb-*.png
+/civil-affairs-logo.svg
+/logo_from_pdf*.svg
+/logo_try2.svg
+/alkredi-portfolio/
